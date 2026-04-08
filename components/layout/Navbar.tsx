@@ -5,10 +5,10 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const navLinks = [
-  { label: "Work",       href: "#projects"  },
-  { label: "About",      href: "#about"     },
-  { label: "Experience", href: "#experience"},
-  { label: "Contact",    href: "#contact"   },
+  { label: "Work",       href: "/work"    },
+  { label: "About",      href: "/about"   },
+  { label: "Experience", href: "#experience" },
+  { label: "Contact",    href: "/contact" },
 ];
 
 function scrollTo(href: string) {
@@ -55,22 +55,10 @@ function StaircaseLink({
     delay: hovered ? i * PER : (len - 1 - i) * PER,
   });
 
-  return (
-    <a
-      href={href}
-      onClick={(e) => { e.preventDefault(); scrollTo(href); }}
-      className="no-underline"
-      style={{
-        display:    "inline-block",
-        overflow:   "hidden",
-        lineHeight: 1,
-        /* Explicit height so overflow clips both layers */
-        height:     "1.1em",
-        position:   "relative",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+  const isRoute = !href.startsWith("#");
+
+  const inner = (
+    <>
       {/* ── Layer A: default (starts visible, exits upward) ── */}
       <span
         style={{ display: "flex", position: "relative", zIndex: 1 }}
@@ -94,7 +82,7 @@ function StaircaseLink({
         style={{
           display:  "flex",
           position: "absolute",
-          top:      "100%",   // sits just below the visible area
+          top:      "100%",
           left:     0,
           color:    "#0f0d0c",
         }}
@@ -112,6 +100,41 @@ function StaircaseLink({
           </motion.span>
         ))}
       </span>
+    </>
+  );
+
+  const sharedStyle = {
+    display:    "inline-block",
+    overflow:   "hidden",
+    lineHeight: 1,
+    height:     "1.1em",
+    position:   "relative" as const,
+  };
+
+  if (isRoute) {
+    return (
+      <Link
+        href={href}
+        className="no-underline"
+        style={sharedStyle}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <a
+      href={href}
+      onClick={(e) => { e.preventDefault(); scrollTo(href); }}
+      className="no-underline"
+      style={sharedStyle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {inner}
     </a>
   );
 }
@@ -163,8 +186,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <motion.a
-          href="#contact"
-          onClick={(e) => { e.preventDefault(); scrollTo("#contact"); }}
+          href="/contact"
           className="no-underline flex items-center gap-2"
           style={{
             background:    "#0f0d0c",
