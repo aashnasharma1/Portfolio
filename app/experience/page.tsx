@@ -1,18 +1,19 @@
 "use client"
 import Preloader from "@/components/Preloader";
-import Contact from "@/pages/contact/Contact";
+import Experience from "@/components/sections/Experience";
 import { useState } from "react";
 export default function Page() {
-  const hasVisited = useState("hasVisited-Contact");
+  const hasVisited = sessionStorage.getItem("hasVisited-Experience");
   const [loading, setLoading] = useState(!hasVisited);
+
   const handleVisited = () => {
     setLoading(false);
-    sessionStorage.setItem("hasVisited-Contact", "true");
+    sessionStorage.setItem("hasVisited-Experience", "true");
   };
   return (
     <>
       {loading && <Preloader onComplete={handleVisited} />}
-      <Contact />
+      <Experience />
     </>
   );
 }
