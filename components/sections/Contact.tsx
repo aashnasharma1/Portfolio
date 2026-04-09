@@ -15,7 +15,11 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="section-pad" style={{ background: "#fff8f9" }}>
+    <section
+      id="contact"
+      className="section-pad"
+      style={{ background: "#fff8f9" }}
+    >
       <div className="inner">
         <motion.p
           className="uppercase mb-4"
@@ -44,7 +48,12 @@ export default function Contact() {
           >
             Let&apos;s work
             <br />
-            <span style={{ WebkitTextStroke: "1.5px #e91e8c", color: "transparent" }}>
+            <span
+              style={{
+                WebkitTextStroke: "1.5px #e91e8c",
+                color: "transparent",
+              }}
+            >
               together.
             </span>
           </motion.h2>
@@ -57,7 +66,14 @@ export default function Contact() {
           viewport={{ once: true }}
           transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p style={{ fontSize: "clamp(14px, 1.3vw, 16px)", color: "#5a5450", lineHeight: 1.8, maxWidth: 440 }}>
+          <p
+            style={{
+              fontSize: "clamp(14px, 1.3vw, 16px)",
+              color: "#5a5450",
+              lineHeight: 1.8,
+              maxWidth: 440,
+            }}
+          >
             Have a project in mind or want to collaborate? I&apos;m always open
             to new opportunities and interesting problems.
           </p>
@@ -88,9 +104,9 @@ export default function Contact() {
             {/* Social links */}
             <div className="flex items-center gap-4 pt-1">
               {[
-                { label: "GitHub",   href: "https://github.com" },
+                { label: "GitHub", href: "https://github.com" },
                 { label: "LinkedIn", href: "https://linkedin.com" },
-                { label: "Twitter",  href: "https://twitter.com" },
+                { label: "Twitter", href: "https://twitter.com" },
               ].map((s) => (
                 <a
                   key={s.label}
@@ -98,9 +114,17 @@ export default function Contact() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="no-underline transition-colors duration-200"
-                  style={{ fontSize: 13, color: "#9a9490", letterSpacing: "0.04em" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#e91e8c")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "#9a9490")}
+                  style={{
+                    fontSize: 13,
+                    color: "#9a9490",
+                    letterSpacing: "0.04em",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = "#e91e8c")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "#9a9490")
+                  }
                 >
                   {s.label}
                 </a>

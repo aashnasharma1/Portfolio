@@ -9,17 +9,23 @@ import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
 
 export default function Page() {
-  const [loaded, setLoaded] = useState(false);
+  const alreadyVisited = sessionStorage.getItem("visited-home");
+  const [loading, setLoading] = useState(!alreadyVisited);
+  const handleComplete = () => {
+    setLoading(false);
+    sessionStorage.setItem("visited-home", "true");
+  };
+  console.log(alreadyVisited);
 
   return (
     <>
       {/* Preloader — mounts on top, unmounts after split-panel exit */}
-      <Preloader onComplete={() => setLoaded(true)} />
+      {loading && <Preloader onComplete={handleComplete} />}
 
       {/* Main site content — fades in once preloader is done */}
       <div
         style={{
-          opacity:    loaded ? 1 : 0,
+          opacity: loading ? 0 : 1,
           transition: "opacity 0.6s ease",
         }}
       >

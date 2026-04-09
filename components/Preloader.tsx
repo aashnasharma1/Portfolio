@@ -23,7 +23,9 @@ import { AnimatePresence, motion } from "framer-motion";
 const BG = "#f5e2ec";
 type Phase = "counting" | "counterOut" | "panelOut";
 
-interface Props { onComplete: () => void }
+interface Props {
+  onComplete: () => void;
+}
 
 function easeInOutQuart(t: number) {
   return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
@@ -47,11 +49,11 @@ function DigitCol({ digit, colDelay }: { digit: number; colDelay: number }) {
   return (
     <div
       style={{
-        position:      "relative",
-        display:       "inline-block",
-        width:         "0.62em",
-        height:        "1em",
-        overflow:      "hidden",
+        position: "relative",
+        display: "inline-block",
+        width: "0.62em",
+        height: "1em",
+        overflow: "hidden",
         verticalAlign: "top",
       }}
     >
@@ -59,21 +61,21 @@ function DigitCol({ digit, colDelay }: { digit: number; colDelay: number }) {
         <motion.span
           key={`${colDelay}-${digit}`}
           style={{
-            position:       "absolute",
-            inset:          0,
-            display:        "flex",
-            alignItems:     "flex-end",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "flex-end",
             justifyContent: "center",
-            lineHeight:     1,
+            lineHeight: 1,
           }}
           initial={{ y: "80%", opacity: 0 }}
           animate={{
             y: "0%",
             opacity: 1,
             transition: {
-              delay:    colDelay,
+              delay: colDelay,
               duration: 0.52,
-              ease:     [0.22, 1, 0.36, 1],
+              ease: [0.22, 1, 0.36, 1],
             },
           }}
           exit={{
@@ -82,7 +84,7 @@ function DigitCol({ digit, colDelay }: { digit: number; colDelay: number }) {
              * (opacity 0) long before it would reach the overflow boundary,
              * so the "half-visible top of a digit" bug cannot occur.
              */
-            y:       "-28%",
+            y: "-28%",
             opacity: 0,
             transition: { duration: 0.22, ease: "easeIn" },
           }}
@@ -97,8 +99,8 @@ function DigitCol({ digit, colDelay }: { digit: number; colDelay: number }) {
 /* ── Main component ─────────────────────────────────────────────── */
 export default function Preloader({ onComplete }: Props) {
   const milestones = useMemo(() => buildMilestones(), []);
-  const [count, setCount]   = useState(0);
-  const [phase, setPhase]   = useState<Phase>("counting");
+  const [count, setCount] = useState(0);
+  const [phase, setPhase] = useState<Phase>("counting");
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -108,11 +110,11 @@ export default function Preloader({ onComplete }: Props) {
 
     const step = (ts: number) => {
       if (!t0) t0 = ts;
-      const p   = Math.min((ts - t0) / DURATION, 1);
+      const p = Math.min((ts - t0) / DURATION, 1);
       // Map eased progress → milestone index
       const idx = Math.min(
         Math.floor(easeInOutQuart(p) * milestones.length),
-        milestones.length - 1
+        milestones.length - 1,
       );
 
       // Only setState when we advance to a new milestone
@@ -129,8 +131,10 @@ export default function Preloader({ onComplete }: Props) {
     };
 
     rafRef.current = requestAnimationFrame(step);
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const d0 = Math.floor(count / 100);
@@ -138,15 +142,15 @@ export default function Preloader({ onComplete }: Props) {
   const d2 = count % 10;
 
   const digitStyle: React.CSSProperties = {
-    fontFamily:         "var(--font-inter, system-ui, sans-serif)",
-    fontWeight:         800,
-    fontSize:           "clamp(96px, 16vw, 220px)",
-    lineHeight:         1,
-    letterSpacing:      "-0.04em",
+    fontFamily: "var(--font-inter, system-ui, sans-serif)",
+    fontWeight: 800,
+    fontSize: "clamp(96px, 16vw, 220px)",
+    lineHeight: 1,
+    letterSpacing: "-0.04em",
     fontVariantNumeric: "tabular-nums",
-    color:              "#0f0d0c",
-    display:            "flex",
-    alignItems:         "flex-end",
+    color: "#0f0d0c",
+    display: "flex",
+    alignItems: "flex-end",
   };
 
   return (
@@ -159,13 +163,23 @@ export default function Preloader({ onComplete }: Props) {
               key="pre-top"
               className="fixed inset-x-0 top-0 z-[9997]"
               style={{ height: "50vh", background: BG }}
-              exit={{ y: "-100%", transition: { duration: 0.96, ease: [0.76, 0, 0.24, 1] } }}
+              exit={{
+                y: "-100%",
+                transition: { duration: 0.96, ease: [0.76, 0, 0.24, 1] },
+              }}
             />
             <motion.div
               key="pre-bottom"
               className="fixed inset-x-0 bottom-0 z-[9997]"
               style={{ height: "50vh", background: BG }}
-              exit={{ y: "100%", transition: { duration: 0.96, ease: [0.76, 0, 0.24, 1], delay: 0.05 } }}
+              exit={{
+                y: "100%",
+                transition: {
+                  duration: 0.96,
+                  ease: [0.76, 0, 0.24, 1],
+                  delay: 0.05,
+                },
+              }}
             />
           </>
         )}
@@ -178,7 +192,11 @@ export default function Preloader({ onComplete }: Props) {
             key="counter"
             className="fixed inset-0 z-[9998] flex flex-col items-center justify-center gap-5"
             initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+            }}
             exit={{
               opacity: 0,
               y: -18,
@@ -191,19 +209,19 @@ export default function Preloader({ onComplete }: Props) {
               {/* Stagger: units first (0ms), tens (+70ms), hundreds (+140ms) */}
               <DigitCol digit={d0} colDelay={0.14} />
               <DigitCol digit={d1} colDelay={0.07} />
-              <DigitCol digit={d2} colDelay={0}    />
+              <DigitCol digit={d2} colDelay={0} />
 
               {/* % — accent, static */}
               <span
                 style={{
-                  fontFamily:    "var(--font-inter, system-ui, sans-serif)",
-                  fontWeight:    800,
-                  fontSize:      "clamp(30px, 4.5vw, 56px)",
-                  color:         "#e91e8c",
+                  fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                  fontWeight: 800,
+                  fontSize: "clamp(30px, 4.5vw, 56px)",
+                  color: "#e91e8c",
                   letterSpacing: "-0.03em",
-                  lineHeight:    1,
+                  lineHeight: 1,
                   paddingBottom: "0.14em",
-                  marginLeft:    "0.06em",
+                  marginLeft: "0.06em",
                 }}
               >
                 %
@@ -212,7 +230,14 @@ export default function Preloader({ onComplete }: Props) {
 
             {/* Loading label */}
             <div className="flex items-center gap-2.5">
-              <span style={{ fontSize: 11, letterSpacing: "0.22em", textTransform: "uppercase", color: "#b08898" }}>
+              <span
+                style={{
+                  fontSize: 11,
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: "#b08898",
+                }}
+              >
                 Loading
               </span>
               {[0, 1, 2].map((i) => (
@@ -221,7 +246,11 @@ export default function Preloader({ onComplete }: Props) {
                   className="block w-[5px] h-[5px] rounded-full"
                   style={{ background: "#e91e8c", opacity: 0.35 }}
                   animate={{ opacity: [0.2, 0.75, 0.2] }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.3 }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: i * 0.3,
+                  }}
                 />
               ))}
             </div>
