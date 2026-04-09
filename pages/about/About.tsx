@@ -6,7 +6,11 @@ const services = [
     num: "01",
     title: "Frontend Development",
     desc: "Building modern, responsive UIs with React.js and Next.js. Focused on performance, accessibility, and engaging user experiences.",
-    skills: ["Modern Websites", "Component Architecture", "Performance Optimization"],
+    skills: [
+      "Modern Websites",
+      "Component Architecture",
+      "Performance Optimization",
+    ],
   },
   {
     num: "02",
@@ -29,7 +33,14 @@ const services = [
 ];
 
 const techStack = {
-  Frontend: ["React.js", "Next.js", "TypeScript", "Redux Toolkit", "Tailwind CSS", "SCSS"],
+  Frontend: [
+    "React.js",
+    "Next.js",
+    "TypeScript",
+    "Redux Toolkit",
+    "Tailwind CSS",
+    "SCSS",
+  ],
   Backend: ["Node.js", "Express.js", "MongoDB", "MySQL", "REST APIs", "JWT"],
   Tools: ["Git", "Docker", "GitHub Actions", "CI/CD", "Webpack", "Postman"],
 };
@@ -37,7 +48,6 @@ const techStack = {
 const About = () => {
   return (
     <section className="bg-[#fff8f9]">
-
       {/* Hello Section */}
       <div className="px-12 py-20 border-b border-[#e91e8c]/08">
         <p className="text-[11px] tracking-[0.14em] uppercase text-[#9a9490] mb-6">
@@ -61,20 +71,28 @@ const About = () => {
                 Aashna Sharma.
               </span>{" "}
               A Full Stack Developer with 2+ years of experience in both{" "}
-              <span className="italic text-[#e91e8c]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <span
+                className="italic text-[#e91e8c]"
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              >
                 Frontend
               </span>{" "}
               and{" "}
-              <span className="italic text-[#e91e8c]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              <span
+                className="italic text-[#e91e8c]"
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              >
                 Backend
               </span>{" "}
-              development. I build digital experiences that bridge technology with real business impact.
+              development. I build digital experiences that bridge technology
+              with real business impact.
             </p>
             <p className="text-[15px] leading-[1.8] text-[#5a5450] mt-6 max-w-[480px]">
               Currently at AllHeart Web, leading a team of 5 developers, owning
-              end-to-end feature delivery, and contributing to blockchain-integrated
-              MERN applications. I'm a B.E. Computer Science graduate from Chitkara
-              University with a CGPA of 9.56, and a winner of the Great Indian Hackathon.
+              end-to-end feature delivery, and contributing to
+              blockchain-integrated MERN applications. I'm a B.E. Computer
+              Science graduate from Chitkara University with a CGPA of 9.56, and
+              a winner of the Great Indian Hackathon.
             </p>
           </div>
 
@@ -86,9 +104,16 @@ const About = () => {
                 { label: "Experience", value: "2+ Years" },
                 { label: "Education", value: "B.E. CS, 9.56 CGPA" },
               ].map((item) => (
-                <div key={item.label} className="bg-white rounded-2xl px-5 py-4 border border-[#e91e8c]/08">
-                  <p className="text-[10px] tracking-[0.1em] uppercase text-[#9a9490]">{item.label}</p>
-                  <p className="text-[14px] font-medium text-[#0f0d0c] mt-1">{item.value}</p>
+                <div
+                  key={item.label}
+                  className="bg-white rounded-2xl px-5 py-4 border border-[#e91e8c]/08"
+                >
+                  <p className="text-[10px] tracking-[0.1em] uppercase text-[#9a9490]">
+                    {item.label}
+                  </p>
+                  <p className="text-[14px] font-medium text-[#0f0d0c] mt-1">
+                    {item.value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -148,7 +173,9 @@ const About = () => {
                   <div
                     key={skill}
                     className={`py-3 text-[14px] text-[#0f0d0c] flex items-center gap-3 ${
-                      j < s.skills.length - 1 ? "border-b border-[#e91e8c]/08" : ""
+                      j < s.skills.length - 1
+                        ? "border-b border-[#e91e8c]/08"
+                        : ""
                     }`}
                   >
                     <span className="text-[10px] text-[#e91e8c]">0{j + 1}</span>
@@ -193,7 +220,6 @@ const About = () => {
           ))}
         </div>
       </div>
-
     </section>
   );
 };

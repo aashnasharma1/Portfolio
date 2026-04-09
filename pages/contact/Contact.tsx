@@ -12,20 +12,54 @@ const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const fields = [
-    { num: "01", key: "name", label: "What's your name?", placeholder: "Jane Smith", required: true },
-    { num: "02", key: "email", label: "What's your email?", placeholder: "jane@company.com", required: true },
-    { num: "03", key: "company", label: "What's your company?", placeholder: "Google, Accenture...", required: false },
-    { num: "04", key: "role", label: "What role are you hiring for?", placeholder: "Full Stack Developer, Frontend Engineer...", required: false },
-    { num: "05", key: "message", label: "Your message", placeholder: "Hello Aashna, I'd love to connect about...", required: true },
+    {
+      num: "01",
+      key: "name",
+      label: "What's your name?",
+      placeholder: "Jane Smith",
+      required: true,
+    },
+    {
+      num: "02",
+      key: "email",
+      label: "What's your email?",
+      placeholder: "jane@company.com",
+      required: true,
+    },
+    {
+      num: "03",
+      key: "company",
+      label: "What's your company?",
+      placeholder: "Google, Accenture...",
+      required: false,
+    },
+    {
+      num: "04",
+      key: "role",
+      label: "What role are you hiring for?",
+      placeholder: "Full Stack Developer, Frontend Engineer...",
+      required: false,
+    },
+    {
+      num: "05",
+      key: "message",
+      label: "Your message",
+      placeholder: "Hello Aashna, I'd love to connect about...",
+      required: true,
+    },
   ];
 
-  const completed = fields.filter((f) => form[f.key as keyof typeof form]).length;
+  const completed = fields.filter(
+    (f) => form[f.key as keyof typeof form],
+  ).length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`Opportunity for Aashna — ${form.role || "Full Stack Developer"}`);
+    const subject = encodeURIComponent(
+      `Opportunity for Aashna — ${form.role || "Full Stack Developer"}`,
+    );
     const body = encodeURIComponent(
-      `Hi Aashna,\n\nName: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\nRole: ${form.role}\n\nMessage:\n${form.message}`
+      `Hi Aashna,\n\nName: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\nRole: ${form.role}\n\nMessage:\n${form.message}`,
     );
     window.open(`mailto:aashnajuyal@gmail.com?subject=${subject}&body=${body}`);
     setSubmitted(true);
@@ -33,7 +67,6 @@ const Contact = () => {
 
   return (
     <section className="bg-[#fff8f9] min-h-screen">
-
       {/* Hero */}
       <div className="px-12 pt-16 pb-12">
         <p className="text-[11px] tracking-[0.14em] uppercase text-[#9a9490] mb-6">
@@ -51,8 +84,9 @@ const Contact = () => {
               <em className="italic text-[#e91e8c]">Conversation.</em>
             </h1>
             <p className="text-[15px] leading-[1.8] text-[#5a5450] mt-6 max-w-[400px]">
-              Got a role in mind? I'm actively looking for full stack opportunities
-              and always happy to have a conversation. Reach out — I respond within 24 hours.
+              Got a role in mind? I'm actively looking for full stack
+              opportunities and always happy to have a conversation. Reach out —
+              I respond within 24 hours.
             </p>
           </div>
 
@@ -67,7 +101,9 @@ const Contact = () => {
 
             <div className="bg-white rounded-2xl p-6 border border-[#e91e8c]/08 flex flex-col gap-5">
               <div>
-                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-2">Contact Details</p>
+                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-2">
+                  Contact Details
+                </p>
                 <a
                   href="mailto:aashnajuyal@gmail.com"
                   className="text-[14px] text-[#0f0d0c] hover:text-[#e91e8c] transition-colors no-underline"
@@ -76,12 +112,18 @@ const Contact = () => {
                 </a>
               </div>
               <div className="border-t border-[#e91e8c]/08 pt-4">
-                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-2">Location</p>
+                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-2">
+                  Location
+                </p>
                 <p className="text-[14px] text-[#0f0d0c]">Chandigarh, India</p>
-                <p className="text-[12px] text-[#e91e8c] mt-0.5">Open to remote & relocation</p>
+                <p className="text-[12px] text-[#e91e8c] mt-0.5">
+                  Open to remote & relocation
+                </p>
               </div>
               <div className="border-t border-[#e91e8c]/08 pt-4">
-                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-3">Socials</p>
+                <p className="text-[10px] tracking-[0.12em] uppercase text-[#9a9490] mb-3">
+                  Socials
+                </p>
                 <div className="flex flex-col gap-2">
                   <a
                     href="https://linkedin.com/in/aashnasharma1"
@@ -139,7 +181,10 @@ const Contact = () => {
         ) : (
           <form onSubmit={handleSubmit} className="max-w-[760px]">
             {fields.map((field, i) => (
-              <div key={field.key} className="border-t border-[#e91e8c]/08 py-8">
+              <div
+                key={field.key}
+                className="border-t border-[#e91e8c]/08 py-8"
+              >
                 <div className="flex items-start gap-6">
                   <span
                     className="text-[13px] font-light text-[#e91e8c] mt-1 w-6 shrink-0"
@@ -158,7 +203,9 @@ const Contact = () => {
                       <textarea
                         placeholder={field.placeholder}
                         value={form[field.key as keyof typeof form]}
-                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                        onChange={(e) =>
+                          setForm({ ...form, [field.key]: e.target.value })
+                        }
                         required={field.required}
                         rows={3}
                         className="w-full mt-3 bg-transparent border-none outline-none text-[15px] text-[#5a5450] placeholder:text-[#c0bab8] resize-none focus:text-[#0f0d0c] transition-colors"
@@ -168,7 +215,9 @@ const Contact = () => {
                         type={field.key === "email" ? "email" : "text"}
                         placeholder={field.placeholder}
                         value={form[field.key as keyof typeof form]}
-                        onChange={(e) => setForm({ ...form, [field.key]: e.target.value })}
+                        onChange={(e) =>
+                          setForm({ ...form, [field.key]: e.target.value })
+                        }
                         required={field.required}
                         className="w-full mt-3 bg-transparent border-none outline-none text-[15px] text-[#5a5450] placeholder:text-[#c0bab8] focus:text-[#0f0d0c] transition-colors"
                       />
@@ -190,7 +239,6 @@ const Contact = () => {
           </form>
         )}
       </div>
-
     </section>
   );
 };
