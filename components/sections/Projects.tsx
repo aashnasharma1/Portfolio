@@ -12,62 +12,58 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface Project {
-  id:       number;
-  title:    string;
-  tags:     string[];
-  year:     string;
-  desc:     string;
-  img:      string;
-  link:     string;
+  id: number;
+  title: string;
+  tags: string[];
+  year: string;
+  desc: string;
+  img: string;
+  link: string;
 }
 
 const projects: Project[] = [
   {
-    id:    1,
+    id: 1,
     title: "E-Commerce Platform",
-    tags:  ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
-    year:  "2024",
-    desc:
-      "Full-featured e-commerce platform with real-time inventory, multi-vendor support, and a 40% improvement in checkout conversion through UX optimisation.",
-    img:   "/images/profile.jpg", // placeholder — replace with project screenshots
-    link:  "#",
+    tags: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
+    year: "2024",
+    desc: "Full-featured e-commerce platform with real-time inventory, multi-vendor support, and a 40% improvement in checkout conversion through UX optimisation.",
+    img: "/images/profile.jpg", // placeholder — replace with project screenshots
+    link: "#",
   },
   {
-    id:    2,
+    id: 2,
     title: "SaaS Dashboard",
-    tags:  ["React", "Node.js", "AWS", "Tailwind"],
-    year:  "2024",
-    desc:
-      "Analytics dashboard for a B2B SaaS product serving 5000+ daily active users. Reduced bundle by 35% and improved initial load by 2.1s.",
-    img:   "/images/profile.jpg",
-    link:  "#",
+    tags: ["React", "Node.js", "AWS", "Tailwind"],
+    year: "2024",
+    desc: "Analytics dashboard for a B2B SaaS product serving 5000+ daily active users. Reduced bundle by 35% and improved initial load by 2.1s.",
+    img: "/images/profile.jpg",
+    link: "#",
   },
   {
-    id:    3,
+    id: 3,
     title: "Design System",
-    tags:  ["React", "Storybook", "Radix UI", "CSS"],
-    year:  "2023",
-    desc:
-      "Component library and design system used across 3 internal products. 80+ components, full accessibility compliance, dark-mode support.",
-    img:   "/images/profile.jpg",
-    link:  "#",
+    tags: ["React", "Storybook", "Radix UI", "CSS"],
+    year: "2023",
+    desc: "Component library and design system used across 3 internal products. 80+ components, full accessibility compliance, dark-mode support.",
+    img: "/images/profile.jpg",
+    link: "#",
   },
   {
-    id:    4,
+    id: 4,
     title: "Real-time Collaboration Tool",
-    tags:  ["WebSockets", "Next.js", "Redis", "Prisma"],
-    year:  "2023",
-    desc:
-      "Notion-style collaborative document editor with live presence, conflict-free editing, and sub-100ms latency at scale.",
-    img:   "/images/profile.jpg",
-    link:  "#",
+    tags: ["WebSockets", "Next.js", "Redis", "Prisma"],
+    year: "2023",
+    desc: "Notion-style collaborative document editor with live presence, conflict-free editing, and sub-100ms latency at scale.",
+    img: "/images/profile.jpg",
+    link: "#",
   },
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const fadeUp = {
-  hidden:  { opacity: 0, y: 50 },
+  hidden: { opacity: 0, y: 50 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
@@ -77,7 +73,11 @@ const fadeUp = {
 
 export default function Projects() {
   return (
-    <section id="projects" className="section-pad" style={{ background: "#fff8f9" }}>
+    <section
+      id="projects"
+      className="section-pad"
+      style={{ background: "#fff8f9" }}
+    >
       <div className="inner">
         {/* Header */}
         <div className="flex items-end justify-between mb-16">
@@ -95,15 +95,19 @@ export default function Projects() {
             <motion.h2
               className="font-display font-bold"
               style={{
-                fontSize:      "clamp(34px, 5vw, 64px)",
+                fontSize: "clamp(34px, 5vw, 64px)",
                 letterSpacing: "-0.025em",
-                color:         "#0f0d0c",
-                lineHeight:    1.05,
+                color: "#0f0d0c",
+                lineHeight: 1.05,
               }}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{
+                duration: 0.7,
+                delay: 0.1,
+                ease: [0.22, 1, 0.36, 1],
+              }}
             >
               Things I&apos;ve built.
             </motion.h2>
@@ -140,7 +144,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       className="group relative overflow-hidden rounded-2xl"
       style={{
         background: "#ffffff",
-        border:     hovered ? "1px solid rgba(233,30,140,0.20)" : "1px solid rgba(15,13,12,0.07)",
+        border: hovered
+          ? "1px solid rgba(233,30,140,0.20)"
+          : "1px solid rgba(15,13,12,0.07)",
         transition: "border-color 0.3s ease",
       }}
       variants={fadeUp}
@@ -160,9 +166,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <div
             className="relative overflow-hidden"
             style={{
-              order:        index % 2 === 0 ? 1 : 2,
-              background:   "#fff0f6",
-              minHeight:    280,
+              order: index % 2 === 0 ? 1 : 2,
+              background: "#fff0f6",
+              minHeight: 280,
             }}
           >
             <motion.div
@@ -182,13 +188,13 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             <div
               className="absolute top-4 left-4"
               style={{
-                background:    "rgba(255,248,249,0.9)",
-                backdropFilter:"blur(8px)",
-                padding:       "5px 12px",
-                borderRadius:  99,
-                fontSize:      11,
+                background: "rgba(255,248,249,0.9)",
+                backdropFilter: "blur(8px)",
+                padding: "5px 12px",
+                borderRadius: 99,
+                fontSize: 11,
                 letterSpacing: "0.08em",
-                color:         "#0f0d0c",
+                color: "#0f0d0c",
               }}
             >
               {project.year}
@@ -206,12 +212,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                   <span
                     key={tag}
                     style={{
-                      fontSize:      11,
+                      fontSize: 11,
                       letterSpacing: "0.06em",
-                      color:         "#9a9490",
-                      padding:       "3px 10px",
-                      borderRadius:  99,
-                      border:        "1px solid rgba(15,13,12,0.1)",
+                      color: "#9a9490",
+                      padding: "3px 10px",
+                      borderRadius: 99,
+                      border: "1px solid rgba(15,13,12,0.1)",
                     }}
                   >
                     {tag}
@@ -222,10 +228,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               <h3
                 className="font-display font-bold"
                 style={{
-                  fontSize:      "clamp(22px, 2.8vw, 36px)",
+                  fontSize: "clamp(22px, 2.8vw, 36px)",
                   letterSpacing: "-0.02em",
-                  color:         "#0f0d0c",
-                  lineHeight:    1.15,
+                  color: "#0f0d0c",
+                  lineHeight: 1.15,
                 }}
               >
                 {project.title}
@@ -233,10 +239,10 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
               <p
                 style={{
-                  fontSize:   "clamp(13px, 1.2vw, 15px)",
-                  color:      "#5a5450",
+                  fontSize: "clamp(13px, 1.2vw, 15px)",
+                  color: "#5a5450",
                   lineHeight: 1.75,
-                  marginTop:  14,
+                  marginTop: 14,
                 }}
               >
                 {project.desc}
@@ -251,11 +257,11 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             >
               <span
                 style={{
-                  fontSize:      12,
-                  fontWeight:    600,
+                  fontSize: 12,
+                  fontWeight: 600,
                   letterSpacing: "0.08em",
                   textTransform: "uppercase",
-                  color:         "#e91e8c",
+                  color: "#e91e8c",
                 }}
               >
                 View Project

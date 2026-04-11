@@ -13,10 +13,8 @@ const stats = [
 const Home = () => {
   return (
     <section className="bg-[#fff8f9] flex flex-col">
-
       {/* Hero Card */}
       <div className="mx-6 mt-4 grid grid-cols-2 bg-white rounded-3xl overflow-hidden shadow-[0_2px_24px_rgba(233,30,140,0.06)]">
-
         {/* Left */}
         <div className="flex flex-col justify-between px-12 py-12">
           <div>
@@ -132,7 +130,6 @@ const Home = () => {
           </div>
         ))}
       </div>
-
     </section>
   );
 };

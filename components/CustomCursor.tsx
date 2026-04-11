@@ -18,12 +18,20 @@ export default function CustomCursor() {
   const cursorX = useMotionValue(-200);
   const cursorY = useMotionValue(-200);
 
-  const springX = useSpring(cursorX, { stiffness: 200, damping: 22, mass: 0.5 });
-  const springY = useSpring(cursorY, { stiffness: 200, damping: 22, mass: 0.5 });
+  const springX = useSpring(cursorX, {
+    stiffness: 200,
+    damping: 22,
+    mass: 0.5,
+  });
+  const springY = useSpring(cursorY, {
+    stiffness: 200,
+    damping: 22,
+    mass: 0.5,
+  });
 
-  const [hovered, setHovered]   = useState(false);
+  const [hovered, setHovered] = useState(false);
   const [textMode, setTextMode] = useState(false);
-  const [visible, setVisible]   = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
@@ -32,12 +40,12 @@ export default function CustomCursor() {
       if (!visible) setVisible(true);
     };
 
-    const onLeave  = () => setVisible(false);
+    const onLeave = () => setVisible(false);
     const onReturn = () => setVisible(true);
 
     const onOver = (e: MouseEvent) => {
       const el = (e.target as HTMLElement).closest(
-        "a, button, [data-cursor], input, textarea, label, [role='button']"
+        "a, button, [data-cursor], input, textarea, label, [role='button']",
       ) as HTMLElement | null;
       setHovered(!!el);
       setTextMode(el?.dataset?.cursor === "text");
@@ -69,8 +77,8 @@ export default function CustomCursor() {
           opacity: visible ? 1 : 0,
         }}
         animate={{
-          width:           hovered ? (textMode ? 80 : 40) : 22,
-          height:          hovered ? (textMode ? 26 : 40) : 22,
+          width: hovered ? (textMode ? 80 : 40) : 22,
+          height: hovered ? (textMode ? 26 : 40) : 22,
           backgroundColor: hovered ? "rgba(233,30,140,0.10)" : "transparent",
         }}
         transition={{ type: "spring", stiffness: 420, damping: 28 }}
