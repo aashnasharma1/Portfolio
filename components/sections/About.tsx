@@ -10,15 +10,21 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 
 const skills = [
-  { category: "Frontend",  items: ["React", "Next.js", "TypeScript", "Tailwind CSS"] },
-  { category: "Backend",   items: ["Node.js", "Express", "PostgreSQL", "REST APIs"] },
-  { category: "Tooling",   items: ["Git", "Figma", "Vercel", "AWS"] },
+  {
+    category: "Frontend",
+    items: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
+  },
+  {
+    category: "Backend",
+    items: ["Node.js", "Express", "PostgreSQL", "REST APIs"],
+  },
+  { category: "Tooling", items: ["Git", "Figma", "Vercel", "AWS"] },
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const fadeUp = {
-  hidden:  { opacity: 0, y: 40 },
+  hidden: { opacity: 0, y: 40 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
@@ -53,10 +59,10 @@ export default function About() {
             <motion.h2
               className="font-display font-bold"
               style={{
-                fontSize:      "clamp(36px, 5vw, 64px)",
+                fontSize: "clamp(36px, 5vw, 64px)",
                 letterSpacing: "-0.025em",
-                lineHeight:    1.1,
-                color:         "#0f0d0c",
+                lineHeight: 1.1,
+                color: "#0f0d0c",
               }}
               variants={fadeUp}
               custom={1}
@@ -69,7 +75,11 @@ export default function About() {
               experiences that{" "}
               <em
                 className="not-italic"
-                style={{ color: "#e91e8c", WebkitTextStroke: "1px #e91e8c", textDecoration: "none" }}
+                style={{
+                  color: "#e91e8c",
+                  WebkitTextStroke: "1px #e91e8c",
+                  textDecoration: "none",
+                }}
               >
                 matter.
               </em>
@@ -97,12 +107,14 @@ export default function About() {
               <div
                 className="absolute bottom-4 left-4 right-4 rounded-xl px-4 py-3"
                 style={{
-                  background:    "rgba(255,248,249,0.9)",
-                  backdropFilter:"blur(12px)",
-                  border:        "1px solid rgba(233,30,140,0.1)",
+                  background: "rgba(255,248,249,0.9)",
+                  backdropFilter: "blur(12px)",
+                  border: "1px solid rgba(233,30,140,0.1)",
                 }}
               >
-                <p style={{ fontSize: 13, fontWeight: 600, color: "#0f0d0c" }}>Aashna Sharma</p>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "#0f0d0c" }}>
+                  Aashna Sharma
+                </p>
                 <p style={{ fontSize: 11, color: "#9a9490", marginTop: 2 }}>
                   Full Stack Developer · Chandigarh, India
                 </p>
@@ -114,9 +126,9 @@ export default function About() {
           <div className="flex flex-col gap-10 pt-0 md:pt-2">
             <motion.p
               style={{
-                fontSize:   "clamp(15px, 1.4vw, 17px)",
+                fontSize: "clamp(15px, 1.4vw, 17px)",
                 lineHeight: 1.8,
-                color:      "#5a5450",
+                color: "#5a5450",
               }}
               variants={fadeUp}
               custom={2}
@@ -124,23 +136,28 @@ export default function About() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              I&apos;m a full stack developer with 2+ years of experience building
-              production-grade web applications. I focus on the intersection of
-              design and engineering — writing clean, performant code while keeping
-              an eye on the user experience.
+              I&apos;m a full stack developer with 2+ years of experience
+              building production-grade web applications. I focus on the
+              intersection of design and engineering — writing clean, performant
+              code while keeping an eye on the user experience.
             </motion.p>
 
             <motion.p
-              style={{ fontSize: "clamp(14px, 1.3vw, 16px)", lineHeight: 1.8, color: "#5a5450" }}
+              style={{
+                fontSize: "clamp(14px, 1.3vw, 16px)",
+                lineHeight: 1.8,
+                color: "#5a5450",
+              }}
               variants={fadeUp}
               custom={3}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              I&apos;ve led frontend teams, shipped scalable systems end-to-end, and
-              reduced bundle sizes by 35% on production apps. I care deeply about
-              performance, accessibility, and the craft of building things that last.
+              I&apos;ve led frontend teams, shipped scalable systems end-to-end,
+              and reduced bundle sizes by 35% on production apps. I care deeply
+              about performance, accessibility, and the craft of building things
+              that last.
             </motion.p>
 
             {/* Skills grid */}
@@ -156,7 +173,11 @@ export default function About() {
                 <div key={group.category}>
                   <p
                     className="uppercase mb-3"
-                    style={{ fontSize: 10, letterSpacing: "0.18em", color: "#9a9490" }}
+                    style={{
+                      fontSize: 10,
+                      letterSpacing: "0.18em",
+                      color: "#9a9490",
+                    }}
                   >
                     {group.category}
                   </p>
@@ -181,7 +202,14 @@ export default function About() {
               whileInView="visible"
               viewport={{ once: true, amount: 0.3 }}
             >
-              <p className="uppercase" style={{ fontSize: 10, letterSpacing: "0.18em", color: "#9a9490" }}>
+              <p
+                className="uppercase"
+                style={{
+                  fontSize: 10,
+                  letterSpacing: "0.18em",
+                  color: "#9a9490",
+                }}
+              >
                 Services
               </p>
               {[
@@ -197,7 +225,12 @@ export default function About() {
                   whileHover={{ x: 6 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
-                  <span style={{ fontSize: "clamp(13px, 1.2vw, 15px)", color: "#0f0d0c" }}>
+                  <span
+                    style={{
+                      fontSize: "clamp(13px, 1.2vw, 15px)",
+                      color: "#0f0d0c",
+                    }}
+                  >
                     {service}
                   </span>
                   <span style={{ color: "#e91e8c", fontSize: 16 }}>→</span>
