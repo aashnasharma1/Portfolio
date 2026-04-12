@@ -19,25 +19,18 @@ interface Role {
 
 const roles: Role[] = [
   {
-    company: "Freelance / Independent",
+    company: "AllHeart Web",
     role: "Full Stack Developer",
-    period: "2023 — Present",
-    desc: "Building end-to-end web applications for startups and growing companies. Specialising in React/Next.js frontends and Node.js backends.",
-    tags: ["Next.js", "Node.js", "TypeScript", "AWS"],
+    period: "2025 — Present",
+    desc: "Building full-stack applications from scratch. Developing REST APIs, React interfaces with Redux for global state management, and leading frontend module delivery across multiple production projects.",
+    tags: ["React.js", "Redux", "Node.js", "MongoDB", "Vue.js"],
   },
   {
-    company: "Tech Startup (Stealth)",
-    role: "Frontend Lead",
-    period: "2022 — 2023",
-    desc: "Led a 4-person frontend team delivering a B2B analytics platform. Architected the design system, reduced bundle size by 35%, and improved deploy velocity by 50%.",
-    tags: ["React", "Redux", "Tailwind", "Storybook"],
-  },
-  {
-    company: "Agency Project",
-    role: "Junior Developer",
-    period: "2021 — 2022",
-    desc: "Developed responsive UIs for 6 client projects across e-commerce and SaaS. Collaborated closely with designers to implement pixel-perfect interfaces.",
-    tags: ["React", "CSS", "REST APIs", "Figma"],
+    company: "CG Infinity",
+    role: "Software Development Engineer",
+    period: "2023 — 2024",
+    desc: "Worked on multiple full-stack projects including an IT asset management system, a library management application, and a client project involving SEO optimization and backlink management.",
+    tags: ["React.js", "Node.js", "REST APIs", "MySQL"],
   },
 ];
 

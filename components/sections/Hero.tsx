@@ -271,7 +271,8 @@ export default function Hero() {
               </motion.a>
 
               <a
-                href="/resume.pdf"
+                href="/AashnaSharma_MERN-Role.pdf"
+                download="AashnaSharma_MERN-Role.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="no-underline"
