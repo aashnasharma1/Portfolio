@@ -98,7 +98,8 @@ export default function About() {
               transition={{ type: "spring", stiffness: 200, damping: 25 }}
             >
               <Image
-                src="/images/profileAbout.jpeg"
+                src="/images/profileAbout.jpeg" 
+  
                 alt="Aashna Sharma"
                 fill
                 className="object-cover object-top"
