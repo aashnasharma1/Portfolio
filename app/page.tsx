@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Preloader from "@/components/Preloader";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
@@ -9,13 +9,19 @@ import Experience from "@/components/sections/Experience";
 import Contact from "@/components/sections/Contact";
 
 export default function Page() {
-  const alreadyVisited = sessionStorage.getItem("visited-home");
-  const [loading, setLoading] = useState(!alreadyVisited);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const alreadyVisited = sessionStorage.getItem("visited-home");
+    if (alreadyVisited) {
+      setLoading(false);
+    }
+  }, []);
+
   const handleComplete = () => {
     setLoading(false);
     sessionStorage.setItem("visited-home", "true");
   };
-  console.log(alreadyVisited);
 
   return (
     <>
@@ -33,7 +39,6 @@ export default function Page() {
         <About />
         <Projects />
         <Experience />
-        <Contact />
       </div>
     </>
   );

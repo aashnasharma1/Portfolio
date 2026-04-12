@@ -146,6 +146,41 @@ html.lenis body {
   }
 }
 
+/* ─── Page content wrapper ───────────────────────────────────────── */
+/*
+ * Sits above the footer in the normal scroll flow. The subtle bottom
+ * shadow creates the visual illusion that content floats over the footer.
+ */
+.page-content {
+  position: relative;
+  z-index: 1;
+  background: var(--bg);
+  box-shadow: 0 8px 48px rgba(15, 13, 12, 0.18);
+}
+
+/* ─── Footer marquee ─────────────────────────────────────────────── */
+.footer-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: footer-marquee 22s linear infinite;
+  will-change: transform;
+}
+
+.footer-marquee-item {
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--bg);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-family: var(--font-inter, sans-serif);
+}
+
+@keyframes footer-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 /* ─── Layout helpers ──────────────────────────────────────────────── */
 .section-pad {
   /* Horizontal gutter matches the navbar (20px min, generous on wide screens) */
