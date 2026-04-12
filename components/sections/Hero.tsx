@@ -230,9 +230,9 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.54, ease: EASE }}
             >
-              Aashna Sharma is a full stack MERN developer building fast,
-              scalable web applications — from pixel-perfect frontends to
-              production-ready backend systems.
+              Hi, I am a full stack MERN developer building fast, scalable web
+              applications — from pixel-perfect frontends to production-ready
+              backend systems.
             </motion.p>
 
             {/* CTAs */}

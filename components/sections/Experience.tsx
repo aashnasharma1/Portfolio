@@ -119,8 +119,8 @@ function RoleRow({ role, index }: { role: Role; index: number }) {
       {/* Accent indicator line */}
       <motion.div
         className="absolute left-0 top-0 bottom-0 w-0.5 rounded-full"
-        style={{ background: "#e91e8c" }}
-        animate={{ scaleY: hovered ? 1 : 0, originY: "top" }}
+        style={{ background: "#e91e8c", originY: 0 }}
+        animate={{ scaleY: hovered ? 1 : 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       />
 

@@ -133,18 +133,6 @@ export default function Contact() {
           </div>
         </motion.div>
 
-        {/* Bottom footer line */}
-        <div
-          className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-20 pt-8"
-          style={{ borderTop: "1px solid rgba(15,13,12,0.07)" }}
-        >
-          <p style={{ fontSize: 12, color: "#9a9490" }}>
-            © {new Date().getFullYear()} Aashna Sharma. All rights reserved.
-          </p>
-          <p style={{ fontSize: 12, color: "#9a9490" }}>
-            Chandigarh, India · Available worldwide
-          </p>
-        </div>
       </div>
     </section>
   );
