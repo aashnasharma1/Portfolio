@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const socialLinks = [
-  { label: "LinkedIn", href: "https://linkedin.com/in/aashnasharma" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/aashnasharma1" },
   { label: "GitHub", href: "https://github.com/aashnasharma1" },
-  { label: "Email", href: "mailto:hello@aashnasharma.co" },
+  { label: "Email", href: "mailto:aashnajuyal@gmail.com" },
 ];
 
 const navLinks = [
@@ -29,7 +29,7 @@ export default function Footer() {
           hour: "2-digit",
           minute: "2-digit",
           timeZone: "Asia/Kolkata",
-        }) + " IST"
+        }) + " IST",
       );
     };
     tick();
@@ -204,9 +204,7 @@ export default function Footer() {
           padding: "16px 0",
           cursor: "pointer",
         }}
-        onClick={() =>
-          (window.location.href = "mailto:hello@aashnasharma.co")
-        }
+        onClick={() => (window.location.href = "mailto:hello@aashnasharma.co")}
       >
         <div className="footer-marquee-track">
           {Array.from({ length: REPEAT }).map((_, i) => (
@@ -234,7 +232,13 @@ export default function Footer() {
           userSelect: "none",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "clamp(16px, 2vw, 32px)" }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "clamp(16px, 2vw, 32px)",
+          }}
+        >
           <span
             style={{
               fontSize: 10,

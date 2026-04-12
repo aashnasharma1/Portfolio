@@ -5,30 +5,42 @@ const services = [
   {
     num: "01",
     title: "Frontend Development",
-    desc: "Building modern, responsive UIs with React.js and Next.js. Focused on performance, accessibility, and engaging user experiences.",
+    desc: "Building modern, responsive UIs with React.js, Next.js, and Vue.js. Focused on performance, global state management with Redux, and pixel-perfect interfaces. Configured Webpack with code splitting, reducing bundle size by 35%.",
     skills: [
-      "Modern Websites",
-      "Component Architecture",
-      "Performance Optimization",
+      "React.js / Vue.js",
+      "Redux State Management",
+      "Webpack & Code Splitting",
     ],
   },
   {
     num: "02",
     title: "Backend Development",
-    desc: "Building robust server-side solutions with scalable architecture. From API design to database optimization, I handle complete backend infrastructure.",
-    skills: ["RESTful APIs", "Database Design", "JWT Authentication"],
+    desc: "Building robust server-side solutions with Node.js and Express.js. Designing scalable REST APIs with JWT authentication, improving response times by 30% through backend migration and optimization.",
+    skills: ["RESTful APIs", "MongoDB / MySQL", "JWT Authentication"],
   },
   {
     num: "03",
     title: "DevOps & Deployment",
-    desc: "Setting up CI/CD pipelines, configuring Docker, and deploying production-ready systems with reduced deployment times.",
+    desc: "Setting up CI/CD pipelines with GitHub Actions, containerizing applications with Docker, and deploying production-ready systems. Reduced deployment times by 50% through pipeline automation.",
     skills: ["CI/CD Pipelines", "Docker", "GitHub Actions"],
   },
   {
     num: "04",
     title: "Team Leadership",
-    desc: "Leading frontend teams, conducting code reviews, and mentoring developers. Proven track record of improving delivery speed and code quality.",
+    desc: "Led a team of 5 developers, conducting code reviews and mentoring juniors. Improved delivery speed by 30%, reduced development effort by 25% through reusable component architecture, and improved onboarding efficiency.",
     skills: ["Code Reviews", "Mentoring", "Sprint Planning"],
+  },
+  {
+    num: "05",
+    title: "Blockchain Integration",
+    desc: "Building secure APIs and transaction workflows for blockchain-integrated MERN applications. Experienced in connecting backend systems with blockchain layers and implementing transaction validation.",
+    skills: ["Web3 Basics", "Secure APIs", "Transaction Workflows"],
+  },
+  {
+    num: "06",
+    title: "SEO & Web Performance",
+    desc: "Hands-on experience with technical SEO optimization, backlink management, and web performance tuning. Improved application load times by 22% through targeted performance enhancements.",
+    skills: ["SEO Optimization", "Backlinking", "Load Time Optimization"],
   },
 ];
 
@@ -90,19 +102,19 @@ const About = () => {
             <p className="text-[15px] leading-[1.8] text-[#5a5450] mt-6 max-w-[480px]">
               Currently at AllHeart Web, leading a team of 5 developers, owning
               end-to-end feature delivery, and contributing to
-              blockchain-integrated MERN applications. I'm a B.E. Computer
-              Science graduate from Chitkara University with a CGPA of 9.56, and
-              a winner of the Great Indian Hackathon.
+              blockchain-integrated MERN applications. B.E. Computer Science
+              graduate from Chitkara University with a CGPA of 9.56, and a 2×
+              hackathon winner.
             </p>
           </div>
 
           <div className="flex flex-col justify-between">
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: "Current Role", value: "Module Lead" },
+                { label: "Current Role", value: "Full Stack Developer" },
                 { label: "Location", value: "Chandigarh, India" },
                 { label: "Experience", value: "2+ Years" },
-                { label: "Education", value: "B.E. CS, 9.56 CGPA" },
+                { label: "Education", value: "B.E in Computer Science" },
               ].map((item) => (
                 <div
                   key={item.label}
