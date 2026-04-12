@@ -15,7 +15,7 @@ export default function Page() {
     setLoading(false);
     sessionStorage.setItem("visited-home", "true");
   };
-  console.log(alreadyVisited);
+
 
   return (
     <>
