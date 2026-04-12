@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/providers/SmoothScroll";
 import ScrollProgress from "@/components/ScrollProgress";
 import Navbar from "@/components/layouts/Navbar";
+import Footer from "@/components/layouts/Footer";
 
 /* Sans-serif — clean UI & body */
 const inter = Inter({
@@ -22,8 +23,7 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "Aashna Sharma — Full Stack MERN Developer",
-  description:
-    "Full Stack MERN Developer based in Chandigarh, India. Crafting fast, scalable web experiences.",
+  description: "Full Stack MERN Developer based in Chandigarh, India. Crafting fast, scalable web experiences.",
 };
 
 export default function RootLayout({
@@ -35,8 +35,11 @@ export default function RootLayout({
         <SmoothScroll>
           <div className="noise-overlay" aria-hidden="true" />
           <ScrollProgress />
-          <Navbar />
-          <main>{children}</main>
+          <div className="page-content">
+            <Navbar />
+            <main>{children}</main>
+          </div>
+          <Footer />
         </SmoothScroll>
       </body>
     </html>
