@@ -23,7 +23,8 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: "Aashna Sharma — Full Stack MERN Developer",
-  description: "Full Stack MERN Developer based in Chandigarh, India. Crafting fast, scalable web experiences.",
+  description:
+    "Full Stack MERN Developer based in Chandigarh, India. Crafting fast, scalable web experiences.",
 };
 
 export default function RootLayout({

@@ -18,45 +18,45 @@ interface Project {
   year: string;
   desc: string;
   img: string;
-  link: string;
+  link: string | null;
 }
 
 const projects: Project[] = [
   {
     id: 1,
-    title: "E-Commerce Platform",
-    tags: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
-    year: "2024",
-    desc: "Full-featured e-commerce platform with real-time inventory, multi-vendor support, and a 40% improvement in checkout conversion through UX optimisation.",
-    img: "/images/profile.jpg", // placeholder — replace with project screenshots
-    link: "#",
+    title: "PhotoTools",
+    tags: ["Next.js", "Cloudinary API", "Clerk", "TypeScript"],
+    year: "2026",
+    desc: "An AI-powered photo editing application built with Next.js server-side components for performance. Features include background removal, generative fill, aspect ratio manipulation, and seamless auth via Clerk — all powered by Cloudinary's transformation API.",
+    img: "/images/photoTools/phototools.png",
+    link: "https://photogarage.vercel.app/",
   },
   {
     id: 2,
-    title: "SaaS Dashboard",
-    tags: ["React", "Node.js", "AWS", "Tailwind"],
-    year: "2024",
-    desc: "Analytics dashboard for a B2B SaaS product serving 5000+ daily active users. Reduced bundle by 35% and improved initial load by 2.1s.",
-    img: "/images/profile.jpg",
-    link: "#",
+    title: "AllHeart — Employee Management Portal",
+    tags: ["React.js", "Redux", "Node.js", "MongoDB", "REST APIs"],
+    year: "2025",
+    desc: "A full-stack internal HR portal built from scratch for AllHeart Web. Features attendance tracking, leave management, task assignments, project tracking, salary increments, and user activity logs — used daily across the organization.",
+    img: "/images/allHeartWeb/allHeartWeb.png",
+    link: null,
   },
   {
     id: 3,
-    title: "Design System",
-    tags: ["React", "Storybook", "Radix UI", "CSS"],
-    year: "2023",
-    desc: "Component library and design system used across 3 internal products. 80+ components, full accessibility compliance, dark-mode support.",
-    img: "/images/profile.jpg",
-    link: "#",
+    title: "Safer — Admin Portal",
+    tags: ["Vue.js", "Vuex", "Node.js", "MongoDB", "REST APIs"],
+    year: "2025",
+    desc: "A secure admin portal for an organizational cybersecurity platform. Enables top-level management to monitor website access requests, block malicious URLs, manage employee permissions, and review safety scores across the organization.",
+    img: "/images/sapher-admin/sapher-admin.png",
+    link: null,
   },
   {
     id: 4,
-    title: "Real-time Collaboration Tool",
-    tags: ["WebSockets", "Next.js", "Redis", "Prisma"],
-    year: "2023",
-    desc: "Notion-style collaborative document editor with live presence, conflict-free editing, and sub-100ms latency at scale.",
-    img: "/images/profile.jpg",
-    link: "#",
+    title: "BlueBill OCR",
+    tags: ["React.js", "Tesseract.js", "Redux", "Tailwind CSS", "PDF.js"],
+    year: "2024",
+    desc: "A browser-based billing scanner that extracts text from invoice images using Tesseract.js OCR — no backend required. Supports drag-and-drop uploads, live webcam capture, and PDF parsing.",
+    img: "/images/billing/billing2.png",
+    link: "https://blue-bill-ocr.vercel.app",
   },
 ];
 
@@ -255,18 +255,22 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               animate={{ x: hovered ? 6 : 0 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
             >
-              <span
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: "#e91e8c",
-                }}
-              >
-                View Project
-              </span>
-              <span style={{ color: "#e91e8c", fontSize: 16 }}>→</span>
+              {project.link !== null && (
+                <>
+                  <span
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      color: "#e91e8c",
+                    }}
+                  >
+                    View Project
+                  </span>
+                  <span style={{ color: "#e91e8c", fontSize: 16 }}>→</span>
+                </>
+              )}
             </motion.div>
           </div>
         </div>
