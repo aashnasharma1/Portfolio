@@ -28,7 +28,7 @@ const achievements: Achievement[] = [
   {
     title: "Winner — Smart App Development Hackathon",
     organizer: "Chitkara University × DigiMantra",
-    prize: "1st Place",
+    prize: "₹10,000 Cash Prize",
     year: "2023",
     description:
       "Won with team member Kirti Pahwa by building an online ticketing application with a unique user satisfaction feature — an idea with real commission potential. Built end-to-end in 24 hours.",
