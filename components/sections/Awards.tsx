@@ -27,7 +27,7 @@ const achievements: Achievement[] = [
   },
   {
     title: "Winner — Smart App Development Hackathon",
-    organizer: "Chitkara University × DigiMantra",
+    organizer: "DigiMantra",
     prize: "₹10,000 Cash Prize",
     year: "2023",
     description:
