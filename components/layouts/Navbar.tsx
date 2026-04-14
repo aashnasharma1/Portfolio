@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import ButtonSlide from "@/components/ui/ButtonSlide";
 
 const navLinks = [
   { label: "About", href: "/about" },
@@ -183,24 +184,9 @@ export default function Navbar() {
         </ul>
 
         {/* CTA */}
-        <motion.a
-          href="/contact"
-          className="no-underline flex items-center gap-2"
-          style={{
-            background: "#0f0d0c",
-            color: "#fff8f9",
-            fontSize: 12,
-            fontWeight: 600,
-            letterSpacing: "0.06em",
-            padding: "9px 20px",
-            borderRadius: 99,
-          }}
-          whileHover={{ scale: 1.04, backgroundColor: "#e91e8c" }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 400, damping: 22 }}
-        >
+        <ButtonSlide href="/contact" compact>
           Hire Me
-        </motion.a>
+        </ButtonSlide>
       </nav>
     </motion.header>
   );

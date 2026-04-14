@@ -17,6 +17,7 @@
 import { useEffect } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import Image from "next/image";
+import ButtonSlide from "@/components/ui/ButtonSlide";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -242,7 +243,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.62, ease: EASE }}
             >
-              <motion.a
+              <ButtonSlide
                 href="#projects"
                 onClick={(e) => {
                   e.preventDefault();
@@ -250,25 +251,9 @@ export default function Hero() {
                     .querySelector("#projects")
                     ?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="no-underline"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.07em",
-                  textTransform: "uppercase",
-                  color: "#fff8f9",
-                  background: "#0f0d0c",
-                  padding: "11px 24px",
-                  borderRadius: 99,
-                }}
-                whileHover={{ backgroundColor: "#e91e8c", scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 400, damping: 22 }}
               >
                 View Work
-              </motion.a>
+              </ButtonSlide>
 
               <a
                 href="/AashnaSharma_MERN-Role.pdf"
@@ -354,7 +339,7 @@ export default function Hero() {
         {/* ═══════ RIGHT PANEL — photo ═══════ */}
         <div className="relative flex-1" style={{ minHeight: 360 }}>
           <Image
-            src="/images/profile.jpg"
+            src="/images/hero.png"
             alt="Aashna Sharma"
             fill
             className="object-cover object-top"

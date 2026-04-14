@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import profile from "@/public/images/profile.jpg";
+import profile from "@/public/images/hero.png";
 
 const stats = [
   { num: "2+", label: "Years Exp" },
