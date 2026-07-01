@@ -1,0 +1,350 @@
+.sticky-cards {
+    position: relative;
+    width: 100%;
+    /* max-width: 1400px; */
+    /* margin: 0 auto; */
+    /* Height controls when sticky ends - reduce for smoother exit */
+    height: 2000px;
+    overflow: visible;
+}
+
+.sticky-card {
+    position: sticky;
+    width: 100%;
+    min-height: 350px;
+    padding: 2.5rem 5rem;
+    display: flex;
+    gap: 4rem;
+    will-change: transform;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+/* Left - Index */
+.sticky-card-index {
+    flex-shrink: 0;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+}
+
+.sticky-card-index span {
+    font-size: 2.5rem;
+    font-weight: 500;
+    color: #85885cff;
+    font-family: "mono", monospace;
+}
+
+.sticky-card-index .animated-shape-box {
+    align-self: center;
+}
+
+.svg-box{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Right - Content */
+.sticky-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sticky-card-title {
+    font-size: 3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #1c1f1a;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.sticky-card-description {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #7c7c7c;
+    margin: 0;
+    max-width: 500px;
+}
+
+.sticky-card-skills {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.sticky-card-skills li {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1rem;
+    border-bottom: 0.5px solid #85885cff;
+}
+
+.sticky-card-skills .skill-index {
+    font-size: 1rem;
+    color: #85885cff;
+    font-family: "mono", monospace;
+}
+
+.sticky-card-skills .skill-name {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #1c1f1a;
+}
+
+/* Different background colors for each card */
+.sticky-card:nth-child(1) {
+    background-color: #ecebe7;
+}
+
+.sticky-card:nth-child(2) {
+    background-color: #e8e6df;
+}
+
+.sticky-card:nth-child(3) {
+    background-color: #dbd9d0;
+}
+
+.sticky-card:nth-child(4) {
+    background-color: #ceccbf;
+}
+
+
+/* 2K monitors (2560x1440) */
+@media (min-width: 2400px) {
+    .sticky-cards {
+        height: 2600px;
+    }
+    
+    .sticky-card {
+        min-height: 450px;
+        padding: 3.5rem 6%;
+        gap: 5rem;
+    }
+    
+    .sticky-card-index {
+        width: 520px;
+        gap: 2.5rem;
+    }
+    
+    .sticky-card-index span {
+        font-size: 3rem;
+    }
+    
+    .sticky-card-content {
+        gap: 2rem;
+    }
+    
+    .sticky-card-title {
+        font-size: 4rem;
+    }
+    
+    .sticky-card-description {
+        font-size: 1.3rem;
+        line-height: 1.8;
+        max-width: 650px;
+    }
+    
+    .sticky-card-skills {
+        gap: 1rem;
+    }
+    
+    .sticky-card-skills li {
+        padding: 1.25rem 1.25rem;
+    }
+    
+    .sticky-card-skills .skill-index {
+        font-size: 1.2rem;
+    }
+    
+    .sticky-card-skills .skill-name {
+        font-size: 1.8rem;
+    }
+}
+
+/* 4K monitors (3840x2160) */
+@media (min-width: 3800px) {
+    .sticky-cards {
+        height: 3600px;
+    }
+    
+    .sticky-card {
+        min-height: 600px;
+        padding: 5rem 7%;
+        gap: 7rem;
+    }
+    
+    .sticky-card-index {
+        width: 700px;
+        gap: 3.5rem;
+    }
+    
+    .sticky-card-index span {
+        font-size: 4rem;
+    }
+    
+    .sticky-card-content {
+        gap: 3rem;
+    }
+    
+    .sticky-card-title {
+        font-size: 5.5rem;
+    }
+    
+    .sticky-card-description {
+        font-size: 1.8rem;
+        line-height: 1.9;
+        max-width: 900px;
+    }
+    
+    .sticky-card-skills {
+        gap: 1.5rem;
+    }
+    
+    .sticky-card-skills li {
+        padding: 1.75rem 1.75rem;
+    }
+    
+    .sticky-card-skills .skill-index {
+        font-size: 1.6rem;
+    }
+    
+    .sticky-card-skills .skill-name {
+        font-size: 2.4rem;
+    }
+}
+
+@media (max-width: 1400px) {
+    .sticky-cards {
+        height: 2100px;
+    }
+}
+
+@media (max-width: 1350px) {
+    .sticky-card-title {
+        font-size: 1.9rem;
+    }
+    .sticky-card-index {
+        width: 300px;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sticky-cards {
+        height: 2000px;
+    }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .sticky-cards {
+        height: 1800px;
+    }
+    
+    .sticky-card {
+        padding: 2rem 1.5rem;
+        gap: 2rem;
+    }
+
+    .sticky-card-index {
+        width: 100px;
+        gap: 1rem;
+    }
+    
+    .sticky-card-index span {
+        font-size: 1.5rem;
+    }
+
+    .sticky-card-title {
+        font-size: 2rem;
+    }
+
+    .sticky-card-description {
+        max-width: 100%;
+        font-size: 0.95rem;
+    }
+    
+    .sticky-card-skills .skill-name {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sticky-cards{
+        height: 1600px;
+    }
+    .sticky-card {
+        padding: 1.5rem;
+        gap: 1.5rem;
+    }
+    
+    .sticky-card-index {
+        width: 80px;
+    }
+    
+    .sticky-card-index span {
+        font-size: 1.25rem;
+    }
+
+    .sticky-card-title {
+        font-size: 1.75rem;
+    }
+
+    .sticky-card-description {
+        font-size: 0.9rem;
+    }
+
+    .sticky-card-skills .skill-name {
+        font-size: 1.1rem;
+    }
+    
+    .sticky-card-skills .skill-index {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .sticky-cards{
+        height: 1600px;
+    }
+    .sticky-card {
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+
+    .sticky-card-index {
+        width: 60px;
+    }
+    
+    .sticky-card-index span {
+        font-size: 1rem;
+    }
+
+    .sticky-card-title {
+        font-size: 1.3rem;
+    }
+
+    .sticky-card-description {
+        font-size: 0.85rem;
+    }
+
+    .sticky-card-skills .skill-name {
+        font-size: 1rem;
+    }
+    
+    .sticky-card-skills li {
+        padding: 0.75rem;
+    }
+}

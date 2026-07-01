@@ -1,0 +1,279 @@
+.achievements {
+    position: relative;
+    z-index: 1;
+    background-color: #ecebe7;
+    color: #1c1f1a;
+    padding: 10% 80px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid rgba(28, 31, 26, 0.25);
+        padding-bottom: 2.5rem;
+    }
+
+    .heading {
+        font-family: "hero";
+        font-size: 6rem;
+        line-height: 0.95;
+        text-transform: uppercase;
+        color: #1c1f1a;
+        margin: 0;
+        letter-spacing: -3px;
+        font-weight: 700;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 24px;
+    }
+
+    .word {
+        display: inline-flex;
+        overflow: hidden;
+        padding-bottom: 0.05em;
+    }
+
+    .word span {
+        display: inline-block;
+        will-change: transform;
+    }
+
+    .intro {
+        display: flex;
+        justify-content: flex-end;
+        gap: 3rem;
+        margin-top: 4%;
+    }
+
+    .label {
+        font-family: "mono", monospace;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b6169;
+        white-space: nowrap;
+    }
+
+    .introText {
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: #1c1f1a;
+        margin: 0;
+        max-width: 42ch;
+        font-weight: 500;
+    }
+
+    // Slider
+    .slider {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-top: 8%;
+        min-height: 46vh;
+        max-width: 60%;
+    }
+
+    .cardBlock {
+        position: relative;
+    }
+
+    .awardBadge {
+        display: inline-block;
+        font-family: "mono", monospace;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #85885cff;
+        border: 1px solid #85885cff;
+        border-radius: 999px;
+        padding: 0.4rem 1.1rem;
+        margin-bottom: 1.75rem;
+    }
+
+    .title {
+        font-family: "hero";
+        font-size: 3.2rem;
+        line-height: 1.05;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #1c1f1a;
+        margin: 0 0 0.5rem;
+        letter-spacing: -1px;
+    }
+
+    .meta {
+        font-family: "mono", monospace;
+        font-size: 0.95rem;
+        color: #6b6169;
+        margin: 0 0 1.75rem;
+    }
+
+    .description {
+        font-family: "hero";
+        font-size: 1.6rem;
+        line-height: 1.35;
+        font-weight: 500;
+        color: #1c1f1a;
+        margin: 0 0 2rem;
+        max-width: 36ch;
+    }
+
+    .tags {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        border: 1px solid rgba(28, 31, 26, 0.4);
+        border-radius: 999px;
+        padding: 0.35rem 1rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6b6169;
+        white-space: nowrap;
+    }
+
+    .controls {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 4rem;
+        gap: 2rem;
+    }
+
+    .counter {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-family: "hero";
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .counterCurrent {
+        color: #1c1f1a;
+    }
+
+    .counterLine {
+        width: 60px;
+        height: 1.5px;
+        background-color: #1c1f1a;
+    }
+
+    .counterTotal {
+        color: #6b6169;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .navBtn {
+        border: 1px solid rgba(28, 31, 26, 0.4);
+        background: transparent;
+        border-radius: 999px;
+        padding: 0.7rem 1.6rem;
+        font-size: 0.95rem;
+        color: #1c1f1a;
+        cursor: pointer;
+        transition: background-color 0.4s ease, color 0.4s ease;
+
+        &:hover {
+            background-color: #1c1f1a;
+            color: #ecebe7;
+        }
+    }
+}
+
+@media (min-width: 2400px) {
+    .achievements {
+        .heading {
+            font-size: 9rem;
+        }
+
+        .title {
+            font-size: 4.5rem;
+        }
+
+        .description {
+            font-size: 2.2rem;
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .achievements {
+        padding-left: 60px;
+        padding-right: 60px;
+
+        .heading {
+            font-size: 4.5rem;
+        }
+
+        .slider {
+            max-width: 80%;
+        }
+
+        .title {
+            font-size: 2.6rem;
+        }
+
+        .description {
+            font-size: 1.4rem;
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .achievements {
+        padding: 14% 40px;
+
+        .heading {
+            font-size: 3.5rem;
+        }
+
+        .intro {
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 1rem;
+        }
+
+        .slider {
+            max-width: 100%;
+            margin-top: 12%;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .achievements {
+        padding-left: 20px;
+        padding-right: 20px;
+
+        .heading {
+            font-size: 2.6rem;
+            gap: 0 12px;
+        }
+
+        .title {
+            font-size: 2rem;
+        }
+
+        .description {
+            font-size: 1.25rem;
+        }
+
+        .controls {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+    }
+}

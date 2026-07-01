@@ -1,0 +1,77 @@
+.scrollIndicators {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 30px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scrollProgress,
+.backToTop {
+  font-size: 12px;
+  font-family: "mono", monospace;
+  text-transform: uppercase;
+  color: #666;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+  pointer-events: auto;
+  cursor: default;
+}
+
+.scrollProgress:hover,
+.backToTop:hover {
+  color: #85885cff;
+}
+
+.backToTop {
+  cursor: pointer;
+}
+
+// Light text for dark backgrounds
+.lightText {
+  .scrollProgress,
+  .backToTop {
+    color: #999;
+  }
+  
+  .scrollProgress:hover,
+  .backToTop:hover {
+    color: #ecebe7;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .scrollIndicators {
+    padding: 0 20px;
+    bottom: 15px;
+  }
+  
+  .scrollProgress,
+  .backToTop {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scrollIndicators {
+    padding: 0 15px;
+  }
+  
+  .scrollProgress,
+  .backToTop {
+    font-size: 9px;
+  }
+}

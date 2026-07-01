@@ -1,0 +1,68 @@
+@font-face {
+  font-family: "TheNeue-Black";
+  src: url("/TheNeue-Black.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Sherman";
+  src: url("/Sherman-Display.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "mono";
+  src: url("/SplineSansMono-VariableFont_wght.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "mango-bold";
+  src: url("/MangoGrotesque-Black.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "hero";
+  src: url("/CabinetGrotesk-Variable.ttf") format("truetype");
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "mango";
+  src: url("/MangoGrotesque-SemiBold.otf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  margin: 0px;
+  cursor: default;
+  width: 100%;
+  max-width: 100vw;
+  overscroll-behavior-y: none;
+}
+
+html {
+  width: 100%;
+  max-width: 100vw;
+  overscroll-behavior-y: none;
+}
+
+/* Hide page content during transitions with loading background */
+body.page-transitioning {
+  background-color: #ecebe7 !important;
+}
+
+body.page-transitioning main,
+body.page-transitioning>div:not([class*="transition"]) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

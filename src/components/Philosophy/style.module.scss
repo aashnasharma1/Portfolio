@@ -1,0 +1,442 @@
+.philosophy {
+  padding: 80px;
+  padding-bottom: 0;
+  background-color: #e8e6df;
+  position: relative;
+  z-index: 2;
+
+  .content {
+    max-width: 1200px;
+    padding: 0;
+    padding-bottom: 100px;
+  }
+
+  .label {
+    display: block;
+    color: #85885cff;
+    font-size: 14px;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+    letter-spacing: 1px;
+  }
+
+  .heading {
+    font-family: "hero";
+    font-size: 8em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: #1c1f1a;
+    margin: 0 0 4rem 0;
+    font-weight: 500;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    overflow: hidden;
+  }
+
+  .word {
+    display: inline-flex;
+    overflow: hidden;
+  }
+
+  .letter {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  .body {
+    max-width: 900px;
+  }
+
+  .philosophyText {
+    font-size: 2rem;
+    line-height: 1.5;
+    font-weight: 300;
+    color: #1c1f1a;
+    margin: 0 0 2rem 0;
+
+    .mask {
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      margin-right: 8px;
+    }
+  }
+
+  .italicWord {
+    font-style: italic;
+    font-family: "Georgia", "Times New Roman", serif;
+
+    span {
+      color: #85885cff;
+    }
+  }
+
+  .beliefText {
+    font-size: 2rem;
+    line-height: 1.7;
+    font-weight: 300;
+    color: #1c1f1a;
+    margin: 0 0 3rem 0;
+    max-width: 1000px;
+  }
+
+  .signature {
+    display: block;
+    font-size: 1.5rem;
+    font-style: italic;
+    font-family: "Georgia", "Times New Roman", serif;
+    color: #85885cff;
+  }
+
+  .curveContainer {
+    width: calc(100% + 160px);
+    position: relative;
+    margin-left: -80px;
+    margin-right: -80px;
+    overflow: visible;
+    height: 0px;
+    pointer-events: none;
+  }
+
+  .circleContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    overflow: visible;
+    will-change: height;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+
+    .circle {
+      height: 6000%;
+      width: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+    &.layer0 {
+      z-index: 1;
+
+      .circle {
+        background-color: #5e6137;
+      }
+    }
+
+    &.layer1 {
+      z-index: 2;
+
+      .circle {
+        background-color: #85885c;
+      }
+    }
+
+    &.layer2 {
+      z-index: 3;
+
+      .circle {
+        background-color: #ceccbf;
+      }
+    }
+
+    &.layer3 {
+      z-index: 4;
+
+      .circle {
+        background-color: #dbd9d0;
+      }
+    }
+
+    &.layer4 {
+      z-index: 5;
+
+      .circle {
+        background-color: #e8e6df;
+      }
+    }
+  }
+}
+
+// Responsive styles
+// 2K monitors (2560x1440)
+@media (min-width: 2400px) {
+  .philosophy {
+    padding: 6%;
+    padding-bottom: 0;
+
+    .content {
+      max-width: 1600px;
+      padding-bottom: 150px;
+    }
+
+    .label {
+      font-size: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .heading {
+      font-size: 10rem;
+      margin-bottom: 5rem;
+      gap: 30px;
+    }
+
+    .body {
+      max-width: 1200px;
+    }
+
+    .philosophyText {
+      font-size: 2.5rem;
+      line-height: 1.6;
+      margin-bottom: 3rem;
+
+      .mask {
+        margin-right: 12px;
+      }
+    }
+
+    .beliefText {
+      font-size: 2.5rem;
+      max-width: 1300px;
+      margin-bottom: 4rem;
+    }
+
+    .signature {
+      font-size: 2rem;
+    }
+
+    .curveContainer {
+      width: calc(100% + 6.9% + 6%);
+      margin-left: -6.9%;
+      margin-right: -6%;
+    }
+  }
+}
+
+// 4K monitors (3840x2160)
+@media (min-width: 3800px) {
+  .philosophy {
+    padding: 7%;
+    padding-bottom: 0;
+
+    .content {
+      max-width: 2400px;
+      padding-bottom: 220px;
+    }
+
+    .label {
+      font-size: 1.4rem;
+      margin-bottom: 5rem;
+    }
+
+    .heading {
+      font-size: 14rem;
+      margin-bottom: 7rem;
+      gap: 45px;
+    }
+
+    .body {
+      max-width: 1800px;
+    }
+
+    .philosophyText {
+      font-size: 3.5rem;
+      line-height: 1.7;
+      margin-bottom: 4rem;
+
+      .mask {
+        margin-right: 16px;
+      }
+    }
+
+    .beliefText {
+      font-size: 3.5rem;
+      max-width: 1900px;
+      margin-bottom: 5rem;
+    }
+
+    .signature {
+      font-size: 2.8rem;
+    }
+
+    .curveContainer {
+      width: calc(100% + 8.2% + 7%);
+      margin-left: -8.2%;
+      margin-right: -7%;
+    }
+  }
+}
+
+@media (max-width: 1400px) {
+  .philosophy {
+    padding: 80px;
+    padding-bottom: 0;
+
+    .heading {
+      font-size: 5rem;
+    }
+
+    .philosophyText {
+      font-size: 1.75rem;
+    }
+
+    .content {
+      padding-bottom: 80px;
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .philosophy {
+    padding: 60px;
+    padding-bottom: 0;
+
+    .heading {
+      font-size: 4rem;
+      gap: 15px;
+    }
+
+    .philosophyText {
+      font-size: 1.5rem;
+    }
+
+    .beliefText {
+      font-size: 1.1rem;
+    }
+
+    .signature {
+      font-size: 1.3rem;
+    }
+
+    .content {
+      padding-bottom: 60px;
+    }
+
+    .curveContainer {
+      width: calc(100% + 120px);
+      margin-left: -60px;
+      margin-right: -60px;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .philosophy {
+    padding: 40px;
+    padding-bottom: 0;
+
+    .heading {
+      font-size: 3.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .philosophyText {
+      font-size: 1.3rem;
+    }
+
+    .beliefText {
+      font-size: 1rem;
+    }
+
+    .content {
+      padding-bottom: 50px;
+    }
+
+    .curveContainer {
+      width: calc(100% + 80px);
+      margin-left: -40px;
+      margin-right: -40px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .philosophy {
+    padding: 20px;
+    padding-bottom: 0;
+
+    .label {
+      margin-bottom: 2rem;
+    }
+
+    .heading {
+      font-size: 2.8rem;
+      gap: 10px;
+      margin-bottom: 2.5rem;
+    }
+
+    .philosophyText {
+      font-size: 1.15rem;
+
+      .mask {
+        margin-right: 5px;
+      }
+    }
+
+    .beliefText {
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .signature {
+      font-size: 1.2rem;
+    }
+
+    .content {
+      padding-bottom: 40px;
+    }
+
+    .curveContainer {
+      width: calc(100% + 40px);
+      margin-left: -20px;
+      margin-right: -20px;
+    }
+
+    .circleContainer .circle {
+      height: 2000%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .philosophy {
+    padding: 20px;
+    padding-bottom: 0;
+
+    .heading {
+      font-size: 2.8rem;
+      margin-bottom: 2rem;
+    }
+
+    .philosophyText {
+      font-size: 1rem;
+    }
+
+    .beliefText {
+      font-size: 0.9rem;
+    }
+
+    .signature {
+      font-size: 1.1rem;
+    }
+
+    .content {
+      padding-bottom: 30px;
+    }
+
+    .curveContainer {
+      width: calc(100% + 40px);
+      margin-left: -20px;
+      margin-right: -20px;
+    }
+
+    .circleContainer .circle {
+      height: 1500%;
+    }
+  }
+}
