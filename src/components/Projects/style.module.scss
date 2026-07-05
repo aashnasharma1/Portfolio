@@ -140,7 +140,7 @@
     .imageWrapper {
         position: relative;
         width: 100%;
-        aspect-ratio: 1 / 1;
+        aspect-ratio: 16 / 9;
         overflow: hidden;
         border-radius: 12px;
         background-color: #161616;
@@ -151,7 +151,7 @@
     }
 
     .workImage {
-        object-fit: cover;
+        object-fit: contain;
         transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     }
 

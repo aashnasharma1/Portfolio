@@ -74,11 +74,34 @@
         justify-content: space-between;
         margin-top: 8%;
         min-height: 46vh;
-        max-width: 60%;
+        max-width: 100%;
     }
 
     .cardBlock {
         position: relative;
+    }
+
+    .slide {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 4rem;
+    }
+
+    .cardContent {
+        max-width: 55%;
+    }
+
+    .imageWrapper {
+        flex: 0 0 38%;
+        max-width: 38%;
+    }
+
+    .hackathonImage {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        display: block;
     }
 
     .awardBadge {
@@ -218,7 +241,7 @@
         }
 
         .slider {
-            max-width: 80%;
+            max-width: 100%;
         }
 
         .title {
@@ -248,6 +271,21 @@
         .slider {
             max-width: 100%;
             margin-top: 12%;
+        }
+
+        .slide {
+            flex-direction: column-reverse;
+            gap: 2rem;
+        }
+
+        .cardContent {
+            max-width: 100%;
+        }
+
+        .imageWrapper {
+            flex: none;
+            max-width: 100%;
+            width: 100%;
         }
     }
 }

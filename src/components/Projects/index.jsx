@@ -8,17 +8,33 @@ import Image from 'next/image';
 
 const projects = [
   {
-    name: "Velozity",
-    category: "Frontend Development",
-    tags: ["React", "Next.js", "GSAP"],
-    src: "Velozity.webp",
-    year: "2025"
+
+    name: "InsightFlow",
+    category: "Full-Stack SaaS Dashboard",
+    tags: [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Prisma",
+      "NextAuth",
+      "Recharts",
+    ],
+    src: "InsightFlow.webp",
+    year: "2026"
   },
   {
-    name: "Photo Garage",
+    name: "Sapher Shield",
+    category: "Full Stack Development",
+    tags: ["Vue.js", "Node.js", "Express.js", "ElasticSearch", "Redis"],
+    src: "saphershield.webp",
+    year: "2025"
+  },
+
+  {
+    name: "PhotoTools",
     category: "Full Stack Development",
     tags: ["Next.js", "Node", "MongoDB"],
-    src: "PhotoGarage.webp",
+    src: "Phototools.webp",
     year: "2025"
   },
   {
@@ -27,27 +43,6 @@ const projects = [
     tags: ["Next.js", "PostgreSQL", "GraphQL"],
     src: "Crewpose.webp",
     year: "2024"
-  },
-  {
-    name: "Archer IRM",
-    category: "Backend Development",
-    tags: [".NET", "C#", "SQL"],
-    src: "ArcherIrm.webp",
-    year: "2023"
-  },
-  {
-    name: "Finnulate",
-    category: "Full Stack Development",
-    tags: ["React", "Node", "MongoDB"],
-    src: "Finnulate.webp",
-    year: "2025"
-  },
-  {
-    name: "VOC",
-    category: "Full Stack Development",
-    tags: ["Angular", "Node", "Express"],
-    src: "voc.webp",
-    year: "2025"
   }
 ]
 

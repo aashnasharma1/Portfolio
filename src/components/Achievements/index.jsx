@@ -2,6 +2,7 @@
 import styles from './style.module.scss';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 // NOTE: placeholder hackathon details — swap with Aashna's real achievements
 const achievements = [
@@ -11,7 +12,10 @@ const achievements = [
     award: "Winner — 1st Place",
     year: "2024",
     description: "Designed and shipped a working full-stack prototype in under 36 hours, leading the team across frontend, API and deployment to take first place.",
-    tags: ["React", "Node.js", "Team Lead"]
+    tags: ["React", "Node.js", "Team Lead"],
+    src: "hackathon1.jpeg",
+    width: 2048,
+    height: 1536
   },
   {
     title: "Hackathon Two",
@@ -19,7 +23,10 @@ const achievements = [
     award: "Finalist",
     year: "2023",
     description: "Built an end-to-end MERN application under time pressure and presented it to the judging panel, finishing among the top teams.",
-    tags: ["MongoDB", "Express", "UI/UX"]
+    tags: ["MongoDB", "Express", "UI/UX"],
+    src: "hackathon2.png",
+    width: 1254,
+    height: 1254
   }
 ];
 
@@ -85,15 +92,28 @@ export default function Achievements() {
               initial="enter"
               animate="center"
               exit="exit"
+              className={styles.slide}
             >
-              <span className={styles.awardBadge}>{current.award}</span>
-              <h3 className={styles.title}>{current.title}</h3>
-              <p className={styles.meta}>{current.event} · {current.year}</p>
-              <p className={styles.description}>{current.description}</p>
-              <div className={styles.tags}>
-                {current.tags.map((tag) => (
-                  <span key={tag} className={styles.tag}>{tag}</span>
-                ))}
+              <div className={styles.cardContent}>
+                <span className={styles.awardBadge}>{current.award}</span>
+                <h3 className={styles.title}>{current.title}</h3>
+                <p className={styles.meta}>{current.event} · {current.year}</p>
+                <p className={styles.description}>{current.description}</p>
+                <div className={styles.tags}>
+                  {current.tags.map((tag) => (
+                    <span key={tag} className={styles.tag}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.imageWrapper}>
+                <Image
+                  src={`/images/${current.src}`}
+                  alt={`${current.event} — ${current.title}`}
+                  width={current.width}
+                  height={current.height}
+                  sizes="(max-width: 900px) 100vw, 38vw"
+                  className={styles.hackathonImage}
+                />
               </div>
             </motion.div>
           </AnimatePresence>
