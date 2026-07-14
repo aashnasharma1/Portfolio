@@ -19,7 +19,7 @@ const achievements = [
   },
   {
     title: "Hackathon Two",
-    event: "Hackathon Name",
+    event: "Digimantra Hackathon",
     award: "Finalist",
     year: "2023",
     description: "Built an end-to-end MERN application under time pressure and presented it to the judging panel, finishing among the top teams.",
