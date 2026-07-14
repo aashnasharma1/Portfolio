@@ -8,7 +8,7 @@ import Image from 'next/image';
 const achievements = [
   {
     title: "Hackathon One",
-    event: "Hackathon Name",
+    event: "Digimantra",
     award: "Winner — 1st Place",
     year: "2024",
     description: "Designed and shipped a working full-stack prototype in under 36 hours, leading the team across frontend, API and deployment to take first place.",
@@ -19,7 +19,7 @@ const achievements = [
   },
   {
     title: "Hackathon Two",
-    event: "Digimantra Hackathon",
+    event: "Reskill",
     award: "Finalist",
     year: "2023",
     description: "Built an end-to-end MERN application under time pressure and presented it to the judging panel, finishing among the top teams.",
