@@ -1,0 +1,279 @@
+.stackSection {
+    position: relative;
+    z-index: 1;
+    background-color: #ecebe7;
+    color: #1c1f1a;
+    padding: 7% 80px 10%;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+// ---- Split layout ----
+.split {
+    display: grid;
+    grid-template-columns: 55% 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+// Left — editorial MERN story
+.left {
+    display: flex;
+    flex-direction: column;
+}
+
+.leftLabel {
+    font-family: "mono", monospace;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b6169;
+    margin-bottom: 2rem;
+}
+
+.leftDesc {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: rgba(28, 31, 26, 0.85);
+    margin: 0 0 3.75rem;
+    max-width: 48ch;
+    font-weight: 500;
+}
+
+.groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+}
+
+.groupRow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.groupLabel {
+    font-family: "mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #85885c;
+}
+
+.groupItems {
+    font-family: "hero";
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    line-height: 1.4;
+    color: rgba(28, 31, 26, 0.9);
+}
+
+.stats {
+    font-family: "mono", monospace;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: #6b6169;
+    margin-top: 4rem;
+}
+
+// Right — the cubes
+.right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+// Blueprint registration marks around the grid
+.sceneWrap {
+    position: relative;
+    padding: 6px;
+}
+
+.corner {
+    position: absolute;
+    font-family: "mono", monospace;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: #85885c;
+    pointer-events: none;
+}
+
+.cornerTL {
+    top: -10px;
+    left: -10px;
+}
+
+.cornerTR {
+    top: -10px;
+    right: -10px;
+}
+
+.cornerBL {
+    bottom: -10px;
+    left: -10px;
+}
+
+.cornerBR {
+    bottom: -10px;
+    right: -10px;
+}
+
+.scene {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    width: 100%;
+    perspective: 9000px;
+    touch-action: pan-y; // never trap vertical scrolling
+}
+
+.cube {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.face {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 6px;
+    overflow: hidden;
+    background: transparent;
+    border: 2.5px dashed #85885c;
+    box-sizing: border-box;
+}
+
+.faceTop {
+    transform: translateY(-50%) rotateX(90deg);
+}
+
+.faceBottom {
+    transform: translateY(50%) rotateX(-90deg);
+}
+
+.faceLeft {
+    transform: translateX(-50%) rotateY(-90deg);
+}
+
+.faceRight {
+    transform: translateX(50%) rotateY(90deg);
+}
+
+.faceFront {
+    transform: rotateY(-90deg) translateX(50%) rotateY(90deg);
+}
+
+// Empty grid cells — hold the slot, render nothing
+.cellEmpty {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+}
+
+.logo {
+    font-size: clamp(1.4rem, 2vw, 2.3rem);
+    flex-shrink: 0;
+}
+
+.logoLabel {
+    font-family: "mono", monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6b6169;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+}
+
+.hint {
+    font-family: "mono", monospace;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #6b6169;
+    align-self: flex-end;
+}
+
+@media (max-width: 1200px) {
+    .stackSection {
+        padding-left: 60px;
+        padding-right: 60px;
+    }
+
+    .split {
+        gap: 3.5rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .stackSection {
+        padding: 10% 40px 14%;
+    }
+
+    .split {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+
+    .scene {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 14px;
+        max-width: 540px;
+    }
+
+    .right {
+        align-items: flex-start;
+    }
+
+    .hint {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .stackSection {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .leftDesc {
+        font-size: 1.15rem;
+    }
+
+    .scene {
+        gap: 8px;
+    }
+
+    .face {
+        gap: 0.25rem;
+        padding: 4px;
+        border-width: 1.5px;
+    }
+
+    .logo {
+        font-size: 1rem;
+    }
+
+    .logoLabel {
+        font-size: 0.42rem;
+        letter-spacing: 0.3px;
+    }
+
+    .stats {
+        font-size: 0.7rem;
+        line-height: 1.8;
+    }
+}

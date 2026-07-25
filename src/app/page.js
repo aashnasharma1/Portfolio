@@ -8,7 +8,7 @@ import Projects from '../components/Projects';
 import AboutMe from '../components/AboutMe';
 import Achievements from '../components/Achievements';
 import Contact from '../components/Contact';
-import Services from '../components/Services';
+import TechCubes from '../components/TechCubes';
 import Philosophy from '../components/Philosophy';
 import TargetCursor from '@/common/TargetCursor';
 import ScrollIndicators from '../components/ScrollIndicators';
@@ -52,7 +52,7 @@ export default function Home() {
       <ScrollIndicators />
       <div style={{ opacity: startAnimations ? 1 : 0, transition: 'opacity 0.3s' }}>
         <Landing startAnimations={startAnimations} />
-        <Services />
+        <TechCubes />
         <AboutMe />
         <div id="work"><Projects /></div>
         <Achievements />
