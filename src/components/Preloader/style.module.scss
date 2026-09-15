@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #1c1f1a;
+    background-color: var(--invert-bg);
     z-index: 99999;
     cursor: wait;
 
@@ -19,36 +19,34 @@
         height: calc(100% + 300px);
 
         path {
-            fill: #1c1f1a;
+            fill: var(--invert-bg);
         }
     }
 
     .name {
         display: flex;
-        color: #ecebe7;
-        font-family: "hero", sans-serif;
+        color: var(--invert-text);
+        font-family: var(--font-display);
         font-size: 4rem;
-        font-weight: 600;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: -0.03em;
         letter-spacing: -2px;
         align-items: center;
         position: relative;
         z-index: 1;
 
-        span {
-            display: block;
-            width: 12px;
-            height: 12px;
-            background-color: #85885cff;
-            border-radius: 50%;
-            margin: 0 14px 0 0;
+        .mark {
+            flex-shrink: 0;
+            margin-right: 18px;
         }
     }
 
     .folio {
         position: absolute;
         top: calc(50% + 3.6rem);
-        color: rgba(236, 235, 231, 0.55);
-        font-family: "mono", monospace;
+        color: var(--invert-muted);
+        font-family: var(--font-mono);
         font-size: 0.85rem;
         letter-spacing: 1px;
         z-index: 1;
@@ -59,8 +57,8 @@
     .loading {
         position: absolute;
         bottom: 2.5rem;
-        color: rgba(236, 235, 231, 0.55);
-        font-family: "mono", monospace;
+        color: var(--invert-muted);
+        font-family: var(--font-mono);
         font-size: 0.8rem;
         letter-spacing: 1px;
         z-index: 1;
@@ -84,7 +82,13 @@
 @media (max-width: 768px) {
     .introduction {
         .name {
-            font-size: 2.6rem;
+            font-size: 2rem;
+
+            .mark {
+                width: 51px;
+                height: 32px;
+                margin-right: 12px;
+            }
         }
 
         .folio {

@@ -2,28 +2,22 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./style.module.scss";
 import { usePathname } from "next/navigation";
-import { useCursor } from "../../context/CursorContext";
-import Image from "next/image";
-import { motion } from "framer-motion";
 
 import { StaggeredMenu } from "../../common/Menu";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Rounded from "../../common/RoundedButton";
+import ThemeToggle from "../../common/ThemeToggle";
+import Logo from "../../common/Logo";
 // import Magnetic from '../../common/Magnetic';
 
 export default function Header() {
   const header = useRef(null);
   const [isActive, setIsActive] = useState(false);
-  const { setCursorColor } = useCursor();
   const pathname = usePathname();
   const button = useRef(null);
 
-  const [logoHovered, setLogoHovered] = useState(false);
-  const [isMobileOrTablet, setIsMobileOrTablet] = useState(false);
-
-  const handleLogoClick = (e) => {
-    e.preventDefault();
+  const handleLogoClick = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -31,34 +25,6 @@ export default function Header() {
     if (isActive) setIsActive(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
-
-  useEffect(() => {
-    const checkViewport = () => {
-      setIsMobileOrTablet(window.innerWidth <= 1024);
-    };
-    
-    checkViewport();
-    window.addEventListener('resize', checkViewport);
-    
-    return () => window.removeEventListener('resize', checkViewport);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollPercentage = (window.scrollY / scrollHeight) * 100;
-      
-      // If scroll percentage is greater than 90%, use white, otherwise black
-      setCursorColor(scrollPercentage > 90 ? '#ffffff' : '#000000');
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial check
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [setCursorColor]);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -103,110 +69,11 @@ export default function Header() {
   return (
     <>
       <div ref={header} className={styles.header}>
-        <motion.div
-          className={styles.logo}
-          onClick={handleLogoClick}
-          onMouseEnter={() => setLogoHovered(true)}
-          onMouseLeave={() => setLogoHovered(false)}
-        >
-          <div className={styles.logoContainer}>
-            <motion.div 
-              className={styles.logoMark}
-              animate={{
-                scale: logoHovered ? 1.05 : 1,
-              }}
-              transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
-            >
-              <Image 
-                src="/favicon.svg" 
-                alt="AS Logo" 
-                width={44} 
-                height={44}
-                className={styles.logoImage}
-              />
-              {logoHovered && !isMobileOrTablet && (
-                <>
-                  <motion.div 
-                    className={styles.logoRing}
-                    initial={{ scale: 0.5, opacity: 0.8 }}
-                    animate={{ scale: 1.5, opacity: 0 }}
-                    transition={{ 
-                      duration: 1.2,
-                      ease: "easeOut",
-                      repeat: Infinity,
-                    }}
-                  />
-                  <motion.div 
-                    className={styles.logoRing2}
-                    initial={{ scale: 0.5, opacity: 0.6 }}
-                    animate={{ scale: 1.8, opacity: 0 }}
-                    transition={{ 
-                      duration: 1.2,
-                      ease: "easeOut",
-                      repeat: Infinity,
-                      delay: 0.4,
-                    }}
-                  />
-                  <motion.div 
-                    className={styles.logoRing3}
-                    initial={{ scale: 0.5, opacity: 0.4 }}
-                    animate={{ scale: 2.1, opacity: 0 }}
-                    transition={{ 
-                      duration: 1.2,
-                      ease: "easeOut",
-                      repeat: Infinity,
-                      delay: 0.8,
-                    }}
-                  />
-                </>
-              )}
-            </motion.div>
-            
-            <div className={styles.logoTextWrapper}>
-              <div className={styles.logoText}>
-                {"CODED BY".split("").map((char, i) => (
-                  <motion.span
-                    key={i}
-                    className={styles.char}
-                    animate={{
-                      y: logoHovered ? 0 : 20,
-                      opacity: logoHovered ? 1 : 0,
-                    }}
-                    transition={{ 
-                      duration: 0.4, 
-                      ease: [0.76, 0, 0.24, 1],
-                      delay: 0.02 * i 
-                    }}
-                  >
-                    {char === " " ? "\u00A0" : char}
-                  </motion.span>
-                ))}
-              </div>
-              <div className={styles.logoText}>
-                {"AASHNA".split("").map((char, i) => (
-                  <motion.span
-                    key={i}
-                    className={`${styles.char} ${styles.accent}`}
-                    animate={{
-                      y: logoHovered ? 0 : 20,
-                      opacity: logoHovered ? 1 : 0,
-                    }}
-                    transition={{ 
-                      duration: 0.4, 
-                      ease: [0.76, 0, 0.24, 1],
-                      delay: 0.02 * i + 0.15
-                    }}
-                  >
-                    {char}
-                  </motion.span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        <Logo onClick={handleLogoClick} />
         <div className={styles.nav}>
+          <ThemeToggle />
           <div className={`${styles.el} cursor-target`}>
-            <a href="#contact" onClick={(e) => {
+            <a href="#contact" data-cursor="Go" onClick={(e) => {
               e.preventDefault();
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
             }}>Contact</a>
@@ -218,8 +85,10 @@ export default function Header() {
         </div>
       </div>
       <div ref={button} className={`${styles.headerButtonContainer} ${isActive ? styles.menuOpen : ''}`}>
+        <ThemeToggle className={styles.floatingToggle} />
         <Rounded
           onClick={() => setIsActive(!isActive)}
+          data-cursor={isActive ? "Close" : "Menu"}
           className={`${styles.button} cursor-target`}
         >
           <div
@@ -252,20 +121,26 @@ export default function Header() {
           hideMenuButton={true}
           isFixed={true}
           position="right"
-          colors={["#404133", "#85885cff"]}
+          colors={["var(--accent)", "var(--invert-surface)"]}
           items={[
             { label: "Home", link: "/", ariaLabel: "Go to home page" },
+            { label: "About", link: "#about", ariaLabel: "About me" },
+            { label: "Stack", link: "#stack", ariaLabel: "View tech stack" },
+            { label: "Experience", link: "#experience", ariaLabel: "View work experience" },
+            { label: "Work", link: "#work", ariaLabel: "View projects" },
+            { label: "Achievements", link: "#achievements", ariaLabel: "View achievements" },
             { label: "Contact", link: "#contact", ariaLabel: "Get in touch" },
           ]}
           socialItems={[
             { label: "LinkedIn", link: "https://www.linkedin.com/in/aashnasharma1/" },
             { label: "GitHub", link: "https://github.com/aashnasharma1" },
+            { label: "Instagram", link: "https://www.instagram.com/codeyapper/" },
           ]}
           displaySocials={true}
           displayItemNumbering={true}
-          menuButtonColor="#85885cff"
-          openMenuButtonColor="#ffffff"
-          accentColor="#85885cff"
+          menuButtonColor="var(--accent)"
+          openMenuButtonColor="var(--invert-text)"
+          accentColor="var(--accent)"
           changeMenuColorOnOpen={true}
           onMenuClose={() => setIsActive(false)}
         />

@@ -1,0 +1,32 @@
+.tiltCard {
+    position: relative;
+    isolation: isolate;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+// Accent spotlight that follows the pointer (vars set by usePointerGlow)
+.spotlight {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+        420px circle at var(--mx, 50%) var(--my, 50%),
+        var(--accent-glow),
+        transparent 65%
+    );
+    transition: opacity 0.4s ease;
+}
+
+.tiltCard:hover .spotlight {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .spotlight {
+        display: none;
+    }
+}

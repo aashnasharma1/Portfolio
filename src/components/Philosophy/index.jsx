@@ -1,6 +1,6 @@
 'use client';
 import styles from './style.module.scss';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { useInView, motion, useScroll, useTransform } from 'framer-motion';
 
 const slideUp = {
@@ -23,56 +23,7 @@ export default function Philosophy() {
   const curveContainer = useRef(null);
   const isInView = useInView(container, { once: false, margin: "-10% 0px -10% 0px", amount: 0.3 });
 
-  // Responsive stagger animation ranges
-  const [staggerRanges, setStaggerRanges] = useState({
-    start: 0,
-    end4: 0.4,
-    end3: 0.5,
-    end2: 0.6,
-    end1: 0.7,
-    end0: 0.8
-  });
-  
-  useEffect(() => {
-    const updateRanges = () => {
-      const width = window.innerWidth;
-      if (width >= 3800) {
-        // 4K displays
-        setStaggerRanges({
-          start: 0,
-          end4: 0.3,
-          end3: 0.4,
-          end2: 0.5,
-          end1: 0.6,
-          end0: 0.7
-        });
-      } else if (width >= 2400) {
-        // 2K displays
-        setStaggerRanges({
-          start: 0,
-          end4: 0.35,
-          end3: 0.45,
-          end2: 0.55,
-          end1: 0.65,
-          end0: 0.75
-        });
-      } else {
-        // Default (mobile, tablet, desktop)
-        setStaggerRanges({
-          start: 0,
-          end4: 0.4,
-          end3: 0.5,
-          end2: 0.6,
-          end1: 0.7,
-          end0: 0.8
-        });
-      }
-    };
-    
-    updateRanges();
-    window.addEventListener('resize', updateRanges);
-    return () => window.removeEventListener('resize', updateRanges);
-  }, []);
+  const staggerRanges = { start: 0, end4: 0.4, end3: 0.5, end2: 0.6, end1: 0.7, end0: 0.8 };
 
   const { scrollYProgress } = useScroll({
     target: container,
@@ -95,14 +46,14 @@ export default function Philosophy() {
   const height0 = useTransform(height0Raw, (v) => `${v}vh`);
 
   const philosophyText = [
-    { text: "There's a popular notion that", style: "normal" },
+    { text: "People say", style: "normal" },
     { text: "technology", style: "italic" },
     { text: "and", style: "normal" },
     { text: "creativity", style: "italic" },
-    { text: "are opposites — one logical, one artistic.", style: "normal" },
+    { text: "are opposites.", style: "normal" },
   ];
 
-  const beliefText = "I believe they're nexuses, not opposites. The best digital experiences happen when code serves creativity, and creativity pushes what code can do.";
+  const beliefText = "I think they work best together — code that serves creativity, and creativity that pushes code.";
 
   let wordIndex = 0;
 

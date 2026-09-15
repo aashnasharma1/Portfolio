@@ -1,0 +1,109 @@
+// Shared section rhythm so every block lines up on the same grid.
+// Usage in a module: @use "../../styles/section" as *;
+
+@mixin section-shell {
+    position: relative;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    padding: var(--section-y) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@mixin container {
+    width: 100%;
+    max-width: var(--container);
+    margin-inline: auto;
+}
+
+// "Title /" + count on one row, label + intro text on the next
+@mixin section-header {
+    .headingContainer {
+        @include container;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 2rem;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: clamp(1.25rem, 2.5vw, 2rem);
+    }
+
+    .heading {
+        font-family: var(--font-display);
+        font-size: clamp(2.2rem, 8vw, 7rem);
+        min-width: 0;
+        line-height: 0.95;
+        text-transform: uppercase;
+        color: var(--text);
+        margin: 0;
+        letter-spacing: -0.035em;
+        font-weight: 800;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 0.25em;
+    }
+
+    .word {
+        display: inline-flex;
+        overflow: hidden;
+        padding-bottom: 0.05em;
+    }
+
+    .word span {
+        display: inline-block;
+        will-change: transform;
+    }
+
+    .count {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.5vw, 2rem);
+        font-weight: 500;
+        color: var(--accent);
+        flex-shrink: 0;
+        padding-bottom: 0.4em;
+    }
+
+    .subtextContainer {
+        @include container;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 2rem;
+        padding-bottom: clamp(2rem, 4vw, 3rem);
+        margin-bottom: clamp(2.5rem, 6vw, 5rem);
+        border-bottom: 1px solid var(--line);
+    }
+
+    .label {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--accent-text);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+    .subtext {
+        font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+        line-height: 1.45;
+        font-weight: 500;
+        color: var(--text-soft);
+        margin: 0;
+        max-width: 34ch;
+        text-align: right;
+    }
+
+    @media (max-width: 900px) {
+        .subtextContainer {
+            flex-direction: column-reverse;
+            gap: 1rem;
+        }
+
+        .subtext {
+            max-width: 100%;
+            text-align: left;
+        }
+    }
+}

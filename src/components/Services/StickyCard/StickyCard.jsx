@@ -1,6 +1,6 @@
 'use client'
-import { useRef, useState, useEffect } from 'react';
 import AnimatedShape from './AnimatedShape';
+import usePointerGlow from '../../../common/usePointerGlow';
 import './StickyCards.css'
 
 const StickyCards = () => {
@@ -8,7 +8,7 @@ const StickyCards = () => {
         {
             index: '01',
             title: 'Frontend Development',
-            description: 'I create custom-coded websites. I focus on making sure they are scalable, fast, accessible, and have engaging animations to provide a memorable experience for users.',
+            description: 'Custom-coded sites that are fast, accessible and full of thoughtful motion.',
             skills: [
                 'Modern Websites',
                 'Motion & Animations',
@@ -18,7 +18,7 @@ const StickyCards = () => {
         {
             index: '02',
             title: 'Backend Development',
-            description: 'Building robust server-side solutions with scalable architecture. From API design to database optimization, I handle the complete backend infrastructure.',
+            description: 'Robust APIs and databases built to scale, from design to deployment.',
             skills: [
                 'RESTful APIs',
                 'Database Design',
@@ -28,7 +28,7 @@ const StickyCards = () => {
         {
             index: '03',
             title: 'Web Performance',
-            description: 'Optimizing applications for speed and efficiency. I focus on fast load times, smooth interactions, and excellent user experience through performance best practices.',
+            description: 'Faster load times and smoother interactions, tuned for Core Web Vitals.',
             skills: [
                 'Core Web Vitals',
                 'Code Optimization',
@@ -38,7 +38,7 @@ const StickyCards = () => {
         {
             index: '04',
             title: 'System Architecture',
-            description: 'Designing complete systems from concept to deployment. I make technical decisions that ensure maintainability, scalability, and long-term success.',
+            description: 'End-to-end systems designed to stay maintainable as they grow.',
             skills: [
                 'Full-stack Solutions',
                 'Scalable Patterns',
@@ -47,111 +47,42 @@ const StickyCards = () => {
         },
     ]
 
-    const container = useRef(null)
-    const [screenSize, setScreenSize] = useState('desktop');
-
-    useEffect(() => {
-        const checkScreenSize = () => {
-            const width = window.innerWidth;
-            if (width <= 768) {
-                setScreenSize('mobile');
-            } else if (width <= 900) {
-                setScreenSize('tablet-small');
-            } else if (width <= 1200) {
-                setScreenSize('tablet');
-            } else if (width <= 1400) {
-                setScreenSize('laptop');
-            } else if (width <= 2400) {
-                setScreenSize('desktop');
-            } else if (width <= 3800) {
-                setScreenSize('2k');
-            } else {
-                setScreenSize('4k');
-            }
-        };
-        
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-        
-        return () => window.removeEventListener('resize', checkScreenSize);
-    }, []);
-
-    const getCardStyle = (index) => {
-        let baseOffset;
-        let headerHeight;
-        
-        switch (screenSize) {
-            case 'mobile':
-                baseOffset = 80;
-                headerHeight = 60;
-                break;
-            case 'tablet-small':
-                baseOffset = 80;
-                headerHeight = 70;
-                break;
-            case 'tablet':
-                baseOffset = 80;
-                headerHeight = 80;
-                break;
-            case 'laptop':
-                baseOffset = 80;
-                headerHeight = 90;
-                break;
-            case '2k':
-                baseOffset = 100;
-                headerHeight = 150;
-                break;
-            case '4k':
-                baseOffset = 120;
-                headerHeight = 200;
-                break;
-            default:
-                baseOffset = 80;
-                headerHeight = 120;
-        }
-        
-        const topPosition = baseOffset + (index * headerHeight);
-
-        return {
-            top: `${topPosition}px`,
-            position: 'sticky',
-            zIndex: index + 1,
-        };
-    };
+    const glow = usePointerGlow();
 
     return (
-        <div className='sticky-cards' ref={container}>
+        <div className='sticky-cards'>
             {StickyCardsData.map((cardData, index) => (
-                <div
+                <article
                     className="sticky-card"
-                    key={index}
-                    style={getCardStyle(index)}
+                    key={cardData.index}
+                    // Sticky offset per card lives in CSS (see --stack-step)
+                    style={{ '--i': index }}
+                    onPointerMove={glow.onPointerMove}
+                    onPointerLeave={glow.onPointerLeave}
                 >
-                    {/* Left - Index and Animation */}
-                    <div className="sticky-card-index">
-                        <span>({cardData.index})</span>
-                        {/* Animated Shape */}
-                        <div className='svg-box'>
-                            <AnimatedShape type={cardData.title} />
-                        </div>
+                    <span className="sticky-card-spotlight" aria-hidden="true" />
+
+                    <span className="sticky-card-index">({cardData.index})</span>
+                    <h3 className="sticky-card-title">{cardData.title}</h3>
+
+                    {/* Drifts toward the pointer for a little depth */}
+                    <div className="svg-box" aria-hidden="true">
+                        <AnimatedShape type={cardData.title} />
                     </div>
 
-                    {/* Right - Content */}
                     <div className="sticky-card-content">
-                        <h1 className="sticky-card-title">{cardData.title}</h1>
-                        
                         <p className="sticky-card-description">{cardData.description}</p>
-                        
+
                         <ul className="sticky-card-skills">
                             {cardData.skills.map((skill, i) => (
-                                <li key={i}>
+                                <li key={skill}>
                                     <span className="skill-index">0{i + 1}</span>
                                     <span className="skill-name">{skill}</span>
                                 </li>
                             ))}
                         </ul>
                     </div>
-                </div>
+                </article>
             ))}
         </div>
     )

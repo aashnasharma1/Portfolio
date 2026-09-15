@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <path fill="#85885c" fill-rule="evenodd" d="M28 18 L48 82 L8 82 Z M28 45 L36 72 L20 72 Z"/>
-  <path fill="none" stroke="#85885c" stroke-width="11" stroke-linecap="round" d="M85 33.5 C85 27 79 23.5 72 23.5 C64.5 23.5 59 27.5 59 33.5 C59 40 65 43.5 72 46 C79 48.5 85.5 52 85.5 59 C85.5 73 80 76.5 72 76.5 C64 76.5 58.5 73 58.5 66.5"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -16 80 80">
+  <g fill="#D9653B">
+    <path d="M0 48 20 0l20 48Z"/>
+    <path d="M60 0A16 12 0 0 0 60 24ZM60 0h16v11H60Z"/>
+    <path d="M60 24a16 12 0 0 1 0 24ZM44 37h16v11H44Z"/>
+  </g>
 </svg>

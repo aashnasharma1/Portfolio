@@ -1,0 +1,36 @@
+.logo {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+    margin: -4px;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mark {
+    display: block;
+    overflow: visible;
+}
+
+.piece {
+    fill: var(--accent);
+    transition: fill 0.3s ease;
+}
+
+.logo:hover .piece {
+    fill: var(--accent-text);
+}
+
+@media (min-width: 2400px) {
+    .mark {
+        height: 56px;
+        width: calc(56px * 76 / 48);
+    }
+}
+
+@media (max-width: 768px) {
+    .mark {
+        height: 30px;
+        width: calc(30px * 76 / 48);
+    }
+}

@@ -153,22 +153,16 @@ export default function AnimatedShape({ type }) {
       const ellipsOrigin = svgRef.current.querySelector('.ellipse-origin');
       const numOfEllipses = 7;
 
-      // Create color gradient from #85885cff to lighter shades
-      const colors = [
-        '#f7f9d9ff', // darkest olive-green
-        '#dadcb6ff',
-        '#b9bc8dff',
-        '#a6a97bff',
-        '#a4a775ff',
-        '#a1a474ff',
-        '#85885cff'  // light cream with green undertones
-      ];
+      // Accent fading into the card background, front to back
+      const colors = [15, 30, 45, 60, 75, 88, 100].map(
+        (pct) => `color-mix(in srgb, var(--accent) ${pct}%, var(--surface))`
+      );
 
       for (let i = 0; i < numOfEllipses; i++) {
         const clonedPath = ellipsOrigin.cloneNode(true);
         clonedPath.classList.remove('ellipse-origin');
         clonedPath.classList.add('ellipse-clone');
-        clonedPath.setAttribute('fill', colors[i]);
+        clonedPath.style.fill = colors[i];
         svgRef.current.appendChild(clonedPath);
       }
 
@@ -208,7 +202,7 @@ export default function AnimatedShape({ type }) {
           <path 
             className="line-origin" 
             fill="none" 
-            stroke="#85885cff" 
+            style={{ stroke: "var(--accent)" }} 
             strokeMiterlimit="10" 
             strokeWidth="1" 
             strokeLinecap="round" 
@@ -233,10 +227,10 @@ export default function AnimatedShape({ type }) {
             </clipPath>
           </defs>
           <g clipPath="url(#arrow-clip)">
-            <path id="arrow-1" d="M50 0 0 50h100L50 0z" fill="#85885cff" />
-            <path id="arrow-2" d="M50 50 0 100h100L50 50z" fill="#85885cff" opacity="0.7" />
-            <path id="arrow-3" d="M50 100 0 150h100l-50-50z" fill="#85885cff" />
-            <path id="arrow-4" d="M50 150 0 200h100l-50-50z" fill="#85885cff" opacity="0.7" />
+            <path id="arrow-1" d="M50 0 0 50h100L50 0z" style={{ fill: "var(--accent)" }} />
+            <path id="arrow-2" d="M50 50 0 100h100L50 50z" style={{ fill: "var(--accent)" }} opacity="0.7" />
+            <path id="arrow-3" d="M50 100 0 150h100l-50-50z" style={{ fill: "var(--accent)" }} />
+            <path id="arrow-4" d="M50 150 0 200h100l-50-50z" style={{ fill: "var(--accent)" }} opacity="0.7" />
           </g>
         </svg>
       </div>
@@ -252,19 +246,19 @@ export default function AnimatedShape({ type }) {
           viewBox="0 0 100 100"
         >
           <g className="bar">
-            <path id="bar-1" d="M71.97 6.27c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V17.25c0-6.07-4.92-10.98-10.98-10.98Z" fill="#d4d3c8" />
-            <circle id="bar-1-circle-1" cx="71.97" cy="17.25" r="10.98" fill="#85885cff" />
-            <circle cx="71.97" cy="69.52" r="10.98" fill="#6b6b5a" />
+            <path id="bar-1" d="M71.97 6.27c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V17.25c0-6.07-4.92-10.98-10.98-10.98Z" style={{ fill: "var(--line-strong)" }} />
+            <circle id="bar-1-circle-1" cx="71.97" cy="17.25" r="10.98" style={{ fill: "var(--accent)" }} />
+            <circle cx="71.97" cy="69.52" r="10.98" style={{ fill: "var(--text)" }} />
           </g>
           <g className="bar">
-            <path id="bar-2" d="M50 22.42c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V33.4c0-6.07-4.92-10.98-10.98-10.98Z" fill="#c5c3b8" />
-            <circle cx="50" cy="33.41" r="10.98" fill="#6b6b5a" />
-            <circle id="bar-2-circle-2" cx="50" cy="85.68" r="10.98" fill="#85885cff" />
+            <path id="bar-2" d="M50 22.42c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V33.4c0-6.07-4.92-10.98-10.98-10.98Z" style={{ fill: "var(--line-strong)" }} />
+            <circle cx="50" cy="33.41" r="10.98" style={{ fill: "var(--text)" }} />
+            <circle id="bar-2-circle-2" cx="50" cy="85.68" r="10.98" style={{ fill: "var(--accent)" }} />
           </g>
           <g className="bar">
-            <path id="bar-3" d="M28.15 7.27c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V18.26c0-6.07-4.92-10.98-10.98-10.98Z" fill="#b8b6ab" />
-            <circle id="bar-3-circle-1" cx="28.15" cy="18.26" r="10.98" fill="#6b6b5a" />
-            <circle cx="28.15" cy="70.53" r="10.98" fill="#85885cff" />
+            <path id="bar-3" d="M28.15 7.27c-6.07 0-10.98 4.92-10.98 10.98v52.27c0 6.07 4.92 10.98 10.98 10.98s10.98-4.92 10.98-10.98V18.26c0-6.07-4.92-10.98-10.98-10.98Z" style={{ fill: "var(--line-strong)" }} />
+            <circle id="bar-3-circle-1" cx="28.15" cy="18.26" r="10.98" style={{ fill: "var(--text)" }} />
+            <circle cx="28.15" cy="70.53" r="10.98" style={{ fill: "var(--accent)" }} />
           </g>
         </svg>
       </div>
@@ -283,7 +277,7 @@ export default function AnimatedShape({ type }) {
           className="ellipse-origin" 
           cx="50" 
           cy="25" 
-          fill="#85885cff" 
+          style={{ fill: "var(--accent)" }} 
           rx="50" 
           ry="25" 
         />
