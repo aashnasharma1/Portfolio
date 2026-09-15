@@ -1,6 +1,6 @@
 .roundedButton {
   border-radius: 3em;
-  border: 0.5px solid #404133;
+  border: 1px solid var(--line-strong);
   cursor: pointer;
   position: relative;
   display: flex;
@@ -17,7 +17,7 @@
 
   &:hover {
     p {
-      color: white;
+      color: var(--invert-text);
     }
   }
 }

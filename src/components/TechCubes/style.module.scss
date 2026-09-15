@@ -1,44 +1,49 @@
+@use "../../styles/section" as *;
+
 .stackSection {
-    position: relative;
+    @include section-shell;
+    @include section-header;
     z-index: 1;
-    background-color: #ecebe7;
-    color: #1c1f1a;
-    padding: 7% 80px 10%;
-    width: 100%;
-    max-width: 100vw;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
+    background-color: var(--bg);
+    color: var(--text);
+
+    .headingContainer {
+        border-bottom: 1px solid var(--line);
+        padding-bottom: clamp(1.25rem, 2.5vw, 2rem);
+        margin-bottom: clamp(2rem, 5vw, 4rem);
+    }
 }
 
 // ---- Split layout ----
 .split {
+    width: 100%;
+    max-width: var(--container);
     display: grid;
     grid-template-columns: 55% 1fr;
-    gap: 4rem;
+    gap: clamp(2.5rem, 5vw, 4rem);
     align-items: start;
 }
 
-// Left — editorial MERN story
+// Left — the MERN story
 .left {
     display: flex;
     flex-direction: column;
 }
 
 .leftLabel {
-    font-family: "mono", monospace;
-    font-size: 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #6b6169;
-    margin-bottom: 2rem;
+    color: var(--accent-text);
+    margin-bottom: 1.5rem;
 }
 
 .leftDesc {
-    font-size: 1.3rem;
-    line-height: 1.6;
-    color: rgba(28, 31, 26, 0.85);
-    margin: 0 0 3.75rem;
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--text-soft);
+    margin: 0 0 clamp(2rem, 4vw, 3rem);
     max-width: 48ch;
     font-weight: 500;
 }
@@ -46,38 +51,45 @@
 .groups {
     display: flex;
     flex-direction: column;
-    gap: 1.35rem;
+    gap: 1.1rem;
 }
 
 .groupRow {
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
+    padding-bottom: 1.1rem;
+    border-bottom: 1px solid var(--line);
+
+    &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
 }
 
 .groupLabel {
-    font-family: "mono", monospace;
-    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #85885c;
+    color: var(--accent-text);
 }
 
 .groupItems {
-    font-family: "hero";
+    font-family: var(--font-display);
     font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: -0.1px;
+    font-weight: 700;
     line-height: 1.4;
-    color: rgba(28, 31, 26, 0.9);
+    color: var(--text);
 }
 
 .stats {
-    font-family: "mono", monospace;
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
     letter-spacing: 1px;
-    color: #6b6169;
-    margin-top: 4rem;
+    line-height: 1.8;
+    color: var(--muted);
+    margin-top: clamp(2rem, 4vw, 3rem);
 }
 
 // Right — the cubes
@@ -95,32 +107,17 @@
 
 .corner {
     position: absolute;
-    font-family: "mono", monospace;
+    font-family: var(--font-mono);
     font-size: 1.1rem;
     line-height: 1;
-    color: #85885c;
+    color: var(--accent);
     pointer-events: none;
 }
 
-.cornerTL {
-    top: -10px;
-    left: -10px;
-}
-
-.cornerTR {
-    top: -10px;
-    right: -10px;
-}
-
-.cornerBL {
-    bottom: -10px;
-    left: -10px;
-}
-
-.cornerBR {
-    bottom: -10px;
-    right: -10px;
-}
+.cornerTL { top: -10px; left: -10px; }
+.cornerTR { top: -10px; right: -10px; }
+.cornerBL { bottom: -10px; left: -10px; }
+.cornerBR { bottom: -10px; right: -10px; }
 
 .scene {
     display: grid;
@@ -150,29 +147,16 @@
     padding: 6px;
     overflow: hidden;
     background: transparent;
-    border: 2.5px dashed #85885c;
+    border: 2px dashed color-mix(in srgb, var(--accent) 70%, transparent);
+    border-radius: 4px;
     box-sizing: border-box;
 }
 
-.faceTop {
-    transform: translateY(-50%) rotateX(90deg);
-}
-
-.faceBottom {
-    transform: translateY(50%) rotateX(-90deg);
-}
-
-.faceLeft {
-    transform: translateX(-50%) rotateY(-90deg);
-}
-
-.faceRight {
-    transform: translateX(50%) rotateY(90deg);
-}
-
-.faceFront {
-    transform: rotateY(-90deg) translateX(50%) rotateY(90deg);
-}
+.faceTop { transform: translateY(-50%) rotateX(90deg); }
+.faceBottom { transform: translateY(50%) rotateX(-90deg); }
+.faceLeft { transform: translateX(-50%) rotateY(-90deg); }
+.faceRight { transform: translateX(50%) rotateY(90deg); }
+.faceFront { transform: rotateY(-90deg) translateX(50%) rotateY(90deg); }
 
 // Empty grid cells — hold the slot, render nothing
 .cellEmpty {
@@ -186,11 +170,11 @@
 }
 
 .logoLabel {
-    font-family: "mono", monospace;
-    font-size: 0.62rem;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #6b6169;
+    color: var(--muted);
     max-width: 100%;
     white-space: nowrap;
     overflow: hidden;
@@ -199,58 +183,71 @@
 }
 
 .hint {
-    font-family: "mono", monospace;
-    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #6b6169;
+    color: var(--muted);
     align-self: flex-end;
 }
 
-@media (max-width: 1200px) {
-    .stackSection {
-        padding-left: 60px;
-        padding-right: 60px;
-    }
-
-    .split {
-        gap: 3.5rem;
-    }
-}
-
 @media (max-width: 900px) {
-    .stackSection {
-        padding: 10% 40px 14%;
-    }
-
     .split {
         grid-template-columns: 1fr;
-        gap: 4rem;
     }
 
     .scene {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 14px;
+        gap: 12px;
         max-width: 540px;
     }
 
     .right {
-        align-items: flex-start;
+        align-items: center;
+    }
+
+    .sceneWrap {
+        width: 100%;
+        max-width: 552px;
     }
 
     .hint {
-        align-self: flex-start;
+        align-self: center;
     }
 }
 
-@media (max-width: 768px) {
-    .stackSection {
-        padding-left: 20px;
-        padding-right: 20px;
+// Phones: tighter copy and an icon-only grid
+@media (max-width: 767px) {
+    .leftLabel {
+        font-size: 0.7rem;
+        margin-bottom: 0.9rem;
     }
 
     .leftDesc {
-        font-size: 1.15rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .groups {
+        gap: 0.7rem;
+    }
+
+    .groupRow {
+        padding-bottom: 0.7rem;
+        gap: 0.2rem;
+    }
+
+    .groupLabel {
+        font-size: 0.6rem;
+    }
+
+    .groupItems {
+        font-size: 0.86rem;
+    }
+
+    .stats {
+        font-size: 0.62rem;
+        margin-top: 1.25rem;
     }
 
     .scene {
@@ -258,22 +255,19 @@
     }
 
     .face {
-        gap: 0.25rem;
         padding: 4px;
         border-width: 1.5px;
     }
 
     .logo {
-        font-size: 1rem;
+        font-size: 1.25rem;
     }
 
     .logoLabel {
-        font-size: 0.42rem;
-        letter-spacing: 0.3px;
+        display: none;
     }
 
-    .stats {
-        font-size: 0.7rem;
-        line-height: 1.8;
+    .hint {
+        font-size: 0.62rem;
     }
 }

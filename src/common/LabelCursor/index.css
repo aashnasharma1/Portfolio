@@ -1,0 +1,82 @@
+/* Hide the system cursor only when the custom one is running */
+.has-label-cursor,
+.has-label-cursor * {
+  cursor: none !important;
+}
+
+.label-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.label-cursor.is-visible {
+  opacity: 1;
+}
+
+.label-cursor__bubble {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 10px;
+  height: 10px;
+  padding: 0;
+  border-radius: 999px;
+  background-color: var(--accent);
+  transform: translate(-50%, -50%);
+  transition:
+    min-width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    scale 0.15s ease;
+}
+
+/* Clickable without a label: a soft, larger ring */
+.label-cursor.is-hover .label-cursor__bubble {
+  min-width: 34px;
+  height: 34px;
+  background-color: var(--accent-glow);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+/* Small word label */
+.label-cursor.is-label .label-cursor__bubble {
+  min-width: 0;
+  height: 22px;
+  padding: 0 9px;
+  box-shadow: 0 6px 16px -8px rgba(40, 28, 22, 0.45);
+}
+
+.label-cursor__text {
+  display: block;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-accent);
+  opacity: 0;
+  transition: max-width 0.3s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+}
+
+.label-cursor.is-label .label-cursor__text {
+  max-width: 90px;
+  opacity: 1;
+}
+
+.label-cursor.is-pressed .label-cursor__bubble {
+  scale: 0.85;
+}

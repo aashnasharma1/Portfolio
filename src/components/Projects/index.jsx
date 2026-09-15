@@ -153,6 +153,7 @@ export default function Projects() {
               key={project.name}
               ref={(el) => { cardsRef.current[i] = el; }}
               className={`${styles.workCard} cursor-target`}
+              data-cursor="View"
             >
               <div className={styles.imageWrapper}>
                 <Image

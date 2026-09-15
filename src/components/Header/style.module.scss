@@ -1,10 +1,10 @@
 .header {
   position: absolute;
   display: flex;
-  z-index: 1;
+  z-index: 10;
   top: 0;
-  color: #191b18;
-  padding: 35px 74px;
+  color: var(--text);
+  padding: 28px var(--gutter);
   justify-content: space-between;
   width: 100%;
   font-weight: 300;
@@ -12,103 +12,22 @@
   align-items: center;
 
   &.lightHeader {
-    color: #f5f5f0;
+    color: var(--text);
     
-    .logo {
-      .logoRing, .logoRing2, .logoRing3 {
-        border-color: rgba(245, 245, 240, 0.5);
-      }
-    }
     
     .nav a {
-      color: #f5f5f0;
+      color: var(--text);
     }
     
     .nav .corners span {
-      border-color: #f5f5f0;
+      border-color: var(--text);
     }
   }
 
-  .logo {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    
-    .logoContainer {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    
-    .logoMark {
-      position: relative;
-      width: 44px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      .logoImage {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        position: relative;
-        z-index: 2;
-      }
-      
-      .logoRing {
-        position: absolute;
-        inset: 0;
-        border: 1px solid rgba(133, 136, 92, 0.6);
-        border-radius: 50%;
-        z-index: 1;
-      }
-      
-      .logoRing2 {
-        position: absolute;
-        inset: 0;
-        border: 1px solid rgba(133, 136, 92, 0.5);
-        border-radius: 50%;
-        z-index: 0;
-      }
-      
-      .logoRing3 {
-        position: absolute;
-        inset: 0;
-        border: 1px solid rgba(133, 136, 92, 0.4);
-        border-radius: 50%;
-        z-index: 0;
-      }
-    }
-    
-    .logoTextWrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      position: relative;
-    }
-    
-    .logoText {
-      display: flex;
-      overflow: hidden;
-      
-      .char {
-        display: inline-block;
-        font-size: 0.65rem;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        
-        &.accent {
-          color: #85885c;
-        }
-      }
-    }
-  }
   .nav {
     display: flex;
     align-items: center;
-    // width: 100%;
+    gap: 0.75rem;
     justify-content: space-between;
     .el {
       display: flex;
@@ -152,7 +71,7 @@
         position: absolute;
         width: 6px;
         height: 6px;
-        border-color: #191b18;
+        border-color: var(--text);
         border-style: solid;
         border-width: 0;
         
@@ -194,38 +113,16 @@
 // Large desktop screens (1920x1080 and above)
 @media (min-width: 1600px) {
   .header {
-    padding: 35px 5%;
+    padding-block: 32px;
   }
 }
 
 // 2K monitors (2560x1440)
 @media (min-width: 2400px) {
   .header {
-    padding: 45px 6%;
+    padding-block: 44px;
     font-size: 1.4rem;
     
-    .logo {
-      .logoContainer {
-        gap: 20px;
-      }
-      
-      .logoMark {
-        width: 60px;
-        height: 60px;
-        
-        .logoRing {
-          inset: -10px;
-        }
-        
-        .logoRing2 {
-          inset: -20px;
-        }
-      }
-      
-      .logoText .char {
-        font-size: 0.85rem;
-      }
-    }
     
     .nav {
       .el {
@@ -245,34 +142,9 @@
 // 4K monitors (3840x2160)
 @media (min-width: 3800px) {
   .header {
-    padding: 60px 7%;
+    padding-block: 60px;
     font-size: 2rem;
     
-    .logo {
-      .logoContainer {
-        gap: 24px;
-      }
-      
-      .logoMark {
-        width: 80px;
-        height: 80px;
-        
-        .logoRing {
-          inset: -12px;
-          border-width: 2px;
-        }
-        
-        .logoRing2 {
-          inset: -24px;
-          border-width: 2px;
-        }
-      }
-      
-      .logoText .char {
-        font-size: 1.1rem;
-        letter-spacing: 3px;
-      }
-    }
     
     .nav {
       .el {
@@ -292,7 +164,7 @@
 // Responsive styles
 @media (max-width: 1024px) {
   .header {
-    padding: 25px 40px;
+    padding-block: 24px;
     
     .nav {
       .el {
@@ -305,44 +177,30 @@
 
 @media (max-width: 768px) {
   .header {
-    padding: 20px 30px;
+    padding-block: 18px;
     align-items: flex-start;
     
     &.lightHeader {
       .nav .el a {
-        color: #f5f5f0;
+        color: var(--text);
       }
       
       .nav .activeNav a {
-        color: #85885cff;
+        color: var(--accent);
         
         &::after {
-          background: #85885cff;
+          background: var(--accent);
         }
       }
     }
     
-    .logo {
-      gap: 4px;
-      
-      .logoContainer {
-        gap: 0;
-      }
-      
-      .logoMark {
-        width: 36px;
-        height: 36px;
-      }
-      
-      .logoTextWrapper, .logoLabel {
-        display: none;
-      }
-    }
     
+    align-items: center;
+
     .nav {
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 0.25rem;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.75rem;
       
       .el {
         width: auto;
@@ -351,7 +209,7 @@
         a {
           justify-content: flex-end;
           font-size: 1rem;
-          color: #1c1f1a;
+          color: var(--text);
           font-weight: 500;
           text-align: right;
           position: relative;
@@ -363,7 +221,7 @@
             left: 0;
             width: 100%;
             height: 1px;
-            background: #1c1f1a;
+            background: var(--text);
             transform: scaleX(0);
             transform-origin: left;
             transition: transform 0.3s ease;
@@ -381,11 +239,11 @@
       
       .activeNav {
         a {
-          color: #85885cff;
+          color: var(--accent);
           
           &::after {
             transform: scaleX(1);
-            background: #85885cff;
+            background: var(--accent);
           }
         }
       }
@@ -395,14 +253,8 @@
 
 @media (max-width: 480px) {
   .header {
-    padding: 15px 20px;
+    padding-block: 14px;
     
-    .logo {
-      .logoMark {
-        width: 32px;
-        height: 32px;
-      }
-    }
     
     .nav {
       gap: 0.15rem;
@@ -420,10 +272,24 @@
 
 .headerButtonContainer {
   transform: scale(0);
+  transform-origin: right center;
   position: fixed;
   right: 0px;
   top: 10px;
   z-index: 20000;
+  display: flex;
+  align-items: center;
+
+  .floatingToggle {
+    width: 52px;
+    height: 52px;
+    box-shadow: 0 8px 24px rgba(40, 28, 22, 0.12);
+  }
+
+  &.menuOpen .floatingToggle {
+    opacity: 0;
+    pointer-events: none;
+  }
 
   .button {
     position: relative;
@@ -431,8 +297,9 @@
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background-color: #1c1f1a;
-    border: #333 solid 1px;
+    background-color: var(--invert-bg);
+    border: 1px solid var(--invert-line);
+    box-shadow: 0 8px 24px rgba(40, 28, 22, 0.18);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -442,8 +309,8 @@
   }
 
   &.menuOpen .button {
-    background-color: #3a3d35;
-    border-color: #555;
+    background-color: var(--invert-surface);
+    border-color: var(--invert-line);
   }
 
   .burger {
@@ -457,7 +324,7 @@
       height: 1px;
       width: 40%;
       margin: auto;
-      background-color: white;
+      background-color: var(--invert-text);
       position: relative;
       transition: transform 0.3s;
     }
@@ -557,6 +424,44 @@
       
       &::before {
         top: 0px;
+      }
+    }
+  }
+}
+
+// Smaller floating controls on phones so they don't cover content
+@media (max-width: 768px) {
+  .headerButtonContainer {
+    top: 4px;
+
+    .button {
+      width: 56px;
+      height: 56px;
+      margin: 14px;
+    }
+
+    .floatingToggle {
+      width: 42px;
+      height: 42px;
+    }
+
+    .burger {
+      &::after {
+        top: -4px;
+      }
+
+      &::before {
+        top: 4px;
+      }
+    }
+
+    .burgerActive {
+      &::after {
+        top: -1px;
+      }
+
+      &::before {
+        top: 0;
       }
     }
   }

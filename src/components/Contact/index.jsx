@@ -3,12 +3,12 @@ import styles from './style.module.scss';
 import { useRef, useState, useEffect } from 'react';
 import { useScroll, motion, useTransform } from 'framer-motion';
 import { FiArrowUp, FiArrowUpRight } from 'react-icons/fi';
-import { SiLinkedin, SiGithub } from 'react-icons/si';
+import { SiLinkedin, SiGithub, SiInstagram } from 'react-icons/si';
 import Rounded from '../../common/RoundedButton';
 
 const Star = () => (
-    <svg className={styles.star} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 0C103.395 53.7596 146.24 96.6052 200 100C146.24 103.395 103.395 146.24 100 200C96.6052 146.24 53.7596 103.395 0 100C53.7596 96.6052 96.6052 53.7596 100 0Z" fill='#ecebe7'></path>
+    <svg className={styles.star} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M100 0C103.395 53.7596 146.24 96.6052 200 100C146.24 103.395 103.395 146.24 100 200C96.6052 146.24 53.7596 103.395 0 100C53.7596 96.6052 96.6052 53.7596 100 0Z" style={{ fill: 'var(--accent)' }}></path>
     </svg>
 );
 
@@ -108,12 +108,12 @@ export default function Contact() {
                             Open to full-time positions, contract work, and interesting projects.
                         </p>
                         <div className={styles.ctaSection}>
-                            <Rounded backgroundColor="#707344ff" className={styles.contactBtn}>
-                                <a href="mailto:aashnajuyal@gmail.com" className={styles.contactBtnInner}>
+                            <Rounded backgroundColor="var(--accent)" className={styles.contactBtn}>
+                                <a href="mailto:aashnajuyal@gmail.com" className={styles.contactBtnInner} data-cursor="Email">
                                     Get in Touch <FiArrowUpRight />
                                 </a>
                             </Rounded>
-                            <Rounded backgroundColor="#85885c" className={styles.goTopBtn} onClick={scrollToTop}>
+                            <Rounded backgroundColor="var(--accent)" className={styles.goTopBtn} onClick={scrollToTop} aria-label="Back to top" data-cursor="Top">
                                 <p className={styles.goTopBtnInner}>
                                     <FiArrowUp />
                                 </p>
@@ -128,10 +128,10 @@ export default function Contact() {
                     <div className={styles.sideColumn}>
                         <div className={styles.infoBlock}>
                             <span className={styles.blockLabel}>DIRECT LINE</span>
-                            <span className={styles.emailLink} onClick={copyEmail}>
+                            <button type="button" className={styles.emailLink} onClick={copyEmail} data-cursor="Copy">
                                 aashnajuyal@gmail.com
                                 {showTooltip && <span className={styles.tooltip}>Email copied!</span>}
-                            </span>
+                            </button>
                         </div>
 
                         <div className={styles.dividerLine}></div>
@@ -139,11 +139,14 @@ export default function Contact() {
                         <div className={styles.infoBlock}>
                             <span className={styles.blockLabel}>SOCIAL CHANNELS</span>
                             <div className={styles.socialLinks}>
-                                <a href="https://www.linkedin.com/in/aashnasharma1/" target="_blank" rel="noopener noreferrer">
+                                <a href="https://www.linkedin.com/in/aashnasharma1/" target="_blank" rel="noopener noreferrer" data-cursor="Open">
                                     <SiLinkedin /> LinkedIn
                                 </a>
-                                <a href="https://github.com/aashnasharma1" target="_blank" rel="noopener noreferrer">
+                                <a href="https://github.com/aashnasharma1" target="_blank" rel="noopener noreferrer" data-cursor="Open">
                                     <SiGithub /> GitHub
+                                </a>
+                                <a href="https://www.instagram.com/codeyapper/" target="_blank" rel="noopener noreferrer" data-cursor="Open">
+                                    <SiInstagram /> Instagram
                                 </a>
                             </div>
                         </div>
@@ -163,14 +166,13 @@ export default function Contact() {
                             <div className={styles.quickLinks}>
                                 <a href="#work" onClick={(e) => { e.preventDefault(); document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' }); }}>View Work</a>
                                 <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }}>About Me</a>
-                                <a href="/resume.pdf" target="_blank">Resume <svg
+                                <a href="/resume.pdf" target="_blank" data-cursor="Open">Resume <svg
                                     stroke="currentColor"
                                     fill="none"
                                     strokeWidth="1.25"
                                     viewBox="6 6 12 12"
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    color="#dbdbdbff"
                                     style={{ transform: "rotate(-90deg)" }}
                                     height="0.6em"
                                     width="0.6em"

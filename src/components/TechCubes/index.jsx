@@ -18,7 +18,9 @@ const RADIUS = 1;
 const ENTER_DUR = 0.3;
 const LEAVE_DUR = 0.6;
 const RIPPLE_SPEED = 2;
-const OLIVE = '#85885c';
+const ACCENT = '#D9653B';
+// Hex used for the ripple when a logo is drawn in the theme's ink colour
+const INK = '#3E332D';
 
 const hexToRgba = (hex, a) => {
   const n = parseInt(hex.slice(1), 16);
@@ -31,9 +33,9 @@ const LOGOS = {
   '0-1': { Icon: SiMongodb, color: '#47A248', label: 'MongoDB' },
   '0-3': { Icon: SiTypescript, color: '#3178C6', label: 'TypeScript' },
   '0-4': { Icon: SiRedis, color: '#DC382D', label: 'Redis' },
-  '1-0': { Icon: SiExpress, color: '#a7ab6f', label: 'Express' },
+  '1-0': { Icon: SiExpress, color: INK, ink: true, label: 'Express' },
   '1-1': { Icon: SiNodedotjs, color: '#3fa63f', label: 'Node.js' },
-  '1-2': { Icon: SiNextdotjs, color: '#1c1f1a', label: 'Next.js' },
+  '1-2': { Icon: SiNextdotjs, color: INK, ink: true, label: 'Next.js' },
   '1-3': { Icon: SiTailwindcss, color: '#06B6D4', label: 'Tailwind' },
   '1-4': { Icon: SiMysql, color: '#4479A1', label: 'MySQL' },
   '2-1': { Icon: SiJavascript, color: '#d4b830', label: 'JavaScript' },
@@ -42,7 +44,7 @@ const LOGOS = {
   '2-4': { Icon: SiPostgresql, color: '#5a86f0', label: 'Postgres' },
   '3-0': { Icon: SiSass, color: '#CC6699', label: 'SCSS' },
   '3-1': { Icon: SiDocker, color: '#2496ED', label: 'Docker' },
-  '3-2': { Icon: SiPrisma, color: '#2D3748', label: 'Prisma' },
+  '3-2': { Icon: SiPrisma, color: INK, ink: true, label: 'Prisma' },
   '3-3': { Icon: SiVitest, color: '#6E9F18', label: 'Vitest' },
   '4-0': { Icon: SiElasticsearch, color: '#005571', label: 'Elastic' },
   '4-1': { Icon: SiWebpack, color: '#1C78C0', label: 'Webpack' },
@@ -51,7 +53,7 @@ const LOGOS = {
   '4-4': { Icon: SiPostman, color: '#FF6C37', label: 'Postman' },
   '5-0': { Icon: SiDotnet, color: '#7c5cff', label: '.NET' },
   '5-2': { Icon: SiClaude, color: '#D97757', label: 'Claude' },
-  '5-3': { Icon: SiGithubcopilot, color: '#1c1f1a', label: 'Copilot' },
+  '5-3': { Icon: SiGithubcopilot, color: INK, ink: true, label: 'Copilot' },
   '5-4': { Icon: SiGithubactions, color: '#2088FF', label: 'CI / CD' },
 };
 
@@ -62,8 +64,16 @@ const groups = [
   { label: 'Backend & APIs', items: 'Node.js · Express · .NET · REST · JWT · OAuth' },
   { label: 'Data', items: 'MongoDB · PostgreSQL · MySQL · Redis · Elasticsearch · Prisma' },
   { label: 'Tooling & DevOps', items: 'Git · Docker · CI/CD · Azure · Webpack · NPM · Vitest · Postman' },
-  { label: 'AI-Native Workflow', items: 'Claude Code · GitHub Copilot — daily drivers' },
+  { label: 'AI-Native Workflow', items: 'Claude Code · GitHub Copilot · Cursor · ChatGPT — daily drivers' },
 ];
+
+const headingReveal = {
+  initial: { y: '100%' },
+  open: (i) => ({
+    y: '0%',
+    transition: { duration: 0.7, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }
+  })
+};
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -148,8 +158,8 @@ export default function TechCubes() {
     const colHit = Math.floor(((e.clientX - rect.left) / rect.width) * COLS);
     const rowHit = Math.floor(((e.clientY - rect.top) / rect.height) * ROWS);
 
-    // Ripple takes the color of the clicked cube's icon (olive if empty)
-    const base = LOGOS[`${rowHit}-${colHit}`]?.color || OLIVE;
+    // Ripple takes the color of the clicked cube's icon (terracotta if empty)
+    const base = LOGOS[`${rowHit}-${colHit}`]?.color || ACCENT;
     const rippleColor = hexToRgba(base, 0.85);
     const fadeColor = hexToRgba(base, 0);
 
@@ -252,6 +262,25 @@ export default function TechCubes() {
 
   return (
     <section id="stack" className={styles.stackSection}>
+      <div className={styles.headingContainer}>
+        <h2 className={styles.heading}>
+          {"Tech Stack /".split(" ").map((word, i) => (
+            <span key={i} className={styles.word}>
+              <motion.span
+                variants={headingReveal}
+                initial="initial"
+                whileInView="open"
+                viewport={{ once: true, margin: "-80px" }}
+                custom={i}
+              >
+                {word}
+              </motion.span>
+            </span>
+          ))}
+        </h2>
+        <span className={styles.count}>( {String(Object.keys(LOGOS).length).padStart(2, '0')} )</span>
+      </div>
+
       <div className={styles.split}>
         {/* Left — the MERN story */}
         <motion.div
@@ -291,7 +320,7 @@ export default function TechCubes() {
             <span className={`${styles.corner} ${styles.cornerTR}`} aria-hidden="true">+</span>
             <span className={`${styles.corner} ${styles.cornerBL}`} aria-hidden="true">+</span>
             <span className={`${styles.corner} ${styles.cornerBR}`} aria-hidden="true">+</span>
-            <div className={styles.scene} ref={sceneRef}>
+            <div className={styles.scene} ref={sceneRef} data-cursor="Click">
             {Array.from({ length: ROWS }).map((_, r) =>
               Array.from({ length: COLS }).map((__, c) => {
                 const logo = LOGOS[`${r}-${c}`];
@@ -315,7 +344,7 @@ export default function TechCubes() {
                         <>
                           <logo.Icon
                             className={styles.logo}
-                            style={{ color: logo.color }}
+                            style={{ color: logo.ink ? 'var(--text)' : logo.color }}
                             aria-hidden="true"
                           />
                           <span className={styles.logoLabel}>{logo.label}</span>

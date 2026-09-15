@@ -23,7 +23,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(40, 28, 22, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   opacity: 0;
@@ -85,14 +85,14 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: #e9e9ef;
+  color: var(--invert-text);
   font-weight: 500;
   line-height: 1;
   overflow: visible;
 }
 
 .sm-toggle:focus-visible {
-  outline: 2px solid #ffffffaa;
+  outline: 2px solid color-mix(in srgb, var(--invert-text) 65%, transparent);
   outline-offset: 4px;
   border-radius: 4px;
 }
@@ -165,7 +165,7 @@
   width: clamp(320px, 38vw, 480px);
   height: auto;
   max-height: calc(100vh - 20px);
-  background: #1c1f1a;
+  background: var(--invert-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   display: flex;
@@ -173,7 +173,7 @@
   padding: 5em 3em 3em 3em;
   overflow: hidden;
   z-index: 10000 !important;
-  box-shadow: 0px 0 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0 30px rgba(40, 28, 22, 0.3);
   border-radius: 16px 0 0 16px;
 }
 
@@ -184,7 +184,7 @@
   right: -5%;
   width: 300px;
   height: 300px;
-  background: radial-gradient(circle, rgba(133, 136, 92, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 15%, transparent) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -197,7 +197,7 @@
   left: -10%;
   width: 250px;
   height: 250px;
-  background: radial-gradient(circle, rgba(133, 136, 92, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 10%, transparent) 0%, transparent 70%);
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
@@ -220,7 +220,7 @@
   width: clamp(320px, 38vw, 480px);
   pointer-events: none;
   z-index: 5000;
-  filter: drop-shadow(-5px 0 15px rgba(0, 0, 0, 0.1));
+  filter: drop-shadow(-5px 0 15px rgba(40, 28, 22, 0.1));
   border-radius: 16px 0 0 16px;
   overflow: hidden;
 }
@@ -266,12 +266,12 @@
 .sm-nav-label {
   font-size: 0.65rem;
   font-weight: 600;
-  color: rgba(133, 136, 92, 0.8);
+  color: color-mix(in srgb, var(--accent) 80%, transparent);
   text-transform: uppercase;
   letter-spacing: 3px;
   margin-bottom: 0;
   padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(133, 136, 92, 0.3);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
   display: block;
 }
 
@@ -282,7 +282,7 @@
   gap: 1.5rem;
   flex-shrink: 0;
   margin-top: auto;
-  border-top: 1px solid rgba(133, 136, 92, 0.2);
+  border-top: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
   padding-top: 2rem;
 }
 
@@ -290,7 +290,7 @@
   margin: 0;
   font-size: 0.75rem;
   font-weight: 500;
-  color: rgba(245, 245, 240, 0.5);
+  color: var(--invert-muted);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -308,7 +308,7 @@
   gap: 12px;
   font-size: 1.1rem;
   font-weight: 400;
-  color: #f5f5f0;
+  color: var(--invert-text);
   text-decoration: none;
   position: relative;
   padding: 8px 0;
@@ -328,14 +328,14 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, #85885c 0%, transparent 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, transparent 100%);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 .sm-email-link:hover .sm-email {
-  color: #85885c;
+  color: var(--accent);
 }
 
 .sm-email-link:hover .sm-email::after {
@@ -347,7 +347,7 @@
   border: none;
   padding: 8px;
   cursor: pointer;
-  color: rgba(208, 208, 200, 0.5);
+  color: var(--invert-muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -360,14 +360,14 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(133, 136, 92, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   border-radius: 6px;
   transform: scale(0);
   transition: transform 0.3s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 .sm-copy-btn:hover {
-  color: #85885c;
+  color: var(--accent);
 }
 
 .sm-copy-btn:hover::before {
@@ -388,8 +388,8 @@
   top: -28px;
   left: 50%;
   transform: translateX(-50%);
-  background: #85885cff;
-  color: #fff;
+  background: var(--accent);
+  color: var(--invert-text);
   padding: 4px 12px;
   border-radius: 4px;
   font-size: 11px;
@@ -405,7 +405,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: #85885cff;
+  border-top-color: var(--accent);
 }
 
 @keyframes tooltipFadeIn {
@@ -450,7 +450,7 @@
 
 .sm-socials-item:not(:last-child)::after {
   content: '·';
-  color: rgba(133, 136, 92, 0.5);
+  color: color-mix(in srgb, var(--accent) 50%, transparent);
   margin: 0 12px;
   font-size: 1rem;
   pointer-events: none;
@@ -464,7 +464,7 @@
 .sm-socials-link {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #f5f5f0;
+  color: var(--invert-text);
   text-decoration: none;
   position: relative;
   padding: 4px 0;
@@ -481,14 +481,14 @@
   left: 0;
   width: 100%;
   height: 1px;
-  background: #85885c;
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 .sm-socials-link:hover {
-  color: #85885c;
+  color: var(--accent);
 }
 
 .sm-socials-link:hover::before {
@@ -500,7 +500,7 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--invert-text);
   text-transform: uppercase;
 }
 
@@ -516,7 +516,7 @@
 
 .sm-panel-item {
   position: relative;
-  color: #000;
+  color: var(--invert-bg);
   font-weight: 700;
   font-size: 4.5rem;
   cursor: pointer;
@@ -533,7 +533,7 @@
 
 /* Active route indicator - dot before active item */
 .sm-panel-item.active .sm-panel-itemLabel {
-  color: #85885cff;
+  color: var(--accent);
 }
 
 .sm-panel-item.active::before {
@@ -542,7 +542,7 @@
   left: -1.5rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #85885cff;
+  color: var(--accent);
   font-size: 1.5rem;
 }
 
@@ -567,17 +567,17 @@
 .sm-panel-itemLabel {
   display: inline-block;
   will-change: transform;
-  color: #f5f5f0;
+  color: var(--invert-text);
   transform-origin: 50% 100%;
 }
 
 .sm-panel-itemLabel:hover{
-  color: #85885cff;
+  color: var(--accent);
   transition: 300ms color ease-in-out;
 }
 
 .sm-panel-item:hover {
-  color: #85885cff;
+  color: var(--accent);
 }
 
 .sm-panel-list[data-numbering] {
@@ -592,7 +592,7 @@
   right: 2.8em;
   font-size: 18px;
   font-weight: 400;
-  color: var(--sm-accent, #85885cff);
+  color: var(--sm-accent, var(--accent));
   letter-spacing: 0;
   pointer-events: none;
   user-select: none;
@@ -731,13 +731,13 @@
     top: 2.5rem;
     width: 50px;
     height: 50px;
-    background: rgba(133, 136, 92, 0.15);
-    border: 1px solid rgba(133, 136, 92, 0.4);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
     font-size: 1.2rem;
   }
 
   .sm-close-button:hover {
-    background: rgba(133, 136, 92, 0.25);
+    background: color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   .sm-socials {
@@ -780,7 +780,7 @@
     display: inline-block;
     font-size: 0.75rem;
     font-weight: 500;
-    color: #f5f5f0;
+    color: var(--invert-text);
     letter-spacing: 1px;
   }
 
@@ -1027,4 +1027,9 @@
   .sm-panel-list[data-numbering] .sm-panel-item::after {
     font-size: 32px;
   }
+}
+
+/* Seven links now — size them by viewport height so the list fits short screens */
+.staggered-menu-panel .sm-panel-item {
+  font-size: clamp(1.5rem, 4.5vh, 4.2rem);
 }

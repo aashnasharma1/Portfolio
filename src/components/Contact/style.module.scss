@@ -1,12 +1,12 @@
 .contactWrapper {
     overflow: hidden;
-    background-color: #1c1f1a;
+    background-color: var(--invert-bg);
     position: relative;
 }
 
 .contact {
-    background: #1c1f1a;
-    color: #e8e8e3;
+    background: var(--invert-bg);
+    color: var(--invert-text);
     position: relative;
 }
 
@@ -29,31 +29,31 @@
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: #85885c;
+    color: var(--accent);
     font-weight: 600;
 }
 
 .headline {
-    font-family: "hero";
+    font-family: var(--font-display);
     font-size: clamp(3rem, 7vw, 6rem);
-    font-weight: 500;
+    font-weight: 800;
     line-height: 1;
     margin: 0;
-    color: #e8e8e3;
+    color: var(--invert-text);
     text-transform: uppercase;
 }
 
 .accentText {
-    color: #85885c;
-    font-style: italic;
-    font-family: "Georgia", serif;
-    text-transform: none;
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-weight: 300;
+    text-transform: lowercase;
 }
 
 .bodyText {
     font-size: 0.95rem;
     line-height: 1.7;
-    color: #888;
+    color: var(--invert-muted);
     margin: 0;
     max-width: 400px;
 }
@@ -67,14 +67,14 @@
 
 .contactBtn {
     cursor: pointer;
-    border-color: rgba(232, 232, 227, 0.2) !important;
+    border-color: var(--invert-line) !important;
 }
 
 .contactBtnInner {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: #e8e8e3;
+    color: var(--invert-text);
     text-decoration: none;
     font-size: 0.95rem;
     position: relative;
@@ -88,7 +88,7 @@
 }
 
 .contactBtn:hover .contactBtnInner {
-    color: #f5f5f0;
+    color: var(--invert-text);
 
     svg {
         transform: translate(3px, -3px);
@@ -97,9 +97,9 @@
 
 .goTopBtn {
     padding: 18px !important;
-    background-color: #707344ff;
+    background-color: transparent;
     border-radius: 50% !important;
-    border-color: rgba(232, 232, 227, 0.2) !important;
+    border-color: var(--invert-line) !important;
     cursor: pointer;
 }
 
@@ -107,7 +107,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #e8e8e3;
+    color: var(--invert-text);
     position: relative;
     z-index: 1;
     margin: 0;
@@ -119,13 +119,13 @@
 }
 
 .goTopBtn:hover .goTopBtnInner {
-    color: #f5f5f0;
+    color: var(--invert-text);
 }
 
 // Vertical Divider
 .verticalDivider {
     width: 1px;
-    background: rgba(232, 232, 227, 0.15);
+    background: var(--invert-line);
     height: 100%;
 }
 
@@ -146,14 +146,18 @@
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #666;
+    color: var(--invert-muted);
     font-weight: 600;
 }
 
 .emailLink {
-    font-family: "Georgia", serif;
+    padding: 0;
+    background: none;
+    border: none;
+    text-align: left;
+    font-family: var(--font-display);
     font-size: 1rem;
-    color: #ccc;
+    color: var(--invert-text);
     text-decoration: none;
     transition: color 0.3s ease;
     word-break: break-all;
@@ -161,7 +165,7 @@
     position: relative;
 
     &:hover {
-        color: #85885c;
+        color: var(--accent);
     }
 }
 
@@ -169,8 +173,8 @@
     position: absolute;
     bottom: calc(100% + 10px);
     left: 0;
-    background-color: #e8e8e3;
-    color: #1c1f1a;
+    background-color: var(--invert-text);
+    color: var(--invert-bg);
     padding: 8px 16px;
     border-radius: 6px;
     font-size: 0.85rem;
@@ -185,7 +189,7 @@
         top: 100%;
         left: 20px;
         border: 6px solid transparent;
-        border-top-color: #e8e8e3;
+        border-top-color: var(--invert-text);
     }
 }
 
@@ -210,7 +214,7 @@
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #aaa;
+        color: var(--invert-muted);
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.3s ease;
@@ -235,7 +239,7 @@
         }
 
         &:hover {
-            color: #85885c;
+            color: var(--accent);
 
             &::after {
                 transform-origin: left;
@@ -246,15 +250,15 @@
 }
 
 .timeDisplay {
-    font-family: "Georgia", serif;
+    font-family: var(--font-display);
     font-size: 1.6rem;
     font-weight: 500;
-    color: #ccc;
+    color: var(--invert-text);
 }
 
 .timezone {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--invert-muted);
 }
 
 .quickLinks {
@@ -263,7 +267,7 @@
     gap: 6px;
 
     a {
-        color: #aaa;
+        color: var(--invert-muted);
         text-decoration: none;
         font-size: 0.9rem;
         transition: color 0.3s ease;
@@ -291,7 +295,7 @@
         }
 
         &:hover {
-            color: #85885c;
+            color: var(--accent);
 
             &::after {
                 transform-origin: left;
@@ -300,7 +304,7 @@
 
             svg {
                 transform: rotate(-45deg) !important;
-                color: #85885c;
+                color: var(--accent);
             }
         }
     }
@@ -308,13 +312,13 @@
 
 .copyright {
     font-size: 0.75rem;
-    color: #555;
+    color: var(--invert-muted);
     margin-top: 45px;
 }
 
 .dividerLine {
     height: 1px;
-    background: rgba(232, 232, 227, 0.1);
+    background: var(--invert-line);
     width: 100%;
 }
 
@@ -322,7 +326,7 @@
 .marqueeContainer {
     width: 100%;
     overflow: hidden;
-    background: rgba(133, 136, 92, 0.08);
+    border-top: 1px solid var(--invert-line);
     padding: 40px 0;
 }
 
@@ -334,13 +338,20 @@
 }
 
 .marqueeWord {
-    font-family: "hero";
+    font-family: var(--font-display);
     font-size: clamp(4rem, 10vw, 7rem);
     font-weight: 800;
     text-transform: uppercase;
-    color: #85885c;
+    // Outlined type that fills in on hover
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--accent);
     white-space: nowrap;
     padding: 0 40px;
+    transition: color 0.5s ease;
+
+    &:hover {
+        color: var(--accent);
+    }
 }
 
 .star {
@@ -626,7 +637,7 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 25px;
         padding-top: 30px;
-        border-top: 1px solid rgba(232, 232, 227, 0.1);
+        border-top: 1px solid var(--invert-line);
     }
 
     .dividerLine {
@@ -692,10 +703,6 @@
 
             a {
                 justify-content: flex-end;
-
-                svg {
-                    display: none;
-                }
             }
         }
     }
@@ -736,7 +743,7 @@
         grid-row: 3;
         text-align: center;
         font-size: 0.75rem;
-        color: #555;
+        color: var(--invert-muted);
         margin-top: 20px;
     }
 
@@ -819,4 +826,7 @@
     .footerBar {
         padding: 15px 20px;
     }
+}
+.marqueeContainer:hover .marqueeTrack {
+    animation-play-state: paused;
 }

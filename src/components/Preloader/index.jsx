@@ -2,18 +2,19 @@
 import styles from "./style.module.scss";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { LogoMark, useLogoAnimation } from "../../common/Logo";
 
 const slideUp = {
   initial: { top: 0 },
   exit: {
     top: "-100vh",
-    transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 },
+    transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.05 },
   },
 };
 
 const opacity = {
   initial: { opacity: 0 },
-  enter: { opacity: 0.75, transition: { duration: 1, delay: 0.2 } },
+  enter: { opacity: 1, transition: { duration: 0.5, delay: 0.05 } },
 };
 
 const fadeUp = {
@@ -21,22 +22,28 @@ const fadeUp = {
   enter: (delay) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.8, delay, ease: [0.76, 0, 0.24, 1] },
+    transition: { duration: 0.5, delay, ease: [0.76, 0, 0.24, 1] },
   }),
 };
 
 export default function Preloader({ onAnimationComplete }) {
   const [dimension, setDimension] = useState({ width: 0, height: 0 });
+  const logo = useLogoAnimation();
 
   useEffect(() => {
     setDimension({ width: window.innerWidth, height: window.innerHeight });
   }, []);
 
+  useEffect(() => {
+    if (dimension.width > 0) logo.play();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dimension.width]);
+
   // After the intro plays, tell the parent to unmount us (triggers the exit curtain)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onAnimationComplete) onAnimationComplete();
-    }, 2200);
+    }, 1000);
     return () => clearTimeout(timer);
   }, [onAnimationComplete]);
 
@@ -50,7 +57,7 @@ export default function Preloader({ onAnimationComplete }) {
     },
     exit: {
       d: targetPath,
-      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.3 },
+      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.1 },
     },
   };
 
@@ -69,12 +76,13 @@ export default function Preloader({ onAnimationComplete }) {
             animate="enter"
             className={styles.name}
           >
-            <span></span>Aashna
+            <LogoMark height={44} controls={logo.controls} className={styles.mark} />
+            Aashna Sharma
           </motion.p>
 
           <motion.p
             variants={fadeUp}
-            custom={0.6}
+            custom={0.2}
             initial="initial"
             animate="enter"
             className={styles.folio}
@@ -84,7 +92,7 @@ export default function Preloader({ onAnimationComplete }) {
 
           <motion.span
             variants={fadeUp}
-            custom={0.8}
+            custom={0.3}
             initial="initial"
             animate="enter"
             className={styles.version}
@@ -94,7 +102,7 @@ export default function Preloader({ onAnimationComplete }) {
 
           <motion.span
             variants={fadeUp}
-            custom={0.8}
+            custom={0.3}
             initial="initial"
             animate="enter"
             className={styles.loading}
