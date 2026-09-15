@@ -1,0 +1,485 @@
+.techStack {
+    position: relative;
+    z-index: 1;
+    background-color: #ecebe7;
+    color: #1c1f1a;
+    padding: 10% 80px 8%;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+
+    .header {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid rgba(28, 31, 26, 0.25);
+        padding-bottom: 2.5rem;
+    }
+
+    .headingRow {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .heading {
+        font-family: "hero";
+        font-size: 6rem;
+        line-height: 0.95;
+        text-transform: uppercase;
+        color: #1c1f1a;
+        margin: 0;
+        letter-spacing: -3px;
+        font-weight: 700;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0 24px;
+    }
+
+    .word {
+        display: inline-flex;
+        overflow: hidden;
+        padding-bottom: 0.05em;
+    }
+
+    .word span {
+        display: inline-block;
+        will-change: transform;
+    }
+
+    .count {
+        font-family: "hero";
+        font-size: 2rem;
+        font-weight: 500;
+        color: #85885cff;
+        flex-shrink: 0;
+    }
+
+    .intro {
+        display: flex;
+        justify-content: flex-end;
+        gap: 3rem;
+        margin-top: 4%;
+    }
+
+    .label {
+        font-family: "mono", monospace;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b6169;
+        white-space: nowrap;
+    }
+
+    .introText {
+        font-size: 1.05rem;
+        line-height: 1.5;
+        color: #1c1f1a;
+        margin: 0;
+        max-width: 42ch;
+        font-weight: 500;
+    }
+
+    .tierLabel {
+        font-family: "mono", monospace;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b6169;
+    }
+
+    // ---- Core tier: pinned horizontal panels ----
+    // Explicit 100vw + left margin (NOT negative side margins): the flex parent
+    // would otherwise stretch this to content width and the pin clips 160px.
+    .horizWrap {
+        position: relative;
+        width: 100vw;
+        margin: 0 0 0 -80px;
+        background-color: #ecebe7;
+    }
+
+    .horizTop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 2rem;
+        padding: 2.5rem 80px 1.75rem;
+        pointer-events: none;
+    }
+
+    .progress {
+        display: none;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    .progressCount {
+        font-family: "mono", monospace;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        color: #6b6169;
+    }
+
+    .progressBar {
+        display: block;
+        width: 160px;
+        height: 2px;
+        background: rgba(28, 31, 26, 0.18);
+        overflow: hidden;
+    }
+
+    .progressFill {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: #1c1f1a;
+        transform: scaleX(0);
+        transform-origin: left center;
+        will-change: transform;
+    }
+
+    .track {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .panel {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        min-height: 62vh;
+        padding: 4rem 80px;
+        border-top: 1px solid rgba(28, 31, 26, 0.25);
+        overflow: hidden;
+    }
+
+    .panelIndex {
+        font-family: "mono", monospace;
+        font-size: 0.95rem;
+        color: #85885c;
+    }
+
+    .panelIcon {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        right: 9%;
+        transform: translateY(-50%);
+        font-size: clamp(11rem, 30vh, 19rem);
+        color: var(--brand);
+        opacity: 0.85;
+        will-change: transform;
+    }
+
+    .panelMain {
+        position: relative;
+        z-index: 2;
+        margin: auto 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2.4rem;
+        padding: 2rem 0;
+    }
+
+    .panelName {
+        font-family: "hero";
+        font-size: clamp(4.2rem, 10.5vw, 10rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: -4px;
+        line-height: 0.9;
+        color: #1c1f1a;
+        margin: 0;
+    }
+
+    .panelNameMask {
+        display: inline-flex;
+        overflow: hidden;
+        padding-bottom: 0.06em;
+    }
+
+    .panelNameMask span {
+        display: inline-block;
+        will-change: transform;
+    }
+
+    // Related technologies — outlined type inside each panel
+    .related {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .relatedLabel {
+        font-family: "mono", monospace;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b6169;
+    }
+
+    .relatedList {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        column-gap: 1.2rem;
+        row-gap: 0.5rem;
+        margin: 0;
+        max-width: 62ch;
+    }
+
+    .relatedItem {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 1.2rem;
+    }
+
+    .wordMask {
+        display: inline-flex;
+        overflow: hidden;
+        padding-bottom: 0.08em;
+    }
+
+    .relatedWord {
+        font-family: "hero";
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: clamp(1.6rem, 2.6vw, 2.5rem);
+        letter-spacing: -0.5px;
+        line-height: 1;
+        display: inline-block;
+        will-change: transform;
+        color: transparent;
+        -webkit-text-stroke: 1px rgba(28, 31, 26, 0.55);
+        transition: color 0.35s ease, -webkit-text-stroke-color 0.35s ease;
+
+        &:hover {
+            color: var(--brand);
+            -webkit-text-stroke-color: var(--brand);
+        }
+    }
+
+    .sep {
+        font-family: "mono", monospace;
+        font-size: 0.9rem;
+        color: #85885c;
+    }
+
+    .panelFooter {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+
+    .panelRole {
+        font-family: "mono", monospace;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #6b6169;
+        white-space: nowrap;
+    }
+
+    .panelDesc {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: rgba(28, 31, 26, 0.75);
+        margin: 0;
+        max-width: 36ch;
+        text-align: right;
+    }
+
+    // Horizontal mode — applied by GSAP matchMedia on capable viewports only
+    .horiz {
+        height: 100vh;
+        height: 100svh;
+        overflow: hidden;
+
+        .horizTop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 3;
+        }
+
+        .progress {
+            display: flex;
+        }
+
+        .track {
+            flex-direction: row;
+            width: max-content;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .panel {
+            flex: 0 0 100vw;
+            width: 100vw;
+            height: 100%;
+            min-height: 0;
+            padding: 130px 80px 70px;
+            border-top: none;
+            border-right: 1px solid rgba(28, 31, 26, 0.25);
+        }
+    }
+}
+
+@media (min-width: 2400px) {
+    .techStack {
+        .heading {
+            font-size: 9rem;
+        }
+
+        .relatedWord {
+            font-size: 3.2rem;
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .techStack {
+        padding-left: 60px;
+        padding-right: 60px;
+
+        .heading {
+            font-size: 4.5rem;
+        }
+
+        .horizWrap {
+            margin-left: -60px;
+        }
+
+        .horizTop {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+
+        .panel {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
+
+        .horiz .panel {
+            padding: 120px 60px 60px;
+        }
+    }
+}
+
+@media (max-width: 900px) {
+    .techStack {
+        padding: 14% 40px;
+
+        .heading {
+            font-size: 3.5rem;
+        }
+
+        .intro {
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 1rem;
+        }
+
+        .horizWrap {
+            margin-left: -40px;
+        }
+
+        .horizTop {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        .panel {
+            min-height: 52vh;
+            padding: 3rem 40px;
+        }
+
+        .panelIcon {
+            font-size: 8rem;
+            opacity: 0.5;
+            right: 6%;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .techStack {
+        padding-left: 20px;
+        padding-right: 20px;
+
+        .heading {
+            font-size: 2.6rem;
+            gap: 0 12px;
+        }
+
+        .count {
+            font-size: 1.4rem;
+        }
+
+        .horizWrap {
+            margin-left: -20px;
+        }
+
+        .horizTop {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .panel {
+            min-height: 0;
+            padding: 2.5rem 20px;
+        }
+
+        .panelIcon {
+            font-size: 5.5rem;
+            opacity: 0.4;
+            top: auto;
+            bottom: 18%;
+            transform: none;
+        }
+
+        .panelMain {
+            gap: 1.5rem;
+            padding: 1.5rem 0 2rem;
+        }
+
+        .panelName {
+            font-size: clamp(2.4rem, 11vw, 3.6rem);
+            letter-spacing: -1.5px;
+        }
+
+        .relatedWord {
+            font-size: 1.25rem;
+            -webkit-text-stroke-width: 1px;
+        }
+
+        .relatedItem {
+            gap: 0.8rem;
+        }
+
+        .relatedList {
+            column-gap: 0.8rem;
+        }
+
+        .sep {
+            font-size: 0.75rem;
+        }
+
+        .panelFooter {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .panelDesc {
+            text-align: left;
+        }
+    }
+}
