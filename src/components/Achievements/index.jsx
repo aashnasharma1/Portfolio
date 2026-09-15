@@ -131,7 +131,7 @@ export default function Achievements() {
                   <div key={fact.label} className={styles.fact}>
                     <dt className={styles.factLabel}>{fact.label}</dt>
                     <dd className={styles.factValue}>
-                      {fact.count ? <CountUp value={fact.value} /> : fact.value}
+                      {fact.count ? <CountUp value={fact.value} duration={1} /> : fact.value}
                     </dd>
                   </div>
                 ))}

@@ -63,6 +63,11 @@
         color: var(--accent);
         flex-shrink: 0;
         padding-bottom: 0.4em;
+
+        // Phones: title only
+        @media (max-width: 767px) {
+            display: none;
+        }
     }
 
     .subtextContainer {
