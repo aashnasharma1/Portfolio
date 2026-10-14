@@ -1,63 +1,62 @@
 'use client';
 import styles from './style.module.scss';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import CountUp from '../../common/CountUp';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 
 // Newest first. `end: null` means the role is ongoing.
-// Kept short on purpose — a few scannable lines per role.
+// `logo` is an optional path under /public — falls back to the `mark` monogram.
 const roles = [
   {
     company: "Control Print Ltd.",
+    mark: "CP",
+    logo: "/images/Control-Print-Logo.png",
     title: "Software Engineer",
     type: "Full-time",
     location: "Noida",
     start: "2026-08",
     end: null,
-    summary: "Building a cloud platform for QR-code lifecycle, product traceability and supply-chain analytics.",
-    metrics: [],
+    summary: "Building a cloud platform for QR-code lifecycle management, product traceability and supply-chain analytics.",
     highlights: [
-      "Scalable web apps with React, TypeScript and Node.js",
-      "REST APIs and performance work for large-scale operations"
+      "Developing scalable web applications with React, TypeScript and Node.js across the platform.",
+      "Designing and maintaining REST APIs built to handle large-scale, high-throughput operations.",
+      "Profiling and optimising performance across the stack for enterprise-grade reliability."
     ],
     tags: ["React", "TypeScript", "Node.js", "SQL", "MongoDB"]
   },
   {
     company: "AllHeart Web",
+    mark: "AH",
+    logo: "/images/All_heart_web.png",
     title: "Full Stack Engineer",
     type: "Full-time",
     location: "Chandigarh",
     start: "2025-03",
     end: "2026-04",
-    summary: "Owned features end to end, from requirements to deployment, and mentored junior developers.",
-    metrics: [
-      { value: "30%", label: "Faster delivery" },
-      { value: "30%", label: "Faster APIs" }
-    ],
+    summary: "Owned features end to end — from requirements gathering through to production deployment.",
     highlights: [
-      "Type-safe REST APIs with Node.js, Express and TypeScript",
-      "Payment gateways, JWT/OAuth and role-based access",
-      "Caching, logging and monitoring for reliability"
+      "Delivered features end to end and cut average delivery time by ~30% through tighter scoping and reusable components.",
+      "Built type-safe REST APIs with Node.js, Express and TypeScript, improving response times by ~30%.",
+      "Integrated payment gateways and implemented JWT/OAuth with role-based access control.",
+      "Added caching, structured logging and monitoring to keep production reliable.",
+      "Mentored junior developers through code reviews and pair programming."
     ],
     tags: ["TypeScript", "Node.js", "Express", "MongoDB"]
   },
   {
     company: "CG Infinity",
+    mark: "CG",
+    logo: "/images/CG_infinity.png",
     title: "Software Engineer",
     type: "Internship",
     location: "Noida",
     start: "2023-06",
     end: "2024-06",
-    summary: "Built an IT Asset Management System used by 500+ people.",
-    metrics: [
-      { value: "22%", label: "Faster load" },
-      { value: "18%", label: "Fewer bugs" },
-      { value: "4", label: "Modules shipped" }
-    ],
+    summary: "Built an IT Asset Management System used by 500+ employees across the organisation.",
     highlights: [
-      "React + TypeScript frontend on a Node.js backend",
-      "Code splitting, lazy loading and query tuning"
+      "Shipped 4 core modules from design through delivery on a React + TypeScript and Node.js stack.",
+      "Applied code splitting and lazy loading to speed up initial load times by ~22%.",
+      "Tuned database queries and tightened validation, reducing reported bugs by ~18%."
     ],
     tags: ["React", "TypeScript", "Node.js"]
   }
@@ -87,6 +86,26 @@ const formatDuration = (start, end) => {
   return parts.join(" ");
 };
 
+const monthIndex = ({ year, month }) => year * 12 + month;
+
+// Timeline drawn to scale: each role is a segment placed by its real dates,
+// so gaps between roles show as gaps. Ticks mark each January.
+const buildTimeline = () => {
+  const spans = roles.map((role) => ({ start: parseMonth(role.start), end: parseMonth(role.end) }));
+  const first = Math.min(...spans.map((s) => monthIndex(s.start)));
+  const last = Math.max(...spans.map((s) => monthIndex(s.end))) + 1;
+  const total = last - first;
+  const segments = spans.map((s) => ({
+    left: ((monthIndex(s.start) - first) / total) * 100,
+    width: ((monthIndex(s.end) + 1 - monthIndex(s.start)) / total) * 100
+  }));
+  const ticks = [];
+  for (let year = Math.floor(first / 12) + 1; year * 12 < last; year++) {
+    ticks.push({ year, left: ((year * 12 - first) / total) * 100 });
+  }
+  return { segments, ticks, firstYear: Math.floor(first / 12) };
+};
+
 const EASE = [0.22, 1, 0.36, 1];
 
 const headingReveal = {
@@ -94,188 +113,91 @@ const headingReveal = {
   open: (i) => ({ y: "0%", transition: { duration: 0.7, delay: 0.05 * i, ease: EASE } })
 };
 
-const rowReveal = {
+// Company name swaps through a mask as the active role changes
+const nameSwap = {
   initial: { y: "105%" },
-  open: (i) => ({ y: "0%", transition: { duration: 0.9, delay: 0.1 * i, ease: EASE } })
+  animate: { y: "0%", transition: { duration: 0.6, ease: EASE } },
+  exit: { y: "-105%", transition: { duration: 0.35, ease: EASE } }
 };
 
-const lineDraw = {
-  initial: { scaleX: 0 },
-  open: (i) => ({ scaleX: 1, transition: { duration: 1.1, delay: 0.1 * i, ease: EASE } })
+const fadeSwap = {
+  initial: { opacity: 0, y: 12 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1, ease: EASE } },
+  exit: { opacity: 0, y: -8, transition: { duration: 0.25, ease: EASE } }
 };
 
-function Role({ role, index, open, onToggle, onHover, dimmed, narrow }) {
-  const start = parseMonth(role.start);
-  const end = parseMonth(role.end);
-  const isCurrent = role.end === null;
+const entryReveal = {
+  initial: { opacity: 0, y: 24 },
+  open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
+};
 
+function Logo({ role, className }) {
   return (
-    <motion.li
-      className={`${styles.row} ${open ? styles.rowOpen : ''} ${dimmed ? styles.rowDim : ''}`}
-      initial="initial"
-      whileInView="open"
-      viewport={{ once: true, margin: "-60px" }}
-      onMouseEnter={() => onHover(index)}
-    >
-      <motion.span className={styles.rule} variants={lineDraw} custom={index} aria-hidden="true" />
-
-      <button
-        type="button"
-        className={styles.rowHead}
-        onClick={() => onToggle(index)}
-        aria-expanded={open}
-        data-cursor={open ? "Close" : "Open"}
-      >
-        <span className={styles.rowIndex}>{String(index + 1).padStart(2, "0")}</span>
-
-        <span className={styles.companyMask}>
-          <motion.span className={styles.company} variants={rowReveal} custom={index}>
-            {/* Duplicate rolls in from below on hover */}
-            <span className={styles.companyText} data-text={role.company}>{role.company}</span>
-          </motion.span>
-        </span>
-
-        <span className={styles.rowMeta}>
-          <span className={styles.rowRole}>{role.title}</span>
-          <span className={styles.rowDates} suppressHydrationWarning>
-            {isCurrent && <span className={styles.liveDot} aria-hidden="true" />}
-            {start.year} — {isCurrent ? "Now" : end.year}
-          </span>
-        </span>
-
-        <span className={styles.plus} aria-hidden="true" />
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            className={styles.panel}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.55, ease: EASE }}
-            onAnimationComplete={() => ScrollTrigger.refresh()}
-          >
-            <div className={styles.panelInner}>
-              <div className={styles.panelLeft}>
-                <p className={styles.panelMeta} suppressHydrationWarning>
-                  {role.type} · {formatMonth(start)} — {isCurrent ? "Present" : formatMonth(end)} · {formatDuration(start, end)} · {role.location}
-                </p>
-                <p className={styles.summary}>{role.summary}</p>
-                <ul className={styles.highlights}>
-                  {role.highlights.map((item, i) => (
-                    <motion.li
-                      key={item}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.45, delay: 0.15 + i * 0.07, ease: EASE }}
-                    >
-                      {item}
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className={styles.panelRight}>
-                {role.metrics.length > 0 && (
-                  <div className={styles.metrics}>
-                    {role.metrics.map((metric, i) => (
-                      <motion.div
-                        key={metric.label}
-                        className={styles.metric}
-                        initial={{ opacity: 0, y: 14, rotate: narrow ? 0 : i % 2 ? 3 : -3 }}
-                        animate={{ opacity: 1, y: 0, rotate: narrow ? 0 : i % 2 ? 1.5 : -1.5 }}
-                        transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.2 + i * 0.08 }}
-                      >
-                        <CountUp value={metric.value} className={styles.metricValue} />
-                        <span className={styles.metricLabel}>{metric.label}</span>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-                <div className={styles.tags}>
-                  {role.tags.map((tag, i) => (
-                    <motion.span
-                      key={tag}
-                      className={styles.tag}
-                      initial={{ opacity: 0, scale: 0.6 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ type: "spring", stiffness: 380, damping: 20, delay: 0.3 + i * 0.05 }}
-                    >
-                      {tag}
-                    </motion.span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.li>
+    <span className={className}>
+      {role.logo ? (
+        <Image src={role.logo} alt={`${role.company} logo`} fill sizes="96px" />
+      ) : (
+        <span className={styles.mark}>{role.mark}</span>
+      )}
+    </span>
   );
 }
 
-// Sticker-style card that follows the pointer while a row is hovered
-function Preview({ role, x, y, visible }) {
-  const isCurrent = role?.end === null;
-  const top = role?.metrics[0];
-
+function Timeline({ timeline, active, onSelect }) {
   return (
-    <motion.div className={styles.preview} style={{ x, y }} aria-hidden="true">
-      <AnimatePresence mode="wait">
-        {visible && role && (
-          <motion.div
-            key={role.company}
-            className={styles.previewCard}
-            initial={{ opacity: 0, scale: 0.6, rotate: -12 }}
-            animate={{ opacity: 1, scale: 1, rotate: -5 }}
-            exit={{ opacity: 0, scale: 0.7, rotate: 6 }}
-            transition={{ type: "spring", stiffness: 320, damping: 22 }}
-          >
-            <span className={styles.previewBadge}>{isCurrent ? "● Now" : role.type}</span>
-            {top ? (
-              <>
-                <span className={styles.previewValue}>{top.value}</span>
-                <span className={styles.previewLabel}>{top.label}</span>
-              </>
-            ) : (
-              <span className={styles.previewLabel}>Currently building</span>
-            )}
-            <span className={styles.previewSummary}>{role.summary}</span>
-            <span className={styles.previewTags}>{role.tags.slice(0, 3).join(" · ")}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+    <div className={styles.timeline}>
+      <div className={styles.track}>
+        {timeline.segments.map((segment, i) => (
+          <button
+            key={roles[i].company}
+            type="button"
+            className={`${styles.segment} ${i === active ? styles.segmentActive : ''}`}
+            style={{ left: `${segment.left}%`, width: `${segment.width}%` }}
+            onClick={() => onSelect(i)}
+            aria-label={`Jump to ${roles[i].company}`}
+            aria-current={i === active ? 'step' : undefined}
+          />
+        ))}
+      </div>
+      <div className={styles.ticks} aria-hidden="true">
+        <span className={styles.tick} style={{ left: '0%' }}>{timeline.firstYear}</span>
+        {timeline.ticks.map((tick) => (
+          <span key={tick.year} className={styles.tick} style={{ left: `${tick.left}%` }}>{tick.year}</span>
+        ))}
+        <span className={`${styles.tick} ${styles.tickEnd}`} style={{ left: '100%' }}>Now</span>
+      </div>
+    </div>
   );
 }
 
 export default function Experience() {
-  const listRef = useRef(null);
-  const [open, setOpen] = useState(0);
-  const [hovered, setHovered] = useState(null);
-  const [narrow, setNarrow] = useState(false);
+  const [active, setActive] = useState(0);
+  const entryRefs = useRef([]);
+  const reduced = useReducedMotion();
+  const timeline = buildTimeline();
 
+  // The entry crossing the middle of the screen is the active role
   useEffect(() => {
-    const query = window.matchMedia('(max-width: 767px)');
-    const update = () => setNarrow(query.matches);
-    update();
-    query.addEventListener('change', update);
-    return () => query.removeEventListener('change', update);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActive(Number(entry.target.dataset.index));
+        });
+      },
+      { rootMargin: '-45% 0px -45% 0px' }
+    );
+    entryRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  const x = useSpring(mouseX, { stiffness: 220, damping: 24, mass: 0.6 });
-  const y = useSpring(mouseY, { stiffness: 220, damping: 24, mass: 0.6 });
-
-  const onMove = (event) => {
-    const rect = listRef.current.getBoundingClientRect();
-    // Sit below-right of the pointer so the hovered name stays readable
-    mouseX.set(event.clientX - rect.left + 56);
-    mouseY.set(event.clientY - rect.top + 36);
+  const scrollToRole = (index) => {
+    entryRefs.current[index]?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
   };
 
+  const role = roles[active];
+  const start = parseMonth(role.start);
+  const end = parseMonth(role.end);
+  const isCurrent = role.end === null;
   const heading = "Experience /";
 
   return (
@@ -302,37 +224,111 @@ export default function Experience() {
       <div className={styles.subtextContainer}>
         <span className={styles.label}>( Work history )</span>
         <p className={styles.subtext}>
-          Tap a role to open it. Hover for the highlight reel.
+          Three roles, newest first, on a timeline drawn to scale.
         </p>
       </div>
 
-      <div
-        ref={listRef}
-        className={styles.listWrap}
-        onMouseMove={onMove}
-        onMouseLeave={() => setHovered(null)}
-      >
-        <ol className={styles.list}>
-          {roles.map((role, i) => (
-            <Role
-              key={role.company}
-              role={role}
-              index={i}
-              open={open === i}
-              dimmed={hovered !== null && hovered !== i}
-              narrow={narrow}
-              onHover={setHovered}
-              onToggle={(index) => setOpen((current) => (current === index ? null : index))}
-            />
-          ))}
-        </ol>
+      <div className={styles.ledger}>
+        {/* Pinned panel: whichever role is in view */}
+        <aside className={styles.stage} aria-live="polite">
+          <div className={styles.stageInner}>
+            <div className={styles.stageTop}>
+              <span className={styles.counter}>
+                {String(active + 1).padStart(2, '0')} <span>/ {String(roles.length).padStart(2, '0')}</span>
+              </span>
+              {isCurrent && <span className={styles.current}>Current role</span>}
+            </div>
 
-        <Preview
-          role={hovered !== null ? roles[hovered] : null}
-          x={x}
-          y={y}
-          visible={hovered !== null && hovered !== open}
-        />
+            <div className={styles.identity}>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div key={role.company} variants={fadeSwap} initial="initial" animate="animate" exit="exit">
+                  <Logo role={role} className={styles.stageLogo} />
+                </motion.div>
+              </AnimatePresence>
+
+              <div className={styles.nameMask}>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.p
+                    key={role.company}
+                    className={styles.stageName}
+                    variants={reduced ? fadeSwap : nameSwap}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                  >
+                    {role.company}
+                  </motion.p>
+                </AnimatePresence>
+              </div>
+
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p
+                  key={role.company}
+                  className={styles.stageMeta}
+                  variants={fadeSwap}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  suppressHydrationWarning
+                >
+                  <strong>{role.title}</strong>
+                  <span>{formatMonth(start)} — {isCurrent ? 'Present' : formatMonth(end)} · {formatDuration(start, end)}</span>
+                </motion.p>
+              </AnimatePresence>
+            </div>
+
+            <Timeline timeline={timeline} active={active} onSelect={scrollToRole} />
+          </div>
+        </aside>
+
+        {/* Scrolling detail, one entry per role */}
+        <ol className={styles.entries}>
+          {roles.map((item, i) => {
+            const itemStart = parseMonth(item.start);
+            const itemEnd = parseMonth(item.end);
+            return (
+              <motion.li
+                key={item.company}
+                ref={(el) => { entryRefs.current[i] = el; }}
+                data-index={i}
+                className={`${styles.entry} ${i === active ? styles.entryActive : ''}`}
+                variants={entryReveal}
+                initial="initial"
+                whileInView="open"
+                viewport={{ once: true, margin: "-80px" }}
+              >
+                <header className={styles.entryHead}>
+                  <span className={styles.entryIndex}>{String(i + 1).padStart(2, '0')}</span>
+                  <Logo role={item} className={styles.entryLogo} />
+                  <h3 className={styles.entryCompany}>{item.company}</h3>
+                  <span className={styles.entryDates} suppressHydrationWarning>
+                    {formatMonth(itemStart)} — {item.end === null ? 'Present' : formatMonth(itemEnd)}
+                  </span>
+                </header>
+
+                <p className={styles.entryMeta}>
+                  {item.title} · {item.type} · {item.location}
+                </p>
+                <p className={styles.summary}>{item.summary}</p>
+
+                <ul className={styles.highlights}>
+                  {item.highlights.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+
+                <div className={styles.stack}>
+                  <span className={styles.stackLabel}>Stack</span>
+                  <ul className={styles.tags}>
+                    {item.tags.map((tag) => (
+                      <li key={tag}>{tag}</li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.li>
+            );
+          })}
+        </ol>
       </div>
     </section>
   );

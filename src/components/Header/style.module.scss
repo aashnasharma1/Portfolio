@@ -1,15 +1,27 @@
 .header {
   position: absolute;
-  display: flex;
   z-index: 10;
   top: 0;
+  // Ruled bar on the page's table columns: logo in the long main cell,
+  // toggle + Contact in the short side cell, split by one hairline that
+  // continues as the services table's side column below
+  display: grid;
+  grid-template-columns: var(--svc-cols);
   color: var(--text);
-  padding: 28px var(--gutter);
-  justify-content: space-between;
   width: 100%;
   font-weight: 300;
   box-sizing: border-box;
-  align-items: center;
+  border-bottom: 1px solid var(--line-strong);
+  // Bar height comes from the logo's margin, not padding, so the divider
+  // always runs the full height of the bar
+  --bar-y: 28px;
+
+  > :first-child {
+    grid-column: 2;
+    align-self: center;
+    justify-self: start;
+    margin: var(--bar-y) 0 var(--bar-y) var(--rail-inset);
+  }
 
   &.lightHeader {
     color: var(--text);
@@ -25,15 +37,22 @@
   }
 
   .nav {
+    grid-column: 4;
+    // Full bar height so the divider runs edge to edge at every size
+    align-self: stretch;
     display: flex;
     align-items: center;
     gap: 0.75rem;
     justify-content: space-between;
+    padding: 0 0 0 clamp(1rem, 2vw, 1.5rem);
+    border-left: 1px solid var(--line-strong);
     .el {
       display: flex;
       flex-direction: column;
       position: relative;
-      width: 10rem;
+      width: auto;
+      flex: 1;
+      max-width: 10rem;
       justify-content: center;
       padding: 15px;
       letter-spacing: 0%;
@@ -113,14 +132,14 @@
 // Large desktop screens (1920x1080 and above)
 @media (min-width: 1600px) {
   .header {
-    padding-block: 32px;
+    --bar-y: 32px;
   }
 }
 
 // 2K monitors (2560x1440)
 @media (min-width: 2400px) {
   .header {
-    padding-block: 44px;
+    --bar-y: 44px;
     font-size: 1.4rem;
     
     
@@ -142,7 +161,7 @@
 // 4K monitors (3840x2160)
 @media (min-width: 3800px) {
   .header {
-    padding-block: 60px;
+    --bar-y: 60px;
     font-size: 2rem;
     
     
@@ -164,7 +183,19 @@
 // Responsive styles
 @media (max-width: 1024px) {
   .header {
-    padding-block: 24px;
+    --bar-y: 24px;
+    // Table columns reflow here, so the bar is simply long left / short right
+    grid-template-columns: minmax(0, 1fr) auto;
+
+    > :first-child {
+      grid-column: 1;
+      margin-left: var(--gutter);
+    }
+
+    .nav {
+      grid-column: 2;
+      padding-right: var(--gutter);
+    }
     
     .nav {
       .el {
@@ -177,7 +208,7 @@
 
 @media (max-width: 768px) {
   .header {
-    padding-block: 18px;
+    --bar-y: 18px;
     align-items: flex-start;
     
     &.lightHeader {
@@ -253,7 +284,7 @@
 
 @media (max-width: 480px) {
   .header {
-    padding-block: 14px;
+    --bar-y: 14px;
     
     
     .nav {

@@ -15,9 +15,11 @@ export default function Services() {
   const heading = "What I Do /";
 
   return (
-    <section className={styles.services}>
+    <section id="stack" className={styles.services}>
       <div className={styles.header}>
-        <div className={styles.headingContainer}>
+        <span className={styles.count} aria-hidden="true" />
+        <div className={styles.headerMain}>
+          <span className={styles.label}>( Services &amp; Stack )</span>
           <h2 className={styles.heading}>
             {heading.split(" ").map((word, i) => (
               <span key={i} className={styles.word}>
@@ -33,14 +35,10 @@ export default function Services() {
               </span>
             ))}
           </h2>
-          <span className={styles.count}>( 04 )</span>
         </div>
-        <div className={styles.subtextContainer}>
-          <span className={styles.label}>( Services )</span>
-          <p className={styles.subtext}>
-            End-to-end ownership across frontend, backend and performance, accelerated by AI.
-          </p>
-        </div>
+        <p className={styles.subtext}>
+          End-to-end ownership across frontend, backend and performance, accelerated by AI.
+        </p>
       </div>
       <StickyCards />
     </section>

@@ -2,59 +2,48 @@
 import styles from './style.module.scss';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import TiltCard from '../../common/TiltCard';
-import CountUp from '../../common/CountUp';
 
 // Newest first
 const achievements = [
   {
     title: "Smart App Development Hackathon",
     event: "Chitkara University × DigiMantra",
-    award: "Winner",
     date: "Jan 2023",
-    project: "Online ticketing app",
-    description: "A ticketing app with a user-satisfaction feature other apps lack, plus a built-in commission model.",
-    facts: [
+    description: "Built an online ticketing app with a user-satisfaction feature other apps lack, plus a built-in commission model — enough to take first place.",
+    stats: [
       { label: "Result", value: "Winner" },
-      { label: "Prize", value: "₹10,000", count: true },
-      { label: "Duration", value: "24 hrs", count: true }
+      { label: "Prize", value: "₹10,000" },
+      { label: "Built in", value: "24 hrs" }
     ],
     src: "hackathon1.jpeg"
   },
   {
     title: "The Great India Hackathon",
     event: "Reskilll",
-    award: "2nd Position",
     date: "Apr 2022",
-    project: "Connector",
-    description: "Instantly send OTPs, links, text and media between your laptop and phone.",
-    facts: [
+    description: "Built Connector, a tool to instantly send OTPs, links, text and media between your laptop and phone. Placed second overall.",
+    stats: [
       { label: "Result", value: "2nd" },
-      { label: "Prize", value: "₹20,000", count: true },
-      { label: "Duration", value: "24 hrs", count: true }
+      { label: "Prize", value: "₹20,000" },
+      { label: "Built in", value: "24 hrs" }
     ],
     src: "hackathon2.png"
   }
 ];
 
+const EASE = [0.22, 1, 0.36, 1];
+
 const headingReveal = {
   initial: { y: "100%" },
-  open: (i) => ({
-    y: "0%",
-    transition: { duration: 0.7, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }
-  })
+  open: (i) => ({ y: "0%", transition: { duration: 0.7, delay: 0.05 * i, ease: EASE } })
 };
 
-const cardReveal = {
-  initial: { opacity: 0, y: 50 },
-  open: (i) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.8, delay: 0.12 * i, ease: [0.22, 1, 0.36, 1] }
-  })
+const itemReveal = {
+  initial: { opacity: 0, y: 40 },
+  open: (i) => ({ opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.12 * i, ease: EASE } })
 };
 
-// Image wipes up from the bottom as the card enters
+// Image wipes up from the bottom as it enters
 const imageWipe = {
   initial: { clipPath: "inset(100% 0% 0% 0%)" },
   open: (i) => ({
@@ -96,48 +85,42 @@ export default function Achievements() {
 
       <div className={styles.grid}>
         {achievements.map((item, i) => (
-          <TiltCard
+          <motion.article
             key={item.title}
-            as="article"
-            maxTilt={5}
-            className={styles.card}
-            variants={cardReveal}
+            className={styles.item}
+            variants={itemReveal}
             initial="initial"
             whileInView="open"
             viewport={{ once: true, margin: "-80px" }}
             custom={i}
           >
-            <motion.div className={styles.imageWrapper} variants={imageWipe} custom={i}>
-              <Image
-                src={`/images/${item.src}`}
-                alt={`${item.event} — ${item.title}`}
-                fill
-                sizes="(max-width: 900px) 100vw, 45vw"
-                className={styles.image}
-              />
-              <span className={styles.year}>{item.date}</span>
-            </motion.div>
+            <div className={styles.imageWrapper}>
+              <motion.div className={styles.imageClip} variants={imageWipe} custom={i}>
+                <Image
+                  src={`/images/${item.src}`}
+                  alt={`${item.event} — ${item.title}`}
+                  fill
+                  sizes="(max-width: 900px) 100vw, 45vw"
+                  className={styles.image}
+                />
+              </motion.div>
 
-            <div className={styles.cardContent}>
-              <span className={styles.awardBadge}>{item.award}</span>
-              <h3 className={styles.title}>{item.title}</h3>
-              <p className={styles.meta}>{item.event}</p>
-              <p className={styles.project}>
-                <span className={styles.projectLabel}>Built</span> {item.project}
-              </p>
-              <p className={styles.description}>{item.description}</p>
-              <dl className={styles.facts}>
-                {item.facts.map((fact) => (
-                  <div key={fact.label} className={styles.fact}>
-                    <dt className={styles.factLabel}>{fact.label}</dt>
-                    <dd className={styles.factValue}>
-                      {fact.count ? <CountUp value={fact.value} duration={1} /> : fact.value}
-                    </dd>
-                  </div>
+              <div className={styles.stats} aria-hidden="true">
+                {item.stats.map((stat) => (
+                  <span key={stat.label} className={styles.stat}>
+                    <span className={styles.statLabel}>{stat.label}</span>
+                    <span className={styles.statValue}>{stat.value}</span>
+                  </span>
                 ))}
-              </dl>
+              </div>
             </div>
-          </TiltCard>
+
+            <div className={styles.content}>
+              <h3 className={styles.title}>{item.title}</h3>
+              <p className={styles.meta}>{item.event} · {item.date}</p>
+              <p className={styles.description}>{item.description}</p>
+            </div>
+          </motion.article>
         ))}
       </div>
     </section>

@@ -4,3 +4,76 @@
   max-width: 100vw;
   overscroll-behavior-y: none;
 }
+
+/* Scroll-over layer: sits above the sticky footer and carries a solid
+   background so the footer stays hidden until this layer's bottom edge
+   (the curtain curve) scrolls past it. */
+.scrollStage {
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg);
+}
+
+/* Page-wide line system, kept light: two vertical guides on the page
+   margins and a hairline across the top of every section. The services
+   table puts its own column lines on the same margins, so they join up.
+   Guides sit above section backgrounds but never take pointer events. */
+.ruled {
+  position: relative;
+
+  :global(section) {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  /* The hero opens the page, so it gets no rule above it */
+  > :global(section):first-child {
+    border-top: 0;
+  }
+}
+
+.ruled::before,
+.ruled::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  width: 1px;
+  background-color: var(--line-strong);
+  pointer-events: none;
+}
+
+/* Just outside the content edge, matching the services table's outer columns */
+.ruled::before {
+  left: calc(var(--rail) - 1px);
+}
+
+.ruled::after {
+  right: var(--rail);
+}
+
+/* Below desktop the margins are too tight for guides to read as anything
+   but clutter, so only the section rules remain */
+@media (max-width: 1024px) {
+  .ruled::before,
+  .ruled::after {
+    display: none;
+  }
+}
+
+/* The footer is pinned to the bottom of the viewport and sits behind the
+   stage (lower z-index), so the stage scrolls up and over it to reveal it. */
+.footerReveal {
+  position: sticky;
+  bottom: 0;
+  z-index: 0;
+}
+
+/* Below desktop the footer stacks into one tall column that exceeds the
+   short viewport; pinning there would push its headline permanently above
+   the fold, so let it scroll in normally instead. */
+@media (max-width: 1024px) {
+  .footerReveal {
+    position: relative;
+  }
+}

@@ -8,8 +8,10 @@
     // Half the portrait's final width — keeps side bios clear of it
     // Grows with width but never taller than ~46% of the screen
     --portrait-w: clamp(240px, min(23vw, 46svh * 0.745), 420px);
-    // Half the portrait's final (1.5×) width — keeps side bios clear of it
-    --portrait-half: calc(var(--portrait-w) * 0.75);
+    // How much the portrait grows into its about pose (read by index.jsx too)
+    --about-scale: 1.15;
+    // Half the portrait's final width — keeps side bios clear of it
+    --portrait-half: calc(var(--portrait-w) * var(--about-scale) / 2);
 }
 
 .aboutAnchor {
@@ -211,7 +213,6 @@
     border-radius: 8px;
     overflow: hidden;
     backface-visibility: hidden;
-    box-shadow: var(--shadow-card);
 }
 
 .faceBack {
@@ -240,7 +241,7 @@
 .copyright {
     position: absolute;
     bottom: 6%;
-    left: 5%;
+    left: var(--gutter);
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 2.4rem;
@@ -250,7 +251,7 @@
 .since {
     position: absolute;
     bottom: 6.5%;
-    right: 5%;
+    right: var(--gutter);
     font-family: var(--font-mono);
     font-size: 0.9rem;
     letter-spacing: 1px;
@@ -261,7 +262,7 @@
 .heroEmail {
     position: absolute;
     bottom: 14%;
-    left: 5%;
+    left: var(--gutter);
     z-index: 5;
     pointer-events: auto;
     display: flex;
@@ -316,7 +317,7 @@
 .heroResume {
     position: absolute;
     bottom: 14%;
-    right: 5%;
+    right: var(--gutter);
     z-index: 5;
     pointer-events: auto;
     display: inline-flex;
@@ -351,7 +352,7 @@
 .hey {
     position: absolute;
     top: 12%;
-    left: 5%;
+    left: var(--gutter);
     margin: 0;
     font-family: var(--font-display);
     font-weight: 700;
@@ -363,7 +364,7 @@
 .bioLeft {
     position: absolute;
     bottom: 15%;
-    left: 5%;
+    left: var(--gutter);
     margin: 0;
     max-width: min(24ch, calc(45% - var(--portrait-half) - 24px));
     font-family: var(--font-display);
@@ -376,7 +377,7 @@
 .bioRight {
     position: absolute;
     bottom: 15%;
-    right: 5%;
+    right: var(--gutter);
     max-width: min(34ch, calc(45% - var(--portrait-half) - 24px));
     display: flex;
     flex-direction: column;

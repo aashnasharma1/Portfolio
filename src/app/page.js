@@ -11,8 +11,7 @@ import Experience from '../components/Experience';
 import Achievements from '../components/Achievements';
 import Contact from '../components/Contact';
 import Services from '../components/Services';
-import TechCubes from '../components/TechCubes';
-import Philosophy from '../components/Philosophy';
+import ContactCurtain from '../components/ContactCurtain';
 import LabelCursor from '@/common/LabelCursor';
 import ScrollIndicators from '../components/ScrollIndicators';
 
@@ -61,15 +60,23 @@ export default function Home() {
       <LabelCursor />
       <ScrollIndicators />
       <div style={{ opacity: startAnimations ? 1 : 0, transition: 'opacity 0.3s' }}>
-        <Landing startAnimations={startAnimations} />
-        <Services />
-        <TechCubes />
-        <AboutMe />
-        <Experience />
-        <div id="work"><Projects /></div>
-        <Achievements />
-        <Philosophy />
-        <div id="contact"><Contact /></div>
+        {/* Everything above the footer rides on a higher layer with a solid
+            background, so it scrolls OVER the sticky footer pinned below —
+            the curtain's curved edge becomes the reveal line. */}
+        <div className={styles.scrollStage}>
+          {/* Ruled stage: margin guides from the hero down to the footer
+              curve, plus a rule atop each section after the hero. */}
+          <div className={styles.ruled}>
+          <Landing startAnimations={startAnimations} />
+          <Services />
+          <AboutMe />
+          <Experience />
+          <div id="work"><Projects /></div>
+          <Achievements />
+          <ContactCurtain />
+          </div>
+        </div>
+        <div id="contact" className={styles.footerReveal}><Contact /></div>
       </div>
     </main>
   )

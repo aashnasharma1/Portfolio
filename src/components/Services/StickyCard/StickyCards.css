@@ -1,247 +1,401 @@
+/* Ruled-table layout: every card is one row of hairline-bordered cells.
+   Columns (shared with the section header via --svc-cols on .services):
+   index | title + description | capabilities + tools | animated shape */
 .sticky-cards {
-    --stack-base: 96px;
-    --stack-step: 112px;
-    position: relative;
-    width: 100%;
-    /* Room after the last card so the full stack stays visible briefly */
-    padding-bottom: 8vh;
+  --stack-base: 96px;
+  --stack-step: 112px;
+  position: relative;
+  width: 100%;
+  /* Space after the last card stays in the first card's light tone */
+  background-color: #ede6e1;
+}
+
+/* Hold the finished stack on screen for a moment before it leaves. An
+   in-flow spacer, not padding: sticky travel stops at the content box. */
+.sticky-cards::after {
+  content: "";
+  display: block;
+  height: 30vh;
+}
+
+.sticky-rails {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: var(--svc-cols);
+  pointer-events: none;
+}
+
+.sticky-rails span {
+  border-right: 1px solid var(--line-strong);
+}
+
+/* Tablet and phone reflow the cards, so the rails would not line up */
+@media (max-width: 1024px) {
+  .sticky-rails {
+    display: none;
+  }
+}
+
+:root[data-theme="dark"] .sticky-cards {
+  background-color: #2d2622;
 }
 
 .sticky-card {
-    position: sticky;
-    top: calc(var(--stack-base) + var(--i) * var(--stack-step));
-    z-index: calc(var(--i) + 1);
-    width: 100%;
-    min-height: 360px;
-    box-sizing: border-box;
-    padding: 2.5rem max(var(--gutter), calc((100% - var(--container)) / 2)) 3rem;
-    display: grid;
-    grid-template-columns: minmax(200px, 4fr) 8fr;
-    grid-template-areas:
-        "index title"
-        "shape content";
-    column-gap: clamp(2rem, 5vw, 5rem);
-    row-gap: 1.5rem;
-    align-items: start;
-    border-top: 1px solid var(--line);
-    border-radius: 28px 28px 0 0;
-    background-color: var(--surface);
-    box-shadow: 0 -18px 40px -28px rgba(40, 28, 22, 0.25);
-    overflow: hidden;
-    isolation: isolate;
+  position: sticky;
+  top: calc(var(--stack-base) + var(--i) * var(--stack-step));
+  z-index: calc(var(--i) + 1);
+  width: 100%;
+  min-height: 360px;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: var(--svc-cols);
+  grid-template-areas: "index main skills shape .";
+  border-top: 1px solid var(--line-strong);
+  background-color: var(--card-bg);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.sticky-card:nth-child(even) {
-    background-color: var(--bg-alt);
+/* Close the table under the last card */
+.sticky-card:last-of-type {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+/* Soft warm pastel, deepening a little per card */
+.sticky-card:nth-of-type(1) {
+  --card-bg: #ede6e1;
+}
+.sticky-card:nth-of-type(2) {
+  --card-bg: #ebe2dc;
+}
+.sticky-card:nth-of-type(3) {
+  --card-bg: #e9ded7;
+}
+.sticky-card:nth-of-type(4) {
+  --card-bg: #e7dbd3;
+}
+
+:root[data-theme="dark"] .sticky-card:nth-of-type(1) {
+  --card-bg: #2d2622;
+}
+:root[data-theme="dark"] .sticky-card:nth-of-type(2) {
+  --card-bg: #2b2420;
+}
+:root[data-theme="dark"] .sticky-card:nth-of-type(3) {
+  --card-bg: #29221f;
+}
+:root[data-theme="dark"] .sticky-card:nth-of-type(4) {
+  --card-bg: #28211d;
 }
 
 /* Soft accent light that follows the pointer (vars from usePointerGlow) */
 .sticky-card-spotlight {
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    opacity: 0;
-    background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 50%), var(--accent-glow), transparent 65%);
-    transition: opacity 0.4s ease;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 50%), var(--accent-glow), transparent 65%);
+  transition: opacity 0.4s ease;
 }
 
 .sticky-card:hover .sticky-card-spotlight {
-    opacity: 1;
+  opacity: 1;
 }
 
+/* ---------- Cells ---------- */
+
 .sticky-card-index {
-    grid-area: index;
-    font-family: var(--font-mono);
-    font-size: clamp(1.1rem, 2vw, 2rem);
-    font-weight: 500;
-    line-height: 1.6;
-    color: var(--accent-text);
+  grid-area: index;
+  padding: 1.6rem 0;
+  text-align: center;
+  border-right: 1px solid var(--line-strong);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+}
+
+.sticky-card-main {
+  grid-area: main;
+  min-width: 0;
+  /* Left padding = rail inset: titles start on the site's content edge */
+  padding: clamp(1.25rem, 2.2vw, 1.75rem) clamp(1.25rem, 2.5vw, 2.25rem) clamp(1.5rem, 3vw, 2.5rem) var(--rail-inset);
+  border-right: 1px solid var(--line-strong);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
 .sticky-card-title {
-    grid-area: title;
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.3rem, 3.4vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    color: var(--text);
-}
-
-.svg-box {
-    grid-area: shape;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 1rem;
-    /* Parallax toward the pointer; --px/--py rest at 0.5 */
-    transform: translate(
-        calc((var(--px, 0.5) - 0.5) * 36px),
-        calc((var(--py, 0.5) - 0.5) * 36px)
-    );
-    transition: transform 0.6s var(--ease-out);
-}
-
-.svg-box .animated-shape-box {
-    width: clamp(96px, 11vw, 150px);
-    height: clamp(96px, 11vw, 150px);
-}
-
-.sticky-card-content {
-    grid-area: content;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.1rem, 2.3vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  /* Sized to the column so even the longest title stays on one line */
+  white-space: nowrap;
+  color: var(--text);
 }
 
 .sticky-card-description {
-    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-    line-height: 1.7;
-    color: var(--muted);
-    margin: 0;
-    max-width: 56ch;
+  margin: 0;
+  max-width: 40ch;
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.65;
+  color: var(--muted);
 }
 
+/* Capabilities: tracked caps label, its tools listed beneath */
 .sticky-card-skills {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
+  grid-area: skills;
+  min-width: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-right: 1px solid var(--line-strong);
+  display: flex;
+  flex-direction: column;
 }
 
-.sticky-card-skills li {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 0.25rem;
-    border-bottom: 1px solid var(--line);
+.sticky-card-skills > li {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1.1rem clamp(1rem, 2vw, 1.5rem);
 }
 
-/* Accent underline sweeps in on hover */
-.sticky-card-skills li::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 1px;
-    background-color: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.5s var(--ease-out);
+.sticky-card-skills > li + li {
+  border-top: 1px solid var(--line);
 }
 
-.sticky-card-skills li:hover::after {
-    transform: scaleX(1);
+.skill-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
 }
 
 .sticky-card-skills .skill-index {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-text);
 }
 
 .sticky-card-skills .skill-name {
-    font-size: clamp(1rem, 1.6vw, 1.5rem);
-    font-weight: 500;
-    color: var(--text);
-    transition: transform 0.4s var(--ease-out);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
-.sticky-card-skills li:hover .skill-name {
-    transform: translateX(6px);
+.skill-stack {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1.1rem;
+}
+
+/* Ink by default; the brand colour shows only on the hovered tool */
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: clamp(0.88rem, 1vw, 0.98rem);
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-soft);
+  transition: color 0.3s ease;
+}
+
+.tech-chip svg {
+  flex-shrink: 0;
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--text);
+  transition: color 0.3s ease, transform 0.5s var(--ease-out);
+}
+
+.tech-chip:hover {
+  color: var(--text);
+}
+
+.tech-chip:hover svg {
+  color: var(--brand, var(--text));
+  transform: translateY(-2px);
+}
+
+/* The visual cell, in place of an image */
+.svg-box {
+  grid-area: shape;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  /* Parallax toward the pointer; --px/--py rest at 0.5 */
+  transform: translate(
+    calc((var(--px, 0.5) - 0.5) * 28px),
+    calc((var(--py, 0.5) - 0.5) * 28px)
+  );
+  transition: transform 0.6s var(--ease-out);
+}
+
+.svg-box .animated-shape-box {
+  width: clamp(96px, 10vw, 150px);
+  height: clamp(96px, 10vw, 150px);
+}
+
+/* Docks into the visible strip while the next card covers this one
+   (--dock 0→1, offset and scale set from StickyCard.jsx) */
+.svg-dock {
+  transform:
+    translateY(calc(var(--dock-y, 0px) * var(--dock, 0)))
+    scale(calc(1 - (1 - var(--dock-scale, 1)) * var(--dock, 0)));
+  transform-origin: 50% 50%;
+  will-change: transform;
 }
 
 @media (min-width: 2400px) {
-    .sticky-cards {
-        --stack-base: 130px;
-        --stack-step: 150px;
-    }
+  .sticky-cards {
+    --stack-base: 130px;
+    --stack-step: 150px;
+  }
 
-    .sticky-card {
-        min-height: 460px;
-    }
+  .sticky-card {
+    min-height: 460px;
+  }
 
-    .svg-box .animated-shape-box {
-        width: 200px;
-        height: 200px;
-    }
+  .svg-box .animated-shape-box {
+    width: 200px;
+    height: 200px;
+  }
 }
 
-/* Tablet */
+/* Tablet: the shape tucks into the index column under the number */
 @media (max-width: 1024px) {
-    .sticky-cards {
-        --stack-base: 92px;
-        --stack-step: 96px;
-    }
+  .sticky-cards {
+    --stack-base: 92px;
+    --stack-step: 96px;
+  }
 
-    .sticky-card {
-        grid-template-columns: 110px 1fr;
-        min-height: 320px;
-        padding-top: 2rem;
-    }
+  .sticky-card {
+    grid-template-areas:
+      "index main skills"
+      "shape main skills";
+    grid-template-rows: auto 1fr;
+    min-height: 320px;
+  }
+
+  .sticky-card-index {
+    padding-inline: 0.75rem;
+    text-align: center;
+  }
+
+  /* The main column is wider relative to the screen here, so titles can be
+     larger and still fit on one line */
+  .sticky-card-title {
+    font-size: clamp(1.15rem, 2.9vw, 1.6rem);
+  }
+
+  .sticky-card-main {
+    padding-left: clamp(1.25rem, 2.5vw, 2.25rem);
+  }
+
+  .svg-box {
+    align-items: flex-start;
+    padding: 0 0.75rem 1.5rem;
+    border-right: 1px solid var(--line-strong);
+    transform: none;
+  }
+
+  .svg-box .animated-shape-box {
+    width: 56px;
+    height: 56px;
+  }
+
+  .sticky-card-skills {
+    border-right: 0;
+  }
 }
 
-/* Phones: number, title and a small shape share the sticky strip */
+/* Phones: number, title and a small shape share the sticky strip;
+   capabilities drop to a full-width row beneath */
 @media (max-width: 767px) {
-    .sticky-cards {
-        --stack-base: 84px;
-        --stack-step: 84px;
-        padding-bottom: 12vh;
-    }
+  .sticky-cards {
+    --stack-base: 84px;
+    /* Just the number + title row stays visible; the description (which
+       starts below 1rem padding + 2.2em title + 1rem gap) stays covered */
+    --stack-step: 72px;
+  }
 
-    .sticky-card {
-        grid-template-columns: auto 1fr auto;
-        grid-template-areas:
-            "index title shape"
-            "content content content";
-        column-gap: 0.85rem;
-        row-gap: 1.25rem;
-        min-height: 0;
-        padding: 1.25rem var(--gutter) 2rem;
-        border-radius: 22px 22px 0 0;
-    }
+  .sticky-card {
+    grid-template-areas:
+      "index main shape"
+      "skills skills skills";
+    grid-template-rows: auto auto;
+    min-height: 0;
+  }
 
-    .sticky-card-index {
-        font-size: 0.9rem;
-        line-height: 1.9;
-    }
+  .sticky-card-index {
+    padding: 1.15rem 0.75rem;
+    font-size: 0.75rem;
+  }
 
-    .sticky-card-title {
-        font-size: clamp(1.15rem, 5.4vw, 1.5rem);
-        min-height: 2.2em;
-    }
+  .sticky-card-main {
+    padding: 1rem;
+    gap: 1rem;
+  }
 
-    .svg-box {
-        padding-top: 0;
-        transform: none;
-    }
+  .sticky-card-title {
+    font-size: clamp(1.15rem, 5.4vw, 1.5rem);
+    min-height: 2.2em;
+    white-space: normal;
+  }
 
-    .svg-box .animated-shape-box {
-        width: 44px;
-        height: 44px;
-    }
+  .sticky-card-description {
+    font-size: 0.9rem;
+  }
 
-    .sticky-card-skills li {
-        padding: 0.8rem 0.25rem;
-    }
+  .svg-box {
+    align-items: flex-start;
+    padding: 1rem 0.75rem;
+    border-right: 0;
+  }
+
+  .svg-box .animated-shape-box {
+    width: 40px;
+    height: 40px;
+  }
+
+  .sticky-card-skills {
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .sticky-card-skills > li {
+    padding: 0.9rem 1rem;
+  }
+
+  .tech-chip {
+    font-size: 0.85rem;
+  }
 }
 
 /* Landscape phones: shorter strips */
 @media (max-height: 500px) and (orientation: landscape) {
-    .sticky-cards {
-        --stack-base: 16px;
-        --stack-step: 56px;
-    }
+  .sticky-cards {
+    --stack-base: 16px;
+    --stack-step: 56px;
+  }
 
-    .sticky-card {
-        min-height: 0;
-        padding-top: 1rem;
-    }
+  .sticky-card {
+    min-height: 0;
+  }
 }

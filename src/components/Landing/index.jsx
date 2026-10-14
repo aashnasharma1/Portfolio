@@ -47,8 +47,16 @@ export default function Home({ startAnimations = false }) {
   useEffect(() => {
     const query = window.matchMedia(STACKED_QUERY);
     const update = () => {
-      if (!query.matches || !stageRef.current || !cardRef.current || !heyRef.current) {
-        setAboutPose({ x: 0, y: 0, scale: 1.5 });
+      if (!stageRef.current || !cardRef.current || !heyRef.current) return;
+      if (!query.matches) {
+        // Desktop: grow in place, but lift it if needed so its bottom edge
+        // keeps clear of the section rule below
+        const scale = parseFloat(getComputedStyle(container.current).getPropertyValue("--about-scale")) || 1.15;
+        const vh = window.innerHeight;
+        const halfHeight = (cardRef.current.offsetHeight * scale) / 2;
+        const centre = stageRef.current.offsetTop;
+        const lowest = vh - Math.max(56, vh * 0.1) - halfHeight;
+        setAboutPose({ x: 0, y: Math.min(0, lowest - centre), scale });
         setAboutGap(null);
         return;
       }

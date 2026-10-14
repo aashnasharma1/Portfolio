@@ -37,13 +37,30 @@
   --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
 
   /* Layout rhythm */
-  --container: 1280px;
+  /* Wide enough that up to ~1760px screens the page gutter sets the content
+     edge, so every section lines up with the hero and the guide lines */
+  --container: 1600px;
   --gutter: clamp(20px, 5vw, 80px);
+  /* Page guide lines sit this far outside the content edge, so text never
+     touches them; --rail is the guide's distance from the viewport edge */
+  --rail-inset: clamp(12px, 1.6vw, 24px);
+  --rail: calc(var(--gutter) - var(--rail-inset));
+  /* Ruled-table columns shared by the navbar and the services table:
+     margin | main | middle | side | margin */
+  --svc-cols: var(--rail) minmax(0, 5fr) minmax(0, 4fr) minmax(0, 2.2fr) var(--rail);
   --section-y: clamp(56px, 7vw, 112px);
   --radius-card: 20px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: light;
+}
+
+@media (max-width: 1024px) {
+  :root { --svc-cols: 88px minmax(0, 1fr) minmax(0, 1fr); }
+}
+
+@media (max-width: 767px) {
+  :root { --svc-cols: 52px minmax(0, 1fr) 64px; }
 }
 
 :root[data-theme="dark"] {
