@@ -6,6 +6,12 @@
     height: 170vh;
     box-sizing: border-box;
     background-color: var(--bg);
+    // Same fine stripes as the page frame, carried across the whole section
+    background-image: repeating-linear-gradient(
+        to bottom,
+        var(--frame-stripe) 0 1px,
+        transparent 1px 4px
+    );
     color: var(--text);
 }
 
@@ -24,13 +30,6 @@
     overflow: hidden;
 }
 
-.label {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--accent-text);
-}
 
 .heading {
     margin: 0;
@@ -54,7 +53,7 @@
     white-space: nowrap;
 }
 
-// Letters pop up and turn terracotta under the pointer
+// Letters pop up and turn the accent colour under the pointer
 .letter {
     display: inline-block;
     will-change: transform, opacity;
@@ -78,7 +77,7 @@
     position: relative;
     width: min(240px, 50vw);
     height: 2px;
-    border-radius: 2px;
+    border-radius: 0;
     background-color: var(--line);
     overflow: hidden;
 }
@@ -87,6 +86,19 @@
     position: absolute;
     inset: 0 auto 0 0;
     background-color: var(--accent);
+}
+
+// Phones: a normal-height block; the fill runs as it scrolls through
+@media (max-width: 767px) {
+    .aboutMe {
+        height: auto;
+    }
+
+    .sticky {
+        position: relative;
+        height: auto;
+        padding-block: clamp(4rem, 14vw, 6rem);
+    }
 }
 
 @media (max-height: 500px) and (orientation: landscape) {

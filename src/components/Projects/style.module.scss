@@ -92,7 +92,7 @@
 }
 
 .rowActive .name {
-    color: var(--accent);
+    color: var(--ink-strong);
 }
 
 @media (hover: hover) {
@@ -101,7 +101,7 @@
     }
 
     .rowActive .nameButton:hover .name {
-        color: var(--accent);
+        color: var(--accent-text);
     }
 }
 
@@ -139,37 +139,6 @@
     }
 }
 
-// Accent sweeps across near-black text once as the row opens
-.rowActive .meta dd {
-    background-image: linear-gradient(
-        100deg,
-        var(--ink-strong) 0%,
-        var(--ink-strong) 28%,
-        var(--accent) 40%,
-        var(--accent) 60%,
-        var(--ink-strong) 72%,
-        var(--ink-strong) 100%
-    );
-    background-size: 200% auto;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    animation: metaShimmer 1s var(--ease-out) forwards;
-}
-
-@keyframes metaShimmer {
-    from { background-position: 150% center; }
-    to { background-position: -50% center; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .rowActive .meta dd {
-        animation: none;
-        color: var(--text);
-        -webkit-text-fill-color: var(--text);
-    }
-}
 
 // ---- Visit button ----
 .visit {
@@ -178,7 +147,7 @@
     gap: 0.55rem;
     padding: 0.7rem 1.2rem;
     border: 1px solid var(--line-strong);
-    border-radius: 999px;
+    border-radius: 0;
     font-family: var(--font-mono);
     font-size: 0.78rem;
     letter-spacing: 0.3px;
@@ -223,15 +192,12 @@
     position: relative;
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
-    overflow: hidden;
-    background-color: var(--surface);
-    border: 1px solid var(--line);
+    // Laptop renders (transparent WebP) — no frame of our own
+    aspect-ratio: 900 / 560;
     text-decoration: none;
 
     img {
-        object-fit: cover;
-        object-position: top;
+        object-fit: contain;
         transition: transform 0.6s var(--ease-out);
     }
 }
@@ -240,6 +206,83 @@
     .thumb:hover img {
         transform: scale(1.04);
     }
+}
+
+// ---- Cards (phones and small tablets) ----
+.cards {
+    @include container;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 1.5rem;
+    border-top: 1px solid var(--line-strong);
+    padding-top: 1.75rem;
+}
+
+.card {
+    min-width: 0;
+}
+
+.cardInner {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+}
+
+// Laptop render on top, full card width
+.cardImage {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 900 / 560;
+
+    img {
+        object-fit: contain;
+    }
+}
+
+.cardBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.cardHead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.cardName {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 8vw, 2.4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--text);
+}
+
+.cardYear {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent-text);
+}
+
+.cardMeta {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card .visit {
+    align-self: flex-start;
+    color: var(--text);
 }
 
 // ---- Tablet ----
@@ -276,4 +319,10 @@
     .metaInner {
         gap: 1rem 2rem;
     }
+
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
 }

@@ -1,5 +1,6 @@
 "use client";
 import styles from "./style.module.scss";
+import SectionTag from '../../common/SectionTag';
 import { motion } from "framer-motion";
 import StickyCards from "./StickyCard/StickyCard";
 
@@ -16,10 +17,10 @@ export default function Services() {
 
   return (
     <section id="stack" className={styles.services}>
+      <SectionTag>Services &amp; Stack</SectionTag>
       <div className={styles.header}>
         <span className={styles.count} aria-hidden="true" />
         <div className={styles.headerMain}>
-          <span className={styles.label}>( Services &amp; Stack )</span>
           <h2 className={styles.heading}>
             {heading.split(" ").map((word, i) => (
               <span key={i} className={styles.word}>

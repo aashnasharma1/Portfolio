@@ -1,5 +1,6 @@
 'use client';
 import styles from './style.module.scss';
+import SectionTag from '../../common/SectionTag';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -57,6 +58,7 @@ export default function Achievements() {
 
   return (
     <section id="achievements" className={styles.achievements}>
+      <SectionTag>Hackathons</SectionTag>
       <div className={styles.headingContainer}>
         <h2 className={styles.heading}>
           {heading.split(" ").map((word, i) => (
@@ -77,7 +79,6 @@ export default function Achievements() {
       </div>
 
       <div className={styles.subtextContainer}>
-        <span className={styles.label}>( Hackathons )</span>
         <p className={styles.subtext}>
           Full products, built and shipped in 24 hours.
         </p>

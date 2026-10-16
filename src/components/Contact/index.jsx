@@ -1,201 +1,143 @@
 'use client';
 import styles from './style.module.scss';
-import { useRef, useState, useEffect } from 'react';
-import { useScroll, motion, useTransform } from 'framer-motion';
-import { FiArrowUp, FiArrowUpRight } from 'react-icons/fi';
-import { SiLinkedin, SiGithub, SiInstagram } from 'react-icons/si';
-import Rounded from '../../common/RoundedButton';
+import { useState } from 'react';
+import { FiArrowUpRight, FiArrowUp } from 'react-icons/fi';
 
-const Star = () => (
-    <svg className={styles.star} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M100 0C103.395 53.7596 146.24 96.6052 200 100C146.24 103.395 103.395 146.24 100 200C96.6052 146.24 53.7596 103.395 0 100C53.7596 96.6052 96.6052 53.7596 100 0Z" style={{ fill: 'var(--accent)' }}></path>
-    </svg>
-);
+const EMAIL = 'aashnajuyal@gmail.com';
 
-export default function Contact() {
-    const container = useRef(null);
-    const [myTime, setMyTime] = useState('');
-    const [showTooltip, setShowTooltip] = useState(false);
+const SITEMAP = [
+    { label: 'Home', target: 'top' },
+    { label: 'About', target: 'about' },
+    { label: 'Stack', target: 'stack' },
+    { label: 'Experience', target: 'experience' },
+    { label: 'Work', target: 'work' },
+    { label: 'Achievements', target: 'achievements' },
+];
 
-    const { scrollYProgress } = useScroll({
-        target: container,
-        offset: ["start end", "end end"]
-    });
+const ELSEWHERE = [
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/aashnasharma1/' },
+    { label: 'GitHub', href: 'https://github.com/aashnasharma1' },
+    { label: 'Resume', href: '/resume.pdf' },
+];
 
-    const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.85, 0.95, 1]);
-
-    useEffect(() => {
-        const updateTime = () => {
-            const myTimeStr = new Date().toLocaleTimeString('en-US', {
-                timeZone: 'Asia/Kolkata',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-            });
-            setMyTime(myTimeStr);
-        };
-
-        updateTime();
-        const interval = setInterval(updateTime, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const scrollToTop = () => {
+const scrollTo = (target) => {
+    if (target === 'top') {
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Short message form. There is no backend, so sending opens the visitor's
+// mail app with the message filled in, addressed to Aashna.
+function ContactForm() {
+    const [sent, setSent] = useState(false);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        const name = data.get('name').trim();
+        const from = data.get('email').trim();
+        const message = data.get('message').trim();
+        const subject = `Portfolio enquiry from ${name}`;
+        const body = `${message}\n\n— ${name} (${from})`;
+        window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        setSent(true);
     };
-
-    const copyEmail = () => {
-        const email = "aashnajuyal@gmail.com";
-
-        // Use fallback method that works everywhere
-        const textArea = document.createElement("textarea");
-        textArea.value = email;
-        textArea.style.position = "fixed";
-        textArea.style.top = "0";
-        textArea.style.left = "0";
-        textArea.style.width = "2em";
-        textArea.style.height = "2em";
-        textArea.style.padding = "0";
-        textArea.style.border = "none";
-        textArea.style.outline = "none";
-        textArea.style.boxShadow = "none";
-        textArea.style.background = "transparent";
-        textArea.style.opacity = "0";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-            document.execCommand("copy");
-            setShowTooltip(true);
-            setTimeout(() => setShowTooltip(false), 2000);
-        } catch (err) {
-            console.error("Failed to copy email:", err);
-        }
-
-        document.body.removeChild(textArea);
-    };
-
-    const marqueeContent = (
-        <>
-            <span className={styles.marqueeWord}>Software Engineer</span>
-            <Star />
-            <span className={styles.marqueeWord}>Software Engineer</span>
-            <Star />
-            <span className={styles.marqueeWord}>Software Engineer</span>
-            <Star />
-            <span className={styles.marqueeWord}>Software Engineer</span>
-            <Star />
-        </>
-    );
 
     return (
-        <div className={styles.contactWrapper} data-dark-bg="true">
-            <motion.footer style={{ scale }} ref={container} className={styles.contact} data-dark-bg="true">
+        <form className={styles.form} onSubmit={onSubmit}>
+            <div className={styles.formHead}>
+                <span className={styles.label}>Start a conversation</span>
+                <p className={styles.formTitle}>Have a project or a role in mind?</p>
+            </div>
 
-                {/* Main Content Grid */}
-                <div className={styles.contentGrid}>
+            <div className={styles.fields}>
+                <label className={styles.field}>
+                    <span>Name</span>
+                    <input id="footer-name" name="name" type="text" autoComplete="name" required placeholder="Your name" />
+                </label>
+                <label className={styles.field}>
+                    <span>Email</span>
+                    <input id="footer-email" name="email" type="email" autoComplete="email" required placeholder="you@company.com" />
+                </label>
+                <label className={`${styles.field} ${styles.fieldWide}`}>
+                    <span>Message</span>
+                    <textarea id="footer-message" name="message" rows={2} required placeholder="A line or two about what you're working on" />
+                </label>
+            </div>
 
-                    {/* Main Column */}
-                    <div className={styles.mainColumn}>
-                        <span className={styles.category}>OPPORTUNITIES</span>
-                        <h2 className={styles.headline}>
-                            Let&apos;s Build<br />
-                            <span className={styles.accentText}>Something</span><br />
-                            Together
-                        </h2>
-                        <p className={styles.bodyText}>
-                            Open to full-time positions, contract work, and interesting projects.
-                        </p>
-                        <div className={styles.ctaSection}>
-                            <Rounded backgroundColor="var(--accent)" className={styles.contactBtn}>
-                                <a href="mailto:aashnajuyal@gmail.com" className={styles.contactBtnInner} data-cursor="Email">
-                                    Get in Touch <FiArrowUpRight />
-                                </a>
-                            </Rounded>
-                            <Rounded backgroundColor="var(--accent)" className={styles.goTopBtn} onClick={scrollToTop} aria-label="Back to top" data-cursor="Top">
-                                <p className={styles.goTopBtnInner}>
-                                    <FiArrowUp />
-                                </p>
-                            </Rounded>
-                        </div>
+            <div className={styles.formFoot}>
+                <p className={styles.formNote} aria-live="polite">
+                    {sent ? 'Your mail app should open with the message ready to send.' : 'Opens in your mail app, ready to send.'}
+                </p>
+                <button type="submit" className={styles.send}>
+                    Send message <FiArrowUpRight aria-hidden="true" />
+                </button>
+            </div>
+        </form>
+    );
+}
+
+export default function Contact() {
+    return (
+        <footer className={styles.footer}>
+            <div className={styles.inner}>
+                <div className={styles.cta}>
+                    <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className={styles.primary}>
+                        View resume <FiArrowUpRight aria-hidden="true" />
+                    </a>
+                </div>
+
+                <ContactForm />
+
+                <div className={styles.columns}>
+                    <div className={styles.col}>
+                        <span className={styles.label}>Contact</span>
+                        <a href={`mailto:${EMAIL}`} className={styles.email}>{EMAIL}</a>
+                        <p>Let&apos;s get in touch!</p>
+                        <p>Response within 24 hours</p>
                     </div>
 
-                    {/* Divider */}
-                    <div className={styles.verticalDivider}></div>
+                    <div className={styles.col}>
+                        <span className={styles.label}>Sitemap</span>
+                        {SITEMAP.map((item) => (
+                            <a
+                                key={item.label}
+                                href={item.target === 'top' ? '#' : `#${item.target}`}
+                                onClick={(e) => { e.preventDefault(); scrollTo(item.target); }}
+                            >
+                                {item.label}
+                            </a>
+                        ))}
+                    </div>
 
-                    {/* Contact Info Column */}
-                    <div className={styles.sideColumn}>
-                        <div className={styles.infoBlock}>
-                            <span className={styles.blockLabel}>DIRECT LINE</span>
-                            <button type="button" className={styles.emailLink} onClick={copyEmail} data-cursor="Copy">
-                                aashnajuyal@gmail.com
-                                {showTooltip && <span className={styles.tooltip}>Email copied!</span>}
-                            </button>
-                        </div>
+                    <div className={styles.col}>
+                        <span className={styles.label}>Elsewhere</span>
+                        {ELSEWHERE.map((item) => (
+                            <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer">
+                                {item.label} <FiArrowUpRight aria-hidden="true" />
+                            </a>
+                        ))}
+                    </div>
 
-                        <div className={styles.dividerLine}></div>
-
-                        <div className={styles.infoBlock}>
-                            <span className={styles.blockLabel}>SOCIAL CHANNELS</span>
-                            <div className={styles.socialLinks}>
-                                <a href="https://www.linkedin.com/in/aashnasharma1/" target="_blank" rel="noopener noreferrer" data-cursor="Open">
-                                    <SiLinkedin /> LinkedIn
-                                </a>
-                                <a href="https://github.com/aashnasharma1" target="_blank" rel="noopener noreferrer" data-cursor="Open">
-                                    <SiGithub /> GitHub
-                                </a>
-                                <a href="https://www.instagram.com/codeyapper/" target="_blank" rel="noopener noreferrer" data-cursor="Open">
-                                    <SiInstagram /> Instagram
-                                </a>
-                            </div>
-                        </div>
-
-                        <div className={styles.dividerLine}></div>
-
-                        <div className={styles.infoBlock}>
-                            <span className={styles.blockLabel}>LOCAL TIME</span>
-                            <span className={styles.timeDisplay}>{myTime}</span>
-                            <span className={styles.timezone}>IST — India</span>
-                        </div>
-
-                        <div className={styles.dividerLine}></div>
-
-                        <div className={styles.infoBlock}>
-                            <span className={styles.blockLabel}>QUICK LINKS</span>
-                            <div className={styles.quickLinks}>
-                                <a href="#work" onClick={(e) => { e.preventDefault(); document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' }); }}>View Work</a>
-                                <a href="#about" onClick={(e) => { e.preventDefault(); document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }); }}>About Me</a>
-                                <a href="/resume.pdf" target="_blank" data-cursor="Open">Resume <svg
-                                    stroke="currentColor"
-                                    fill="none"
-                                    strokeWidth="1.25"
-                                    viewBox="6 6 12 12"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    style={{ transform: "rotate(-90deg)" }}
-                                    height="0.6em"
-                                    width="0.6em"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                >
-                                    <line x1="7" y1="7" x2="17" y2="17"></line>
-                                    <polyline points="17 7 17 17 7 17"></polyline>
-                                </svg></a>
-                            </div>
-                            <span className={styles.copyright}>© 2026 Aashna Sharma</span>
-                        </div>
+                    <div className={styles.col}>
+                        <span className={styles.label}>Based in</span>
+                        <p>Noida · IST India</p>
+                        <p>Full-stack · MERN · AI</p>
                     </div>
                 </div>
 
-                {/* Marquee */}
-                <div className={styles.marqueeContainer}>
-                    <div className={styles.marqueeTrack}>
-                        {marqueeContent}
-                        {marqueeContent}
-                    </div>
+                <div className={styles.bottom}>
+                    <span>© 2026 Aashna Sharma — All rights reserved</span>
+                    <button type="button" className={styles.toTop} onClick={() => scrollTo('top')}>
+                        Back to top <FiArrowUp aria-hidden="true" />
+                    </button>
                 </div>
+            </div>
 
-            </motion.footer>
-        </div>
+            <span className={`${styles.corner} ${styles.cornerLeft}`} aria-hidden="true" />
+            <span className={`${styles.corner} ${styles.cornerRight}`} aria-hidden="true" />
+        </footer>
     );
 }

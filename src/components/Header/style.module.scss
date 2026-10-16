@@ -23,6 +23,46 @@
     margin: var(--bar-y) 0 var(--bar-y) var(--rail-inset);
   }
 
+  // Name set in an italic serif with its ligatures switched on
+  .wordmark {
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font-wordmark), Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2rem, 2.8vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-feature-settings: "liga" 1, "dlig" 1, "swsh" 1, "calt" 1;
+    font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
+    color: var(--ink-strong);
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--accent-text);
+    }
+  }
+
+  // Theme toggle: a full-height square cell at the start of the side column.
+  // The column's own divider is its left edge; it draws its right edge.
+  .navToggle {
+    align-self: stretch;
+    height: auto;
+    width: auto;
+    aspect-ratio: 1;
+    border: 0;
+    border-right: 1px solid var(--line-strong);
+    background-color: transparent;
+
+    &:hover {
+      transform: none;
+      background-color: var(--bg-alt);
+      border-color: var(--line-strong);
+    }
+  }
+
   &.lightHeader {
     color: var(--text);
     
@@ -41,18 +81,19 @@
     // Full bar height so the divider runs edge to edge at every size
     align-self: stretch;
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    justify-content: space-between;
-    padding: 0 0 0 clamp(1rem, 2vw, 1.5rem);
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 0;
+    gap: 0;
     border-left: 1px solid var(--line-strong);
     .el {
       display: flex;
       flex-direction: column;
       position: relative;
       width: auto;
+      // Contact fills the rest of the cell, centred
       flex: 1;
-      max-width: 10rem;
+      align-items: center;
       justify-content: center;
       padding: 15px;
       letter-spacing: 0%;
@@ -314,7 +355,6 @@
   .floatingToggle {
     width: 52px;
     height: 52px;
-    box-shadow: 0 8px 24px rgba(40, 28, 22, 0.12);
   }
 
   &.menuOpen .floatingToggle {
@@ -327,10 +367,9 @@
     margin: 20px;
     width: 80px;
     height: 80px;
-    border-radius: 50%;
+    border-radius: 0;
     background-color: var(--invert-bg);
     border: 1px solid var(--invert-line);
-    box-shadow: 0 8px 24px rgba(40, 28, 22, 0.18);
     cursor: pointer;
     display: flex;
     align-items: center;

@@ -198,7 +198,7 @@ export default function TechStack() {
           {core.map((t, i) => (
             <article
               key={t.name}
-              className={`${styles.panel} cursor-target`}
+              className={styles.panel}
               style={{ '--brand': t.color }}
             >
               <span className={styles.panelIndex}>(0{i + 1})</span>
@@ -232,7 +232,7 @@ export default function TechStack() {
                           viewport={{ once: true, margin: '-60px' }}
                         >
                           <motion.span
-                            className={`${styles.relatedWord} cursor-target`}
+                            className={styles.relatedWord}
                             variants={maskReveal}
                             custom={j}
                           >

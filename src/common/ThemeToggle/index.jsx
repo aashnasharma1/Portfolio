@@ -10,9 +10,8 @@ export default function ThemeToggle({ className = '' }) {
   return (
     <button
       type="button"
-      className={`${styles.toggle} ${isDark ? styles.dark : ''} ${className} cursor-target`}
+      className={`${styles.toggle} ${isDark ? styles.dark : ''} ${className}`}
       onClick={toggleTheme}
-      data-cursor={isDark ? 'Light' : 'Dark'}
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={isDark ? 'Light theme' : 'Dark theme'}
     >

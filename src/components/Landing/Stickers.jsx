@@ -21,7 +21,7 @@ const pop = {
   })
 };
 
-// Circular text badge: idles slowly, spins faster on hover and with scroll
+// Square stamp with a ring of text that idles slowly, spins faster on hover and with scroll
 function SpinBadge({ scrollProgress, canDrag, show }) {
   const angle = useMotionValue(0);
   const speed = useSpring(0.03, { stiffness: 60, damping: 20 });
@@ -34,8 +34,7 @@ function SpinBadge({ scrollProgress, canDrag, show }) {
 
   return (
     <motion.div
-      className={`${styles.badge} cursor-target`}
-      data-cursor={canDrag ? "Drag" : undefined}
+      className={styles.badge}
       custom={0}
       variants={pop}
       initial="hidden"
@@ -51,7 +50,6 @@ function SpinBadge({ scrollProgress, canDrag, show }) {
         <defs>
           <path id="badge-circle" d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0" />
         </defs>
-        <circle cx="60" cy="60" r="58" className={styles.badgeDisc} />
         <text className={styles.badgeText}>
           <textPath href="#badge-circle" textLength="268" lengthAdjust="spacing">
             {BADGE_TEXT}
@@ -66,30 +64,17 @@ function SpinBadge({ scrollProgress, canDrag, show }) {
   );
 }
 
-function Pill({ children, className, index, canDrag, show, tilt }) {
+// Flat, level label pinned to the portrait edge
+function Pill({ children, className, index, show }) {
   return (
     <motion.div
-      className={`${styles.pill} ${className} cursor-target`}
-      data-cursor={canDrag ? "Drag" : undefined}
+      className={`${styles.pill} ${className}`}
       custom={index}
       variants={pop}
       initial="hidden"
       animate={show ? "shown" : "hidden"}
-      style={{ rotate: tilt }}
-      drag={canDrag}
-      dragSnapToOrigin
-      dragElastic={0.5}
-      whileHover={{ rotate: tilt * -1, scale: 1.08 }}
-      whileDrag={{ scale: 1.12 }}
     >
-      {/* Gentle in-place wobble — no travel, so it never drifts over text */}
-      <motion.span
-        className={styles.pillInner}
-        animate={show ? { rotate: [0, 2.5, 0, -2.5, 0] } : undefined}
-        transition={{ duration: 5 + index, repeat: Infinity, ease: "easeInOut" }}
-      >
-        {children}
-      </motion.span>
+      <span className={styles.pillInner}>{children}</span>
     </motion.div>
   );
 }
@@ -111,11 +96,11 @@ export default function Stickers({ show, opacity, scrollProgress }) {
     <motion.div ref={ref} className={styles.stickers} style={{ opacity }}>
       <SpinBadge scrollProgress={scrollProgress} canDrag={canDrag} show={show} />
 
-      <Pill className={styles.pillLocation} index={1} canDrag={canDrag} show={show} tilt={-8}>
+      <Pill className={styles.pillLocation} index={1} show={show}>
         <FiMapPin aria-hidden="true" /> Noida
       </Pill>
 
-      <Pill className={styles.pillAi} index={2} canDrag={canDrag} show={show} tilt={7}>
+      <Pill className={styles.pillAi} index={2} show={show}>
         <FiZap aria-hidden="true" /> ships with AI
       </Pill>
     </motion.div>

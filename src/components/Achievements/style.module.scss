@@ -6,8 +6,7 @@
     z-index: 1;
     background-color: var(--bg);
     color: var(--text);
-    // Extra room so the footer curve doesn't clip the last row of content
-    padding-bottom: calc(var(--section-y) + 160px);
+    padding-bottom: var(--section-y);
 
     // No divider under the heading block, and tighten the gap above the images
     .subtextContainer {

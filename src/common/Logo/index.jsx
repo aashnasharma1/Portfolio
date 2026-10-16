@@ -95,7 +95,7 @@ export default function Logo({ onClick, introDelay = 1500 }) {
   return (
     <motion.a
       href="#"
-      className={`${styles.logo} cursor-target`}
+      className={styles.logo}
       onClick={(e) => {
         e.preventDefault();
         onClick?.(e);
@@ -104,7 +104,6 @@ export default function Logo({ onClick, introDelay = 1500 }) {
       onTap={wiggle}
       whileTap={{ scale: 0.9 }}
       aria-label="Aashna Sharma — back to top"
-      data-cursor="Top"
     >
       <LogoMark controls={controls} />
     </motion.a>

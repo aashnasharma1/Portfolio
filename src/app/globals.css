@@ -1,35 +1,43 @@
 /* ------------------------------------------------------------------
    Theme tokens — "Warm minimal". Light is the default; the inline
    script in layout.js stamps data-theme="dark" when chosen.
+   Light is built on cream #FFFDF3, dark on #13120E; every other neutral
+   is derived from those (same warm hue, stepped in lightness).
    ------------------------------------------------------------------ */
 :root {
-  --bg: #EDE6E1;
-  --bg-alt: #E4DBD5;
-  --surface: #F5F0EC;
-  /* Warm grey ink with a terracotta tint — no pure black anywhere */
-  --text: #3E332D;
-  --ink-strong: #2B221E;
-  --text-soft: #54483F;
-  --muted: #6E6159;
-  --line: #D9CEC7;
-  --line-strong: #C9BBB2;
-  --accent: #D9653B;
-  --accent-text: #A34723;
-  --on-accent: #F6EEE8;
-  --accent-glow: rgba(217, 101, 59, 0.16);
+  --bg: #FFFDF3;
+  --bg-alt: #F7F2E2;
+  --surface: #FFFEF9;
+  /* Warm near-black ink — no pure black anywhere */
+  --text: #2A2620;
+  --ink-strong: #1A1712;
+  --text-soft: #4D473C;
+  --muted: #655E4E;
+  --line: #EAE3CE;
+  --line-strong: #D9D0B6;
+  /* Mustard accent. Too light for small text on cream, so --accent-text is
+     a deeper shade of the same hue; fills carry dark ink, not cream */
+  --accent: #F2B549;
+  --accent-text: #7D5409;
+  --on-accent: #1A1712;
+  --accent-glow: rgba(242, 181, 73, 0.18);
 
-  /* Inverted blocks (menu panel, preloader, footer) */
-  --invert-bg: #2E2622;
-  --invert-surface: #3A312C;
-  --invert-text: #F2EAE4;
-  --invert-muted: #B3A69E;
-  --invert-line: rgba(242, 239, 234, 0.12);
+  /* Sticky service cards, stepping a little darker down the stack */
+  --card-1: #FFFDF3;
+  --card-2: #F8F3E3;
+  --card-3: #F1EAD5;
+  --card-4: #EAE1C8;
+
+  /* Inverted blocks (menu panel, footer) */
+  --invert-bg: #1C1A15;
+  --invert-surface: #29261F;
+  --invert-text: #F5F1E3;
+  --invert-muted: #ADA690;
+  --invert-line: rgba(245, 241, 227, 0.12);
 
 
-  --shadow-card: 0 30px 60px rgba(46, 32, 24, 0.2);
+  --shadow-card: 0 30px 60px rgba(40, 34, 20, 0.18);
 
-  /* Speckle texture for the hero name (light specks on dark ink) */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.93 0 0 0 0 0.88 0 0 0 1.1 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   /* Type — one display/body family + one mono, loaded via next/font in layout.js */
   --font-display: var(--font-bricolage), system-ui, sans-serif;
@@ -48,15 +56,19 @@
   /* Ruled-table columns shared by the navbar and the services table:
      margin | main | middle | side | margin */
   --svc-cols: var(--rail) minmax(0, 5fr) minmax(0, 4fr) minmax(0, 2.2fr) var(--rail);
+  /* Page frame: the margin strips outside the guide lines are filled with
+     fine horizontal stripes in one pastel tone */
+  --frame-w: max(10px, var(--rail));
+  --frame-stripe: #EEDBB5;
   --section-y: clamp(56px, 7vw, 112px);
-  --radius-card: 20px;
+  --radius-card: 0;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
   color-scheme: light;
 }
 
 @media (max-width: 1024px) {
-  :root { --svc-cols: 88px minmax(0, 1fr) minmax(0, 1fr); }
+  :root { --svc-cols: calc(var(--frame-w) + 72px) minmax(0, 1fr) minmax(0, 1fr); }
 }
 
 @media (max-width: 767px) {
@@ -64,30 +76,35 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #221C19;
-  --bg-alt: #27201D;
-  --surface: #2D2622;
-  --text: #EAE0D8;
-  --ink-strong: #F5ECE5;
-  --text-soft: #D3C7BE;
-  --muted: #A5978E;
-  --line: #3A312C;
-  --line-strong: #4A3F39;
-  --accent: #E8805A;
-  --accent-text: #EE9270;
-  --on-accent: #221C19;
-  --accent-glow: rgba(232, 128, 90, 0.16);
+  --frame-stripe: #2E2A1F;
+  --bg: #13120E;
+  --bg-alt: #191813;
+  --surface: #1F1D18;
+  --text: #ECE7D8;
+  --ink-strong: #F8F4E7;
+  --text-soft: #CDC6B3;
+  --muted: #9A937F;
+  --line: #2A2822;
+  --line-strong: #38352C;
+  --accent: #F2B549;
+  --accent-text: #F2B549;
+  --on-accent: #13120E;
+  --accent-glow: rgba(242, 181, 73, 0.14);
 
-  --invert-bg: #2D2521;
-  --invert-surface: #3A312C;
-  --invert-text: #F2EAE4;
-  --invert-muted: #B3A69E;
-  --invert-line: rgba(242, 239, 234, 0.1);
+  --card-1: #1F1D18;
+  --card-2: #1B1A15;
+  --card-3: #171612;
+  --card-4: #13120E;
+
+  --invert-bg: #1E1C17;
+  --invert-surface: #2A2720;
+  --invert-text: #F5F1E3;
+  --invert-muted: #ADA690;
+  --invert-line: rgba(245, 241, 227, 0.1);
 
 
   --shadow-card: 0 30px 60px rgba(10, 6, 4, 0.5);
 
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0 0.05 0 0 0 1.1 -0.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   color-scheme: dark;
 }

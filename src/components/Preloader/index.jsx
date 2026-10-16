@@ -1,124 +1,93 @@
 "use client";
 import styles from "./style.module.scss";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
-import { LogoMark, useLogoAnimation } from "../../common/Logo";
 
-const slideUp = {
-  initial: { top: 0 },
-  exit: {
-    top: "-100vh",
-    transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.05 },
-  },
+const WORD = "WELCOME";
+const COLUMNS = 5;
+const EASE = [0.215, 0.61, 0.355, 1];
+const EASE_OUT = [0.22, 1, 0.36, 1];
+
+// How long the word holds before the staircase starts
+const HOLD_MS = 1400;
+
+// Root stays mounted until every column has finished leaving
+const stage = {
+  initial: {},
+  enter: {},
+  exit: { transition: { when: "afterChildren" } },
 };
 
-const opacity = {
-  initial: { opacity: 0 },
-  enter: { opacity: 1, transition: { duration: 0.5, delay: 0.05 } },
-};
-
-const fadeUp = {
-  initial: { opacity: 0, y: 20 },
-  enter: (delay) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, delay, ease: [0.76, 0, 0.24, 1] },
+// Letters rise into place one after another, then lift out before the stairs
+const letter = {
+  initial: { y: "110%" },
+  enter: (i) => ({
+    y: "0%",
+    transition: { duration: 0.6, delay: 0.15 + i * 0.06, ease: EASE_OUT },
+  }),
+  exit: (i) => ({
+    y: "-110%",
+    transition: { duration: 0.35, delay: i * 0.02, ease: EASE },
   }),
 };
 
+// Staircase: columns drop away one after another, right to left, once the
+// word has cleared
+const column = {
+  initial: { y: "0%" },
+  enter: { y: "0%" },
+  exit: (i) => ({
+    y: "100%",
+    transition: { duration: 0.55, delay: 0.25 + 0.07 * i, ease: EASE },
+  }),
+};
+
+// Dim veil behind the columns fades as they go
+const veil = {
+  initial: { opacity: 0.5 },
+  enter: { opacity: 0.5 },
+  exit: { opacity: 0, transition: { duration: 0.7, delay: 0.4, ease: EASE } },
+};
+
 export default function Preloader({ onAnimationComplete }) {
-  const [dimension, setDimension] = useState({ width: 0, height: 0 });
-  const logo = useLogoAnimation();
-
-  useEffect(() => {
-    setDimension({ width: window.innerWidth, height: window.innerHeight });
-  }, []);
-
-  useEffect(() => {
-    if (dimension.width > 0) logo.play();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dimension.width]);
-
-  // After the intro plays, tell the parent to unmount us (triggers the exit curtain)
+  // After the word has played, tell the parent to unmount us (triggers the exit)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onAnimationComplete) onAnimationComplete();
-    }, 1000);
+    }, HOLD_MS);
     return () => clearTimeout(timer);
   }, [onAnimationComplete]);
 
-  const initialPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${dimension.width / 2} ${dimension.height + 300} 0 ${dimension.height}  L0 0`;
-  const targetPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${dimension.width / 2} ${dimension.height} 0 ${dimension.height}  L0 0`;
-
-  const curve = {
-    initial: {
-      d: initialPath,
-      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] },
-    },
-    exit: {
-      d: targetPath,
-      transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 0.1 },
-    },
-  };
-
   return (
     <motion.div
-      variants={slideUp}
+      variants={stage}
       initial="initial"
+      animate="enter"
       exit="exit"
       className={styles.introduction}
     >
-      {dimension.width > 0 && (
-        <>
-          <motion.p
-            variants={opacity}
-            initial="initial"
-            animate="enter"
-            className={styles.name}
-          >
-            <LogoMark height={44} controls={logo.controls} className={styles.mark} />
-            Aashna Sharma
-          </motion.p>
+      <motion.div variants={veil} className={styles.veil} aria-hidden="true" />
 
-          <motion.p
-            variants={fadeUp}
-            custom={0.2}
-            initial="initial"
-            animate="enter"
-            className={styles.folio}
-          >
-            © Folio 2026
-          </motion.p>
+      <div className={styles.columns} aria-hidden="true">
+        {[...Array(COLUMNS)].map((_, i) => (
+          <motion.div key={i} variants={column} custom={COLUMNS - i} className={styles.column} />
+        ))}
+      </div>
 
-          <motion.span
-            variants={fadeUp}
-            custom={0.3}
-            initial="initial"
-            animate="enter"
-            className={styles.version}
-          >
-            Version 1.0
+      <p className={styles.word} aria-label="Welcome">
+        {WORD.split("").map((char, i) => (
+          <span key={i} className={styles.mask} aria-hidden="true">
+            <motion.span variants={letter} custom={i} className={styles.letter}>
+              {char}
+            </motion.span>
+          </span>
+        ))}
+        <span className={styles.mask} aria-hidden="true">
+          <motion.span variants={letter} custom={WORD.length} className={`${styles.letter} ${styles.dot}`}>
+            .
           </motion.span>
-
-          <motion.span
-            variants={fadeUp}
-            custom={0.3}
-            initial="initial"
-            animate="enter"
-            className={styles.loading}
-          >
-            Loading…
-          </motion.span>
-
-          <svg className={styles.curveSvg}>
-            <motion.path
-              variants={curve}
-              initial="initial"
-              exit="exit"
-            ></motion.path>
-          </svg>
-        </>
-      )}
+        </span>
+      </p>
     </motion.div>
   );
 }

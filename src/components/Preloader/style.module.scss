@@ -1,106 +1,88 @@
 .introduction {
+    // Fixed loader palette, the same in both themes
+    --loader-bg: #f8f3e0;
+    --loader-stripe: #eedbb5;
+    --loader-ink: #1a1712;
+
     height: 100vh;
+    height: 100lvh;
     width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--invert-bg);
     z-index: 99999;
     cursor: wait;
+    overflow: hidden;
 
-    .curveSvg {
+    // Dim veil over the page while the stairs drop away
+    .veil {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: calc(100% + 300px);
-
-        path {
-            fill: var(--invert-bg);
-        }
+        inset: 0;
+        background-color: var(--ink-strong);
+        pointer-events: none;
     }
 
-    .name {
+    // Staircase columns in the page-frame pattern: loader colour with fine
+    // pastel stripes; no dividers, so they read as one surface until they drop
+    .columns {
+        position: absolute;
+        inset: 0;
         display: flex;
-        color: var(--invert-text);
-        font-family: var(--font-display);
-        font-size: 4rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: -0.03em;
-        letter-spacing: -2px;
-        align-items: center;
-        position: relative;
-        z-index: 1;
-
-        .mark {
-            flex-shrink: 0;
-            margin-right: 18px;
-        }
     }
 
-    .folio {
+    .column {
+        flex: 1;
+        height: 100%;
+        // Overlap neighbours by a pixel: fractional column widths on HiDPI
+        // screens otherwise leave hairline seams where the veil shows through
+        margin-right: -1px;
+        padding-right: 1px;
+        background-color: var(--loader-bg);
+        background-image: repeating-linear-gradient(
+            to bottom,
+            var(--loader-stripe) 0 1px,
+            transparent 1px 4px
+        );
+        will-change: transform;
+    }
+
+    .word {
         position: absolute;
-        top: calc(50% + 3.6rem);
-        color: var(--invert-muted);
-        font-family: var(--font-mono);
-        font-size: 0.85rem;
-        letter-spacing: 1px;
+        inset: 0;
         z-index: 1;
         margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-size: clamp(2.25rem, 5vw, 4.5rem);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        color: var(--loader-ink);
     }
 
-    .version,
-    .loading {
-        position: absolute;
-        bottom: 2.5rem;
-        color: var(--invert-muted);
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        letter-spacing: 1px;
-        z-index: 1;
+    // Each letter slides through its own mask
+    .mask {
+        display: inline-flex;
+        overflow: hidden;
+        padding-block: 0.06em;
     }
 
-    .version {
-        left: 3.5rem;
+    .letter {
+        display: inline-block;
+        will-change: transform;
     }
 
-    .loading {
-        right: 3.5rem;
-        animation: pulse 1.4s ease-in-out infinite;
+    // Accent full stop after the word
+    .dot {
+        color: var(--accent);
     }
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.9; }
-}
-
-@media (max-width: 768px) {
-    .introduction {
-        .name {
-            font-size: 2rem;
-
-            .mark {
-                width: 51px;
-                height: 32px;
-                margin-right: 12px;
-            }
-        }
-
-        .folio {
-            top: calc(50% + 2.4rem);
-        }
-
-        .version {
-            left: 1.5rem;
-        }
-
-        .loading {
-            right: 1.5rem;
-        }
+@media (prefers-reduced-motion: reduce) {
+    .introduction .letter {
+        transform: none !important;
     }
 }

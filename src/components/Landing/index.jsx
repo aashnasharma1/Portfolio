@@ -2,8 +2,9 @@
 import Image from "next/image";
 import styles from "./style.module.scss";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
 import Stickers from "./Stickers";
+import { FiMapPin, FiZap } from "react-icons/fi";
 
 // Heading mount reveal (runs once the preloader is done)
 const lineReveal = {
@@ -41,28 +42,44 @@ export default function Home({ startAnimations = false }) {
   }, []);
   const [aboutPose, setAboutPose] = useState({ x: 0, y: 0, scale: 1.5 });
   const [aboutGap, setAboutGap] = useState(null);
+  // Settled portrait box in the about view (centre + size), for its frame
+  const [frameRect, setFrameRect] = useState(null);
   const heyRef = useRef(null);
   const bioLeftRef = useRef(null);
+  const bioRightRef = useRef(null);
 
   useEffect(() => {
     const query = window.matchMedia(STACKED_QUERY);
     const update = () => {
       if (!stageRef.current || !cardRef.current || !heyRef.current) return;
       if (!query.matches) {
-        // Desktop: grow in place, but lift it if needed so its bottom edge
-        // keeps clear of the section rule below
-        const scale = parseFloat(getComputedStyle(container.current).getPropertyValue("--about-scale")) || 1.15;
+        // Desktop: the portrait starts beside the name on the right and slides
+        // into the same centred spot and size the about view always had
+        // (the old centred hero portrait, grown 1.15x, kept clear of the rule below)
+        const vw = window.innerWidth;
         const vh = window.innerHeight;
-        const halfHeight = (cardRef.current.offsetHeight * scale) / 2;
-        const centre = stageRef.current.offsetTop;
-        const lowest = vh - Math.max(56, vh * 0.1) - halfHeight;
-        setAboutPose({ x: 0, y: Math.min(0, lowest - centre), scale });
+        const oldW = Math.min(420, Math.max(240, Math.min(vw * 0.23, vh * 0.46 * 0.745)));
+        const settledW = oldW * 1.15;
+        const scale = settledW / cardRef.current.offsetWidth;
+        const halfHeight = (settledW * 1.3417) / 2;
+        const oldCentre = Math.max(vh * 0.62, 226 + vw * 0.1032 + oldW * 0.67);
+        const targetY = Math.min(oldCentre, vh - Math.max(56, vh * 0.1) - halfHeight);
+        const stage = stageRef.current.getBoundingClientRect();
+        const frame = stageRef.current.parentElement.getBoundingClientRect();
+        const centreX = stage.left - frame.left + stage.width / 2;
+        const centreY = stage.top - frame.top + stage.height / 2;
+        setAboutPose({ x: vw / 2 - centreX, y: targetY - centreY, scale });
+        // Band's top line drops to just above the copy on each side
+        const lead = 28;
+        const leftTop = bioLeftRef.current ? bioLeftRef.current.offsetTop - lead : null;
+        const rightTop = bioRightRef.current ? bioRightRef.current.offsetTop - lead : null;
+        setFrameRect({ cx: frame.width / 2, cy: targetY, w: settledW, h: settledW * 1.3417, leftTop, rightTop });
         setAboutGap(null);
         return;
       }
       const vw = window.innerWidth;
-      // Portrait takes ~42% of a phone's width (a bit less on tablets)
-      const poseWidth = vw * (vw < 768 ? 0.42 : 0.34);
+      // Portrait takes ~46% of a phone's width (a bit less on tablets)
+      const poseWidth = vw * (vw < 768 ? 0.46 : 0.34);
       const scale = poseWidth / cardRef.current.offsetWidth;
       const poseHeight = cardRef.current.offsetHeight * scale;
       // Top edge level with "Hey!", right edge on the page gutter
@@ -74,10 +91,12 @@ export default function Home({ startAnimations = false }) {
         y: targetY - stageRef.current.offsetTop,
         scale
       });
+      setFrameRect({ cx: targetX, cy: targetY, w: poseWidth, h: poseHeight });
       // Start the second paragraph just under the portrait — no dead space
-      const bio = bioLeftRef.current;
-      const bioBottom = bio ? bio.offsetTop + bio.offsetHeight : 0;
-      setAboutGap(Math.max(20, poseTop + poseHeight + 24 - bioBottom));
+      // Only "Hey!" sits beside the portrait; the intro line starts just
+      // under the portrait
+      const heyBottom = heyRef.current.offsetTop + heyRef.current.offsetHeight;
+      setAboutGap(Math.max(20, poseTop + poseHeight + 24 - heyBottom));
     };
     update();
     document.fonts?.ready.then(update);
@@ -115,6 +134,35 @@ export default function Home({ startAnimations = false }) {
 
   const heading = [["Aashna"], ["Sharma"]];
 
+  // Magnetic portrait (about view): a light pull toward the pointer while it
+  // is over the photo, enough to nudge past the frame lines; springs back
+  // into the frame as soon as the pointer leaves the photo
+  const magX = useMotionValue(0);
+  const magY = useMotionValue(0);
+  const pullX = useSpring(magX, { stiffness: 140, damping: 16, mass: 0.6 });
+  const pullY = useSpring(magY, { stiffness: 140, damping: 16, mass: 0.6 });
+
+  const releaseMagnet = () => {
+    magX.set(0);
+    magY.set(0);
+  };
+
+  const onStagePointerMove = (e) => {
+    if (e.pointerType === "touch" || !cardRef.current) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Only once the portrait has settled into its frame
+    if (scrollYProgress.get() < 0.88) return releaseMagnet();
+    const r = cardRef.current.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width / 2);
+    const dy = e.clientY - (r.top + r.height / 2);
+    // Only while the pointer is over the photo itself (its frame box)
+    const inside = Math.abs(dx) < r.width / 2 + 8 && Math.abs(dy) < r.height / 2 + 8;
+    if (!inside) return releaseMagnet();
+    const max = 14;
+    magX.set(Math.max(-max, Math.min(max, dx * 0.07)));
+    magY.set(Math.max(-max, Math.min(max, dy * 0.07)));
+  };
+
   const copyEmail = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(EMAIL);
@@ -128,9 +176,28 @@ export default function Home({ startAnimations = false }) {
       {/* Anchor for the "About" nav link, positioned at the about state */}
       <div id="about" className={styles.aboutAnchor} />
 
-      <div className={styles.sticky}>
-        {/* Name + AI tagline move and fade together */}
+      <div className={styles.sticky} onPointerMove={onStagePointerMove} onPointerLeave={releaseMagnet}>
+        {/* Name, then the AI tagline beneath it, move and fade together */}
         <motion.div className={styles.titleGroup} style={{ y: headingY, opacity: heroFade }}>
+
+          <h1 className={styles.heading}>
+            {heading.map((line, li) => (
+              <span key={li} className={styles.headingLine}>
+                {line.map((word, wi) => (
+                  <span key={wi} className={styles.wordMask}>
+                    <motion.span
+                      variants={lineReveal}
+                      initial="initial"
+                      animate={startAnimations ? "open" : "initial"}
+                      custom={li + wi}
+                    >
+                      {word}
+                    </motion.span>
+                  </span>
+                ))}
+              </span>
+            ))}
+          </h1>
           <p className={styles.tagline}>
             <span className={styles.liveDot} aria-hidden="true" />
             <span className={styles.taglineLead}>full-stack engineer</span>
@@ -157,29 +224,11 @@ export default function Home({ startAnimations = false }) {
             </span>
           </p>
 
-          <h1 className={styles.heading}>
-            {heading.map((line, li) => (
-              <span key={li} className={styles.headingLine}>
-                {line.map((word, wi) => (
-                  <span key={wi} className={styles.wordMask}>
-                    <motion.span
-                      variants={lineReveal}
-                      initial="initial"
-                      animate={startAnimations ? "open" : "initial"}
-                      custom={li + wi}
-                    >
-                      {word}
-                    </motion.span>
-                  </span>
-                ))}
-              </span>
-            ))}
-          </h1>
-
         </motion.div>
 
         {/* Flipping / colourising portrait */}
         <div ref={stageRef} className={styles.imageStage}>
+          <motion.div className={styles.magnet} style={{ x: pullX, y: pullY }}>
           <motion.div
             ref={cardRef}
             className={styles.imageCard}
@@ -192,13 +241,14 @@ export default function Home({ startAnimations = false }) {
               <Image src="/images/myself.webp" alt="Aashna Sharma" fill sizes="460px" className={styles.portraitColor} />
             </div>
           </motion.div>
+          </motion.div>
           <Stickers show={startAnimations} opacity={stickersFade} scrollProgress={scrollYProgress} />
         </div>
 
         {/* Hero email + resume */}
         <motion.div className={styles.heroEmail} style={{ opacity: heroFade }}>
           <span className={styles.connectLabel}>Connect with me through Email</span>
-          <button type="button" className={styles.email} onClick={copyEmail} data-cursor="Copy">
+          <button type="button" className={styles.email} onClick={copyEmail}>
             {EMAIL}
             {copied && <span className={styles.tooltip}>Email copied!</span>}
           </button>
@@ -208,8 +258,7 @@ export default function Home({ startAnimations = false }) {
           href="/resume.pdf"
           target="_blank"
           rel="noopener noreferrer"
-          className={`${styles.heroResume} cursor-target`}
-          data-cursor="Download"
+          className={styles.heroResume}
           style={{ opacity: heroFade }}
         >
           Download Resume
@@ -218,6 +267,36 @@ export default function Home({ startAnimations = false }) {
             <path d="M5 19H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
           </svg>
         </motion.a>
+
+        {/* Desktop: one structured row of facts and the resume action */}
+        <motion.div className={styles.heroMeta} style={{ opacity: heroFade }}>
+          <div className={styles.metaCell}>
+            <span className={styles.metaLabel}>Email</span>
+            <button type="button" className={styles.metaEmail} onClick={copyEmail}>
+              {EMAIL}
+              {copied && <span className={styles.tooltip}>Email copied!</span>}
+            </button>
+          </div>
+          <div className={styles.metaCell}>
+            <span className={styles.metaLabel}>Based in</span>
+            <span className={styles.metaValue}><FiMapPin aria-hidden="true" /> Noida, India</span>
+          </div>
+          <div className={styles.metaCell}>
+            <span className={styles.metaLabel}>Workflow</span>
+            <span className={styles.metaValue}><FiZap aria-hidden="true" className={styles.metaAccent} /> Ships with AI</span>
+          </div>
+          <div className={styles.metaCell}>
+            <span className={styles.metaLabel}>©2026</span>
+            <span className={styles.metaValue}>Crafting since 2022</span>
+          </div>
+          <a href="/resume.pdf" target="_blank" rel="noopener noreferrer" className={styles.metaResume}>
+            Download Resume
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3V15M12 15L7 10M12 15L17 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M5 19H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </a>
+        </motion.div>
 
         {/* Corners — fade with the shapes so they never sit on the about copy */}
         <motion.div className={styles.corners} style={{ opacity: shapesFade }}>
@@ -229,19 +308,43 @@ export default function Home({ startAnimations = false }) {
           </motion.span>
         </motion.div>
 
+        {/* Frame around the settled portrait, its top and bottom edges running
+            out to the page frame lines */}
+        {frameRect && (
+          <motion.div
+            className={styles.portraitFrame}
+            style={{
+              opacity: aboutOpacity,
+              "--fx": `${frameRect.cx}px`,
+              "--fy": `${frameRect.cy}px`,
+              "--fw": `${frameRect.w}px`,
+              "--fh": `${frameRect.h}px`,
+              ...(frameRect.leftTop != null && { "--top-l": `${frameRect.leftTop}px` }),
+              ...(frameRect.rightTop != null && { "--top-r": `${frameRect.rightTop}px` })
+            }}
+            aria-hidden="true"
+          >
+            <span className={styles.frameTopLeft} />
+            <span className={styles.frameTopRight} />
+            <span className={styles.frameBottom} />
+            <span className={styles.frameBox} />
+          </motion.div>
+        )}
+
         {/* About content (fades in as the portrait settles) */}
         <motion.div className={styles.aboutContent} style={{ opacity: aboutOpacity, y: aboutY }}>
           <h2 ref={heyRef} className={styles.hey}>Hey!</h2>
 
-          <p ref={bioLeftRef} className={styles.bioLeft}>
+          <p
+            ref={bioLeftRef}
+            className={styles.bioLeft}
+            style={aboutGap !== null ? { marginTop: aboutGap } : undefined}
+          >
             I&apos;m Aashna, a <span className={styles.nowrap}>full-stack</span> developer
             crafting fast, scalable web products.
           </p>
 
-          <div
-            className={styles.bioRight}
-            style={aboutGap !== null ? { marginTop: aboutGap } : undefined}
-          >
+          <div ref={bioRightRef} className={styles.bioRight}>
             <p>
               I build modern, scalable web products across the MERN stack and beyond.
             </p>
@@ -251,8 +354,7 @@ export default function Home({ startAnimations = false }) {
             </p>
             <a
               href="#contact"
-              className={`${styles.cta} cursor-target`}
-              data-cursor="Say hi"
+              className={styles.cta}
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });

@@ -31,49 +31,50 @@
   }
 }
 
-.ruled::before,
-.ruled::after {
+/* Page frame: two strips fixed to the window edges, filling the margin
+   outside the guide lines with fine pastel stripes. The inner edge of each
+   strip is the guide line, which the navbar, services table and Experience
+   ledger columns line up with. Above the page, below menus and overlays. */
+.frame::before,
+.frame::after {
   content: "";
-  position: absolute;
+  position: fixed;
   top: 0;
   bottom: 0;
-  z-index: 5;
-  width: 1px;
-  background-color: var(--line-strong);
+  z-index: 50;
+  width: var(--frame-w);
+  box-sizing: border-box;
+  background-color: var(--bg);
+  // Stripes only down to the bottom of the page content (--frame-bottom,
+  // set in page.js); alongside the footer the margins are plain and the
+  // footer carries the stripes between the frame lines
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--frame-stripe) 0 1px,
+    transparent 1px 4px
+  );
+  background-size: 100% var(--frame-bottom, 100vh);
+  background-repeat: no-repeat;
   pointer-events: none;
 }
 
-/* Just outside the content edge, matching the services table's outer columns */
-.ruled::before {
-  left: calc(var(--rail) - 1px);
+.frame::before {
+  left: 0;
+  border-right: 1px solid var(--line-strong);
 }
 
-.ruled::after {
-  right: var(--rail);
+.frame::after {
+  right: 0;
+  border-left: 1px solid var(--line-strong);
 }
 
-/* Below desktop the margins are too tight for guides to read as anything
-   but clutter, so only the section rules remain */
-@media (max-width: 1024px) {
-  .ruled::before,
-  .ruled::after {
-    display: none;
-  }
-}
-
-/* The footer is pinned to the bottom of the viewport and sits behind the
-   stage (lower z-index), so the stage scrolls up and over it to reveal it. */
+/* The footer is pinned behind the stage (lower z-index), so the stage
+   scrolls up and over it to reveal it. When it fits the screen it pins by its
+   bottom edge; when it's taller (phones) the negative offset pins it by its
+   top edge instead, so the headline is revealed first and the rest scrolls
+   in normally. --footer-h is measured in page.js. */
 .footerReveal {
   position: sticky;
-  bottom: 0;
+  bottom: min(0px, calc(100svh - var(--footer-h, 0px)));
   z-index: 0;
-}
-
-/* Below desktop the footer stacks into one tall column that exceeds the
-   short viewport; pinning there would push its headline permanently above
-   the fold, so let it scroll in normally instead. */
-@media (max-width: 1024px) {
-  .footerReveal {
-    position: relative;
-  }
 }

@@ -30,7 +30,7 @@ export default function RoundedButton({children, backgroundColor="var(--accent)"
 
   return (
     <Magnetic>
-      <div className={`${styles.roundedButton} ${className || ''} cursor-target`} style={{overflow: 'hidden'}} onMouseEnter={() => {manageMouseEnter()}} onMouseLeave={() => {manageMouseLeave()}} {...attributes}>
+      <div className={`${styles.roundedButton} ${className || ''}`} style={{overflow: 'hidden'}} onMouseEnter={() => {manageMouseEnter()}} onMouseLeave={() => {manageMouseLeave()}} {...attributes}>
           {
             children
           }

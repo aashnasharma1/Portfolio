@@ -1,0 +1,40 @@
+.tag {
+    position: absolute;
+    top: 0;
+    left: var(--frame-w);
+    z-index: 4;
+    padding: 0.5rem 0.8rem;
+    background-color: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.corner {
+    position: absolute;
+    top: 0;
+    right: var(--frame-w);
+    z-index: 4;
+    width: 18px;
+    height: 18px;
+    border-top: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+    pointer-events: none;
+}
+
+@media (max-width: 767px) {
+    .tag {
+        font-size: 0.64rem;
+        padding: 0.45rem 0.7rem;
+    }
+
+    .corner {
+        width: 12px;
+        height: 12px;
+    }
+}

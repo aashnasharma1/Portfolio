@@ -11,7 +11,8 @@
     }
 }
 
-// Circular text badge — bottom-right corner on wide screens
+// Square text stamp — bottom-right corner on wide screens. The plate is
+// still; only the text ring inside it turns
 .badge {
     --size: 120px;
     position: absolute;
@@ -19,19 +20,15 @@
     bottom: calc(var(--size) / -2.6);
     width: var(--size);
     height: var(--size);
-    border-radius: 50%;
+    border-radius: 0;
+    background-color: var(--text);
     touch-action: none;
-    filter: drop-shadow(0 14px 22px rgba(40, 28, 22, 0.22));
 }
 
 .badgeRing {
     width: 100%;
     height: 100%;
     display: block;
-}
-
-.badgeDisc {
-    fill: var(--text);
 }
 
 .badgeText {
@@ -47,7 +44,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 0;
     background-color: var(--accent);
     color: var(--on-accent);
     font-size: calc(var(--size) * 0.16);
@@ -58,7 +55,6 @@
     position: absolute;
     white-space: nowrap;
     touch-action: none;
-    filter: drop-shadow(0 10px 18px rgba(40, 28, 22, 0.16));
 }
 
 .pillInner {
@@ -66,7 +62,7 @@
     align-items: center;
     gap: 0.4em;
     padding: 0.55em 1em;
-    border-radius: 999px;
+    border-radius: 0;
     font-family: var(--font-display);
     font-size: 0.95rem;
     font-weight: 800;
@@ -158,5 +154,21 @@
 
     .pillAi {
         top: 4%;
+    }
+}
+
+// Desktop: the name/portrait layout has a structured facts row instead of
+// loose pills; the stamp sits flush in the portrait's bottom-left corner
+@media (min-width: 1025px) and (min-height: 501px),
+    (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 501px) {
+    .pill {
+        display: none;
+    }
+
+    .badge {
+        --size: clamp(88px, 7vw, 112px);
+        left: 0;
+        right: auto;
+        bottom: 0;
     }
 }

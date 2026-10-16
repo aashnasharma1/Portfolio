@@ -201,10 +201,11 @@ const StickyCards = () => {
                 >
                     <span className="sticky-card-spotlight" aria-hidden="true" />
 
-                    <span className="sticky-card-index">{cardData.index}</span>
-
                     <div className="sticky-card-main">
-                        <h3 className="sticky-card-title">{cardData.title}</h3>
+                        <div className="sticky-card-heading">
+                            <span className="sticky-card-index">{cardData.index}</span>
+                            <h3 className="sticky-card-title">{cardData.title}</h3>
+                        </div>
                         <p className="sticky-card-description">{cardData.description}</p>
                     </div>
 

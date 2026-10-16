@@ -1,6 +1,7 @@
 'use client';
 import styles from './style.module.scss';
-import { useRef } from 'react';
+import SectionTag from '../../common/SectionTag';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const roles = ["Programmer,", "Developer,", "Creator"];
@@ -28,11 +29,22 @@ function Letter({ char, index, progress }) {
 
 export default function AboutMe() {
   const sectionRef = useRef(null);
+  const [compact, setCompact] = useState(false);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"]
-  });
+  // Phones get a normal-height block instead of a pinned screen
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 767px)');
+    const update = () => setCompact(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+
+  // Pinned: progress runs while the section is stuck. Compact: it runs as
+  // the block travels up through the screen.
+  const pinned = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
+  const flowing = useScroll({ target: sectionRef, offset: ["start 0.85", "end 0.4"] });
+  const scrollYProgress = compact ? flowing.scrollYProgress : pinned.scrollYProgress;
 
   // The line of type zooms from slightly small to full size as the fill runs
   const scale = useTransform(scrollYProgress, [0, 0.75], [0.9, 1]);
@@ -43,8 +55,8 @@ export default function AboutMe() {
 
   return (
     <section ref={sectionRef} className={styles.aboutMe} aria-label="Programmer, Developer, Creator">
+      <SectionTag>What defines me</SectionTag>
       <div className={styles.sticky}>
-        <span className={styles.label}>( What defines me )</span>
 
         <motion.h2 className={styles.heading} style={{ scale }} aria-hidden="true">
           {roles.map((word, wi) => (

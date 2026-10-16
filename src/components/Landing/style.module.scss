@@ -80,21 +80,11 @@
     padding-inline: 0.04em 0.08em;
     margin-right: -0.04em;
 
-    // Speckled ink: grain texture over a warm grey → terracotta-tinted fill
+    // Solid ink — no gradient or texture fill on text anywhere
     > span {
         display: inline-block;
         will-change: transform;
-        color: transparent;
-        background-image:
-            var(--grain),
-            linear-gradient(
-                180deg,
-                var(--ink-strong) 35%,
-                color-mix(in srgb, var(--ink-strong) 82%, var(--accent)) 100%
-            );
-        background-size: 180px 180px, 100% 100%;
-        -webkit-background-clip: text;
-        background-clip: text;
+        color: var(--ink-strong);
     }
 }
 
@@ -109,12 +99,6 @@
     align-items: center;
     flex-wrap: nowrap;
     gap: 0.5em;
-    padding: 0.45em 0.5em 0.45em 0.95em;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background-color: color-mix(in srgb, var(--surface) 80%, transparent);
-    box-shadow: 0 10px 30px -18px color-mix(in srgb, var(--accent) 60%, transparent);
-    backdrop-filter: blur(6px);
     font-family: var(--font-mono);
     font-size: clamp(0.72rem, 0.95vw, 0.92rem);
     letter-spacing: 0.3px;
@@ -155,7 +139,7 @@
     width: calc(8ch + 1.1em);
     height: 1.7em;
     overflow: hidden;
-    border-radius: 999px;
+    border-radius: 0;
     background-color: var(--accent-glow);
 }
 
@@ -170,7 +154,7 @@
     align-items: center;
     gap: 0.3em;
     padding: 0.25em 0.7em;
-    border-radius: 999px;
+    border-radius: 0;
     background-color: var(--accent);
     color: var(--on-accent);
     font-family: var(--font-display);
@@ -210,9 +194,70 @@
 .face {
     position: absolute;
     inset: 0;
-    border-radius: 8px;
+    border-radius: 0;
     overflow: hidden;
     backface-visibility: hidden;
+}
+
+// Magnetic wrapper (springs set in index.jsx); keeps the card's 3D flip
+.magnet {
+    transform-style: preserve-3d;
+}
+
+// Frame around the settled portrait (about view): a box 8px clear of the
+// photo, plus a band whose top/bottom hairlines reach the page frame lines
+.portraitFrame {
+    --gap: 8px;
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.portraitFrame {
+    --box-top: calc(var(--fy) - var(--fh) / 2 - var(--gap));
+    --box-bottom: calc(var(--fy) + var(--fh) / 2 + var(--gap));
+    --box-left: calc(var(--fx) - var(--fw) / 2 - var(--gap));
+    --box-right: calc(var(--fx) + var(--fw) / 2 + var(--gap));
+}
+
+.frameTopLeft,
+.frameTopRight,
+.frameBottom,
+.frameBox {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+// Top lines start lower than the box: each drops to just above the copy on
+// its side (desktop), meeting the box's side edge; default is the box top
+.frameTopLeft {
+    left: var(--frame-w);
+    width: calc(var(--box-left) - var(--frame-w));
+    top: clamp(var(--box-top), var(--top-l, var(--box-top)), var(--box-bottom));
+    border-top: 1px solid var(--line-strong);
+}
+
+.frameTopRight {
+    left: var(--box-right);
+    right: var(--frame-w);
+    top: clamp(var(--box-top), var(--top-r, var(--box-top)), var(--box-bottom));
+    border-top: 1px solid var(--line-strong);
+}
+
+.frameBottom {
+    left: var(--frame-w);
+    right: var(--frame-w);
+    top: calc(var(--box-bottom) - 1px);
+    border-top: 1px solid var(--line-strong);
+}
+
+.frameBox {
+    left: var(--box-left);
+    top: var(--box-top);
+    width: calc(var(--fw) + var(--gap) * 2);
+    height: calc(var(--fh) + var(--gap) * 2);
+    border: 1px solid var(--line-strong);
 }
 
 .faceBack {
@@ -309,7 +354,7 @@
     font-size: 0.7rem;
     letter-spacing: 0.5px;
     padding: 0.3rem 0.6rem;
-    border-radius: 6px;
+    border-radius: 0;
     white-space: nowrap;
 }
 
@@ -324,19 +369,20 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.4rem;
-    border-radius: 999px;
-    background-color: var(--text);
-    color: var(--bg);
-    border: 1px solid var(--text);
+    border-radius: 0;
+    // Primary action: solid accent, dark ink
+    background-color: var(--accent);
+    color: var(--on-accent);
+    border: 1px solid var(--accent);
     font-size: 0.95rem;
     white-space: nowrap;
     text-decoration: none;
     transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 
     &:hover {
-        background-color: var(--accent);
-        border-color: var(--accent);
-        color: var(--on-accent);
+        background-color: var(--ink-strong);
+        border-color: var(--ink-strong);
+        color: var(--bg);
     }
 }
 
@@ -400,7 +446,7 @@
     margin-top: 0.5rem;
     padding: 0.75rem 1.4rem;
     border: 1px solid var(--line-strong);
-    border-radius: 999px;
+    border-radius: 0;
     font-size: 0.95rem;
     color: var(--text);
     text-decoration: none;
@@ -457,14 +503,20 @@
         position: static;
     }
 
+    // Full width under "Hey!" + portrait (top margin set in index.jsx)
     .bioLeft {
-        margin-top: 1rem;
-        max-width: min(22ch, 52%);
+        max-width: 30ch;
     }
 
     .bioRight {
-        margin-top: 1.5rem;
+        margin-top: 1.25rem;
         max-width: 60ch;
+    }
+
+    // Centred, larger call to action
+    .cta {
+        align-self: center;
+        margin-top: 1.25rem;
     }
 }
 
@@ -481,6 +533,13 @@
 @media (max-width: 767px) {
     .hero { height: 240vh; }
 
+    // About copy sits lower so it fills the screen rather than hugging the
+    // top. A fixed offset, not flex centring: index.jsx measures this block
+    // to place the portrait, and centring would shift it after measuring.
+    .aboutContent {
+        padding-top: max(96px, 20svh);
+    }
+
     // Keep the tagline on one line: the lead phrase is implied by the name
     .taglineLead { display: none; }
 
@@ -489,7 +548,7 @@
     .imageStage { top: 58%; }
 
     .imageCard { width: 60vw; height: calc(60vw * 1.3417); }
-    .face { border-radius: 6px; }
+    .face { border-radius: 0; }
     .heroEmail { bottom: 16%; }
     .heroResume { bottom: 8.5%; }
 
@@ -507,17 +566,17 @@
         font-size: 0.85rem;
     }
 
-    .hey { font-size: 3rem; }
+    .hey { font-size: clamp(3.25rem, 15vw, 4.5rem); }
 
     .bioLeft {
-        font-size: 1.1rem;
+        font-size: clamp(1.2rem, 5.4vw, 1.5rem);
     }
 
     .bioRight {
-        p { font-size: 0.92rem; }
+        p { font-size: clamp(0.95rem, 4.1vw, 1.08rem); }
     }
 
-    .cta { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
+    .cta { padding: 1rem 2.25rem; font-size: 1.05rem; gap: 0.65rem; }
 }
 
 // Very short phones (iPhone SE and similar)
@@ -531,6 +590,8 @@
     .heroEmail { bottom: 15%; }
     .heroResume { bottom: 7%; }
     .bioRight p:nth-child(1) { display: none; }
+    .hey { font-size: 3rem; }
+    .bioLeft { font-size: 1.1rem; }
 }
 
 // Landscape phones: size everything by height so it fits the short screen
@@ -583,4 +644,172 @@
     }
 
     .cta { padding: 0.45rem 0.9rem; font-size: 0.78rem; margin-top: 0.2rem; }
+}
+
+// ==================================================================
+// Desktop layout: name stacked on the left, portrait on the right, and
+// one ruled row of facts along the bottom. Phones, portrait tablets and
+// landscape phones keep their own layouts above.
+// ==================================================================
+.heroMeta {
+    display: none;
+}
+
+@media (min-width: 1025px) and (min-height: 501px),
+    (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 501px) {
+    .hero {
+        // Where the name and portrait start, just under the navbar
+        --hero-top: max(15svh, 132px);
+        // Facts row offset + its height + breathing room above it
+        --meta-bottom: clamp(1.5rem, 5svh, 3.5rem);
+        --meta-space: calc(var(--meta-bottom) + 4.25rem + clamp(1.5rem, 3.5svh, 2.75rem));
+        // Portrait fills the height between the navbar and the facts row
+        --portrait-w: min(30vw, calc((100svh - var(--hero-top) - var(--meta-space)) * 0.745));
+        // The about view keeps its original look: the settled portrait is the
+        // old hero portrait width x 1.15 (index.jsx mirrors this sum)
+        --about-w: calc(clamp(240px, min(23vw, 46svh * 0.745), 420px) * 1.15);
+        --portrait-half: calc(var(--about-w) / 2);
+    }
+
+    // Tagline at the top of the column, the name pinned to its bottom so it
+    // lines up with the portrait's lower edge
+    .titleGroup {
+        top: var(--hero-top);
+        bottom: var(--meta-space);
+        // Leave the portrait's column free on the right
+        right: calc(var(--gutter) + var(--portrait-w) + clamp(2rem, 4vw, 4rem));
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding-right: 0;
+    }
+
+    .heading {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
+        font-size: min(12vw, 25svh);
+        line-height: 0.84;
+    }
+
+    // Portrait: top-aligned with the tagline, on the right page margin
+    .imageStage {
+        top: var(--hero-top);
+        left: auto;
+        right: var(--gutter);
+        transform: none;
+    }
+
+    // Loose stickers and corner labels give way to the structured row
+    .heroEmail,
+    .heroResume,
+    .corners {
+        display: none;
+    }
+
+    .heroMeta {
+        position: absolute;
+        left: var(--gutter);
+        right: var(--gutter);
+        bottom: var(--meta-bottom);
+        z-index: 5;
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)) auto;
+        align-items: stretch;
+        border-top: 1px solid var(--line-strong);
+        pointer-events: auto;
+    }
+
+    .metaCell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+        min-width: 0;
+        padding: 1.1rem 1.25rem 0.25rem;
+
+        &:first-child {
+            padding-left: 0;
+        }
+
+        & + & {
+            border-left: 1px solid var(--line);
+        }
+    }
+
+    .metaLabel {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+    }
+
+    .metaValue {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+
+        svg {
+            flex-shrink: 0;
+            color: var(--muted);
+        }
+    }
+
+    .metaAccent {
+        color: var(--accent) !important;
+    }
+
+    .metaEmail {
+        position: relative;
+        width: fit-content;
+        max-width: 100%;
+        padding: 0;
+        background: none;
+        border: none;
+        border-bottom: 1px solid var(--line-strong);
+        font: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        text-align: left;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: border-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+            border-color: var(--accent);
+            color: var(--accent-text);
+        }
+
+        .tooltip {
+            bottom: calc(100% + 10px);
+        }
+    }
+
+    .metaResume {
+        align-self: end;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1.25rem;
+        padding: 0.85rem 1.4rem;
+        background-color: var(--accent);
+        color: var(--on-accent);
+        border: 1px solid var(--accent);
+        font-size: 0.95rem;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+
+        &:hover {
+            background-color: var(--ink-strong);
+            border-color: var(--ink-strong);
+            color: var(--bg);
+        }
+    }
 }

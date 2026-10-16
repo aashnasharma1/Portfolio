@@ -8,7 +8,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Rounded from "../../common/RoundedButton";
 import ThemeToggle from "../../common/ThemeToggle";
-import Logo from "../../common/Logo";
 // import Magnetic from '../../common/Magnetic';
 
 export default function Header() {
@@ -69,11 +68,13 @@ export default function Header() {
   return (
     <>
       <div ref={header} className={styles.header}>
-        <Logo onClick={handleLogoClick} />
+        <button type="button" className={styles.wordmark} onClick={handleLogoClick} aria-label="Aashna, back to top">
+          Aashna
+        </button>
         <div className={styles.nav}>
-          <ThemeToggle />
-          <div className={`${styles.el} cursor-target`}>
-            <a href="#contact" data-cursor="Go" onClick={(e) => {
+          <ThemeToggle className={styles.navToggle} />
+          <div className={styles.el}>
+            <a href="#contact" onClick={(e) => {
               e.preventDefault();
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
             }}>Contact</a>
@@ -88,8 +89,7 @@ export default function Header() {
         <ThemeToggle className={styles.floatingToggle} />
         <Rounded
           onClick={() => setIsActive(!isActive)}
-          data-cursor={isActive ? "Close" : "Menu"}
-          className={`${styles.button} cursor-target`}
+          className={styles.button}
         >
           <div
             className={`${styles.burger} ${isActive ? styles.burgerActive : ""}`}

@@ -1,5 +1,6 @@
 'use client';
 import styles from './style.module.scss';
+import SectionTag from '../../common/SectionTag';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
@@ -202,6 +203,7 @@ export default function Experience() {
 
   return (
     <section id="experience" className={styles.experience}>
+      <SectionTag>Work history</SectionTag>
       <div className={styles.headingContainer}>
         <h2 className={styles.heading}>
           {heading.split(" ").map((word, i) => (
@@ -222,7 +224,6 @@ export default function Experience() {
       </div>
 
       <div className={styles.subtextContainer}>
-        <span className={styles.label}>( Work history )</span>
         <p className={styles.subtext}>
           Three roles, newest first, on a timeline drawn to scale.
         </p>
@@ -306,8 +307,9 @@ export default function Experience() {
                   </span>
                 </header>
 
-                <p className={styles.entryMeta}>
-                  {item.title} · {item.type} · {item.location}
+                <p className={styles.entryRole}>
+                  <strong>{item.title}</strong>
+                  <span>{item.type} · {item.location}</span>
                 </p>
                 <p className={styles.summary}>{item.summary}</p>
 

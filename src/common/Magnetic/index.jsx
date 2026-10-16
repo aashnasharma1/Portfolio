@@ -37,7 +37,7 @@ export default function Magnetic({children}) {
     return (
         React.cloneElement(children, {
             ref: magnetic,
-            className: `${children.props.className || ''} cursor-target`.trim()
+            className: children.props.className
         })
     )
 }
