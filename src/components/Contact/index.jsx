@@ -28,21 +28,37 @@ const scrollTo = (target) => {
     document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' });
 };
 
-// Short message form. There is no backend, so sending opens the visitor's
-// mail app with the message filled in, addressed to Aashna.
-function ContactForm() {
-    const [sent, setSent] = useState(false);
+// Short message form, delivered to Aashna's inbox through /api/contact (Resend)
+const NOTES = {
+    idle: 'Goes straight to my inbox. I reply within 24 hours.',
+    sending: 'Sending…',
+    sent: 'Thanks! Your message is on its way. I’ll get back to you soon.',
+};
 
-    const onSubmit = (e) => {
+function ContactForm() {
+    const [status, setStatus] = useState('idle');
+    const [error, setError] = useState('');
+
+    const onSubmit = async (e) => {
         e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const name = data.get('name').trim();
-        const from = data.get('email').trim();
-        const message = data.get('message').trim();
-        const subject = `Portfolio enquiry from ${name}`;
-        const body = `${message}\n\n— ${name} (${from})`;
-        window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        setSent(true);
+        const form = e.currentTarget;
+        const data = Object.fromEntries(new FormData(form));
+        setStatus('sending');
+        setError('');
+        try {
+            const res = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const body = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(body.error || 'The message couldn’t be sent.');
+            form.reset();
+            setStatus('sent');
+        } catch (err) {
+            setError(`${err.message} You can also email ${EMAIL}.`);
+            setStatus('error');
+        }
     };
 
     return (
@@ -55,24 +71,26 @@ function ContactForm() {
             <div className={styles.fields}>
                 <label className={styles.field}>
                     <span>Name</span>
-                    <input id="footer-name" name="name" type="text" autoComplete="name" required placeholder="Your name" />
+                    <input id="footer-name" name="name" type="text" autoComplete="name" required maxLength={100} placeholder="Your name" />
                 </label>
                 <label className={styles.field}>
                     <span>Email</span>
-                    <input id="footer-email" name="email" type="email" autoComplete="email" required placeholder="you@company.com" />
+                    <input id="footer-email" name="email" type="email" autoComplete="email" required maxLength={200} placeholder="you@company.com" />
                 </label>
                 <label className={`${styles.field} ${styles.fieldWide}`}>
                     <span>Message</span>
-                    <textarea id="footer-message" name="message" rows={2} required placeholder="A line or two about what you're working on" />
+                    <textarea id="footer-message" name="message" rows={2} required maxLength={5000} placeholder="A line or two about what you're working on" />
                 </label>
+                {/* Honeypot for bots: hidden from people and screen readers */}
+                <input className={styles.honeypot} name="company" type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" />
             </div>
 
             <div className={styles.formFoot}>
-                <p className={styles.formNote} aria-live="polite">
-                    {sent ? 'Your mail app should open with the message ready to send.' : 'Opens in your mail app, ready to send.'}
+                <p className={`${styles.formNote} ${status === 'error' ? styles.formError : ''}`} aria-live="polite">
+                    {status === 'error' ? error : NOTES[status]}
                 </p>
-                <button type="submit" className={styles.send}>
-                    Send message <FiArrowUpRight aria-hidden="true" />
+                <button type="submit" className={styles.send} disabled={status === 'sending'}>
+                    {status === 'sending' ? 'Sending…' : 'Send message'} <FiArrowUpRight aria-hidden="true" />
                 </button>
             </div>
         </form>
