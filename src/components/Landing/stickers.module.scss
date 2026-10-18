@@ -120,6 +120,12 @@
         display: none;
     }
 
+    // The portrait slot is full width on phones; keep the labels' box the
+    // portrait's own size (same sum as .imageCard) so they hug its edges
+    .stickers {
+        inset: calc(50% - min(64vw, 100cqh * 0.745) * 0.6711) calc(50% - min(64vw, 100cqh * 0.745) / 2);
+    }
+
     .pillInner {
         font-size: 0.64rem;
         padding: 0.45em 0.8em;
@@ -170,5 +176,20 @@
         left: 0;
         right: auto;
         bottom: 0;
+    }
+}
+
+// Touch screens: idle spin on the compositor
+.badgeRingCss {
+    animation: badgeSpin 22s linear infinite;
+}
+
+@keyframes badgeSpin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badgeRingCss {
+        animation: none;
     }
 }

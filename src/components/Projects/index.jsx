@@ -1,227 +1,193 @@
 'use client';
 import styles from './style.module.scss';
+import scrollToSection from '../../common/scrollToSection';
 import SectionTag from '../../common/SectionTag';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { FiArrowUpRight } from 'react-icons/fi';
+import { FiArrowRight, FiArrowUpRight } from 'react-icons/fi';
 
 const projects = [
   {
     name: 'InsightFlow',
-    category: 'Full-stack SaaS',
+    description: 'A feedback platform with live analytics, so product teams can turn what users say into what ships next.',
     stack: 'Next.js · TypeScript · PostgreSQL · Prisma',
     year: '2026',
     url: 'https://insightflow-aashna.vercel.app/',
-    image: 'laptop/insightflow.webp'
+    image: 'scenes/insightflow.webp'
   },
   {
     name: 'GitPulse',
-    category: 'Developer tooling',
+    description: 'A GitHub bot that labels issues, comments on activity and pings Slack, all driven by rules you write once.',
     stack: 'Next.js · GitHub API · Webhooks · Slack',
     year: '2025',
     url: 'https://github-event-automation.vercel.app/',
-    image: 'laptop/gitpulse.webp'
+    image: 'scenes/gitpulse.webp'
   },
   {
     name: 'PhotoTools',
-    category: 'AI image editor',
+    description: 'An AI image editor for restoring photos, generative fill, object removal and recolouring in the browser.',
     stack: 'Next.js · Node.js · MongoDB · AI',
     year: '2025',
     url: 'https://phototools-ai.vercel.app/',
-    image: 'laptop/phototools.webp'
+    image: 'scenes/phototools.webp'
   },
   {
     name: 'AashTrack',
-    category: 'Productivity app',
+    description: 'A minimal task manager with a workload view and time tracking, built to stay out of the way.',
     stack: 'Next.js · React',
     year: '2024',
     url: 'https://aashtrack.vercel.app/',
-    image: 'laptop/aashtrack.webp'
+    image: 'scenes/aashtrack.webp'
   }
 ];
 
 const EASE = [0.22, 1, 0.36, 1];
 
 const headingReveal = {
-  initial: { y: '100%' },
-  open: (i) => ({ y: '0%', transition: { duration: 0.7, delay: 0.05 * i, ease: EASE } })
+  initial: { opacity: 0, y: 24 },
+  open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
 const rowReveal = {
-  initial: { y: '105%' },
-  open: (i) => ({ y: '0%', transition: { duration: 0.8, delay: 0.08 * i, ease: EASE } })
+  initial: { opacity: 0, y: 16 },
+  open: (i) => ({ opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.08 * i, ease: EASE } })
 };
 
-const cardReveal = {
-  initial: { opacity: 0, y: 28 },
-  open: (i) => ({ opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.06 * (i % 2), ease: EASE } })
+const expand = {
+  initial: { height: 0, opacity: 0 },
+  animate: { height: 'auto', opacity: 1, transition: { duration: 0.5, ease: EASE } },
+  exit: { height: 0, opacity: 0, transition: { duration: 0.35, ease: EASE } }
 };
 
-const lineDraw = {
-  initial: { scaleX: 0 },
-  open: (i) => ({ scaleX: 1, transition: { duration: 1, delay: 0.08 * i, ease: EASE } })
+const crossfade = {
+  initial: { opacity: 0, scale: 1.04 },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: EASE } },
+  exit: { opacity: 0, transition: { duration: 0.4, ease: EASE } }
 };
 
-function ProjectRow({ project, index, active, onActivate }) {
+const pad = (n) => String(n).padStart(2, '0');
+
+function VisitLink({ project }) {
   return (
-    <motion.li
-      className={`${styles.row} ${active ? styles.rowActive : ''}`}
-      initial="initial"
-      whileInView="open"
-      viewport={{ once: true, margin: '-60px' }}
-      onMouseEnter={onActivate}
-    >
-      <motion.span className={styles.rule} variants={lineDraw} custom={index} aria-hidden="true" />
-
-      <div className={styles.rowHead}>
-        <div className={styles.lead}>
-          <button
-            type="button"
-            className={styles.nameButton}
-            onClick={onActivate}
-            onFocus={onActivate}
-            aria-expanded={active}
-          >
-            <span className={styles.nameMask}>
-              <motion.span className={styles.name} variants={rowReveal} custom={index}>
-                {project.name}
-              </motion.span>
-            </span>
-          </button>
-        </div>
-
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.visit}
-          aria-label={`Visit ${project.name}`}
-        >
-          <span>Visit Project</span>
-          <FiArrowUpRight aria-hidden="true" />
-        </a>
-
-        <div className={styles.thumbCol}>
-          <AnimatePresence initial={false}>
-            {active && (
-              <motion.div
-                className={styles.thumbWrap}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.55, ease: EASE }}
-              >
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.thumb}
-                  aria-label={`Open ${project.name} live site`}
-                >
-                  <Image
-                    src={`/images/projects/${project.image}`}
-                    alt={`${project.name} — ${project.category}`}
-                    fill
-                    sizes="(max-width: 900px) 70vw, 24vw"
-                  />
-                </a>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <AnimatePresence initial={false}>
-        {active && (
-          <motion.dl
-            className={styles.meta}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.55, ease: EASE }}
-          >
-            <div className={styles.metaInner}>
-              <div className={styles.metaItem}>
-                <dt>Category</dt>
-                <dd>{project.category}</dd>
-              </div>
-              <div className={styles.metaItem}>
-                <dt>Stack</dt>
-                <dd>{project.stack}</dd>
-              </div>
-              <div className={styles.metaItem}>
-                <dt>Year</dt>
-                <dd>{project.year}</dd>
-              </div>
-            </div>
-          </motion.dl>
-        )}
-      </AnimatePresence>
-    </motion.li>
+    <a href={project.url} target="_blank" rel="noopener noreferrer" className={styles.visit}>
+      <span>Visit project</span>
+      <FiArrowRight aria-hidden="true" />
+    </a>
   );
 }
 
-// Phones and small tablets: every project as a card, screenshot on top
-function ProjectCard({ project, index }) {
+// Desktop: numbered list on the left, the active project's scene on the right
+function Showcase() {
+  const [active, setActive] = useState(0);
+  const project = projects[active];
+
   return (
-    <motion.li
-      className={styles.card}
-      initial="initial"
-      whileInView="open"
-      viewport={{ once: true, margin: '-40px' }}
-    >
-      <motion.div className={styles.cardInner} variants={cardReveal} custom={index}>
-        <a
-          href={project.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.cardImage}
-          aria-label={`Open ${project.name} live site`}
+    <div className={styles.showcase}>
+      <ol className={styles.list}>
+        {projects.map((p, i) => {
+          const on = i === active;
+          return (
+            <motion.li
+              key={p.name}
+              className={on ? `${styles.row} ${styles.rowActive}` : styles.row}
+              variants={rowReveal}
+              custom={i}
+              initial="initial"
+              whileInView="open"
+              viewport={{ once: true, margin: '-60px' }}
+              onMouseEnter={() => setActive(i)}
+            >
+              <button
+                type="button"
+                className={styles.rowButton}
+                onClick={() => setActive(i)}
+                onFocus={() => setActive(i)}
+                aria-expanded={on}
+              >
+                <span className={styles.num}>{pad(i + 1)}</span>
+                <span className={styles.name}>{p.name}</span>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {on && (
+                  <motion.div className={styles.detail} variants={expand} initial="initial" animate="animate" exit="exit">
+                    <div className={styles.detailInner}>
+                      <p className={styles.description}>{p.description}</p>
+                      <p className={styles.stack}>{p.stack} <span>· {p.year}</span></p>
+                      <VisitLink project={p} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.li>
+          );
+        })}
+      </ol>
+
+      <a
+        href={project.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.panel}
+        aria-label={`Open ${project.name} live site`}
+      >
+        <AnimatePresence initial={false}>
+          <motion.div key={project.name} className={styles.panelImage} variants={crossfade} initial="initial" animate="animate" exit="exit">
+            <Image
+              src={`/images/projects/${project.image}`}
+              alt={`${project.name} shown on a desktop screen`}
+              fill
+              sizes="(max-width: 900px) 100vw, 55vw"
+              priority={active === 0}
+            />
+          </motion.div>
+        </AnimatePresence>
+        <span className={styles.panelChip}>
+          {pad(active + 1)} / {pad(projects.length)} · {project.name}
+          <FiArrowUpRight aria-hidden="true" />
+        </span>
+      </a>
+    </div>
+  );
+}
+
+// Phones and small tablets: every project as a card, scene on top
+function Cards() {
+  return (
+    <ol className={styles.cards}>
+      {projects.map((p, i) => (
+        <motion.li
+          key={p.name}
+          className={styles.card}
+          variants={rowReveal}
+          custom={i % 2}
+          initial="initial"
+          whileInView="open"
+          viewport={{ once: true, margin: '-40px' }}
         >
-          <Image
-            src={`/images/projects/${project.image}`}
-            alt={`${project.name} — ${project.category}`}
-            fill
-            sizes="(max-width: 767px) 100vw, 50vw"
-          />
-        </a>
-
-        <div className={styles.cardBody}>
-          <div className={styles.cardHead}>
-            <h3 className={styles.cardName}>{project.name}</h3>
-            <span className={styles.cardYear}>{project.year}</span>
-          </div>
-
-          <dl className={styles.cardMeta}>
-            <div className={styles.metaItem}>
-              <dt>Category</dt>
-              <dd>{project.category}</dd>
-            </div>
-            <div className={styles.metaItem}>
-              <dt>Stack</dt>
-              <dd>{project.stack}</dd>
-            </div>
-          </dl>
-
-          <a
-            href={project.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.visit}
-            aria-label={`Visit ${project.name}`}
-          >
-            <span>Visit Project</span>
-            <FiArrowUpRight aria-hidden="true" />
+          <a href={p.url} target="_blank" rel="noopener noreferrer" className={styles.cardImage} aria-label={`Open ${p.name} live site`}>
+            <Image
+              src={`/images/projects/${p.image}`}
+              alt={`${p.name} shown on a desktop screen`}
+              fill
+              sizes="(max-width: 767px) 100vw, 50vw"
+            />
           </a>
-        </div>
-      </motion.div>
-    </motion.li>
+          <div className={styles.cardHead}>
+            <span className={styles.num}>{pad(i + 1)}</span>
+            <h3 className={styles.name}>{p.name}</h3>
+          </div>
+          <p className={styles.description}>{p.description}</p>
+          <p className={styles.stack}>{p.stack} <span>· {p.year}</span></p>
+          <VisitLink project={p} />
+        </motion.li>
+      ))}
+    </ol>
   );
 }
 
 export default function Projects() {
-  const [active, setActive] = useState(0);
   const [compact, setCompact] = useState(false);
 
   useEffect(() => {
@@ -232,62 +198,29 @@ export default function Projects() {
     return () => query.removeEventListener('change', update);
   }, []);
 
-  const heading = 'Proof of Work /';
-
   return (
     <section className={styles.projects}>
       <SectionTag>Selected projects</SectionTag>
-      <div className={styles.headingContainer}>
+
+      <motion.div
+        className={styles.intro}
+        variants={headingReveal}
+        initial="initial"
+        whileInView="open"
+        viewport={{ once: true, margin: '-80px' }}
+      >
         <h2 className={styles.heading}>
-          {heading.split(' ').map((word, i) => (
-            <span key={i} className={styles.word}>
-              <motion.span
-                variants={headingReveal}
-                initial="initial"
-                whileInView="open"
-                viewport={{ once: true, margin: '-80px' }}
-                custom={i}
-              >
-                {word}
-              </motion.span>
-            </span>
-          ))}
+          Here&apos;s what I&apos;ve <span>shipped.</span>
         </h2>
-        <span className={styles.count}>( {String(projects.length).padStart(2, '0')} )</span>
-      </div>
+        <p className={styles.subtext}>Live products I&apos;ve designed, built and put in front of real users.</p>
+      </motion.div>
 
-      <div className={styles.subtextContainer}>
-        <p className={styles.subtext}>Live products I&apos;ve designed, built and shipped.</p>
-      </div>
+      {compact ? <Cards /> : <Showcase />}
 
-      {compact ? (
-        <ol className={styles.cards}>
-          {projects.map((project, i) => (
-            <ProjectCard key={project.name} project={project} index={i} />
-          ))}
-        </ol>
-      ) : (
-      <ol className={styles.list}>
-        {projects.map((project, i) => (
-          <ProjectRow
-            key={project.name}
-            project={project}
-            index={i}
-            active={active === i}
-            onActivate={() => setActive(i)}
-          />
-        ))}
-        <motion.span
-          className={styles.closingRule}
-          variants={lineDraw}
-          initial="initial"
-          whileInView="open"
-          viewport={{ once: true, margin: '-60px' }}
-          custom={projects.length}
-          aria-hidden="true"
-        />
-      </ol>
-      )}
+      <a href="#contact" className={styles.cta} onClick={(e) => { e.preventDefault(); scrollToSection('#contact'); }}>
+        <span>Let&apos;s build something</span>
+        <FiArrowUpRight aria-hidden="true" />
+      </a>
     </section>
   );
 }

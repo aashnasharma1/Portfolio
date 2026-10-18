@@ -199,6 +199,103 @@
     backface-visibility: hidden;
 }
 
+// Touch screens: no 3D and no scroll scrubbing. The hero has two states
+// (data-settled on .hero); CSS transitions carry the change on the GPU.
+// The grey print fades off the colour one as the card moves, like a photo
+// developing.
+.imageCardFlat {
+    transform-style: flat;
+    transition: transform 0.5s var(--ease-out);
+
+    .face {
+        backface-visibility: visible;
+    }
+
+    .faceBack {
+        transform: none;
+    }
+
+    .faceFront {
+        z-index: 1;
+        transition: opacity 0.5s ease;
+    }
+}
+
+.hero[data-flat] {
+    // The pin only needs to hold while the switch plays, then the next
+    // section follows straight on instead of after a screen of dead scroll
+    height: 150vh;
+
+    .aboutAnchor {
+        top: 20%;
+    }
+
+    [data-stickers] {
+        transition: opacity 0.25s ease;
+    }
+
+    .titleGroup {
+        transition: opacity 0.25s ease, transform 0.4s var(--ease-out);
+    }
+
+    .heroEmail,
+    .heroResume,
+    .heroMeta,
+    .corners {
+        transition: opacity 0.25s ease;
+    }
+
+    .portraitFrame {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .aboutContent {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.4s ease, transform 0.45s var(--ease-out);
+    }
+}
+
+.hero[data-settled] {
+    .titleGroup {
+        opacity: 0;
+        transform: translateY(-30%);
+        pointer-events: none;
+    }
+
+    .heroEmail,
+    .heroResume,
+    .heroMeta,
+    .corners {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .imageCardFlat {
+        transform: translate(var(--ax), var(--ay)) scale(var(--as));
+
+        .faceFront {
+            opacity: 0;
+        }
+    }
+
+    .portraitFrame {
+        opacity: 1;
+        transition-delay: 0.2s;
+    }
+
+    .aboutContent {
+        opacity: 1;
+        transform: none;
+        transition-delay: 0.08s;
+    }
+
+    [data-stickers] {
+        opacity: 0;
+    }
+}
+
 // Magnetic wrapper (springs set in index.jsx); keeps the card's 3D flip
 .magnet {
     transform-style: preserve-3d;
@@ -267,7 +364,6 @@
 .portraitGray {
     object-fit: cover;
     object-position: center;
-    filter: grayscale(1);
 }
 
 .portraitColor {
@@ -658,13 +754,17 @@
 @media (min-width: 1025px) and (min-height: 501px),
     (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) and (min-height: 501px) {
     .hero {
-        // Where the name and portrait start, just under the navbar
+        // Where the name starts, just under the navbar
         --hero-top: max(15svh, 132px);
-        // Facts row offset + its height + breathing room above it
-        --meta-bottom: clamp(1.5rem, 5svh, 3.5rem);
-        --meta-space: calc(var(--meta-bottom) + 4.25rem + clamp(1.5rem, 3.5svh, 2.75rem));
-        // Portrait fills the height between the navbar and the facts row
-        --portrait-w: min(30vw, calc((100svh - var(--hero-top) - var(--meta-space)) * 0.745));
+        // Navbar height: two bar paddings + the wordmark + its rule
+        // (mirrors --bar-y and --mark-size in Header/style.module.scss)
+        --nav-h: calc(56px + clamp(2rem, 2.8vw, 2.6rem) + 1px);
+        // Facts row: flush with the bottom of the screen
+        --meta-h: clamp(96px, 12.5svh, 128px);
+        --meta-space: calc(var(--meta-h) + clamp(1.5rem, 3.5svh, 2.75rem));
+        // Portrait runs edge to edge: navbar rule down to the facts row,
+        // flush with the right frame line
+        --portrait-w: min(42vw, calc((100svh - var(--nav-h) - var(--meta-h)) * 0.745));
         // The about view keeps its original look: the settled portrait is the
         // old hero portrait width x 1.15 (index.jsx mirrors this sum)
         --about-w: calc(clamp(240px, min(23vw, 46svh * 0.745), 420px) * 1.15);
@@ -677,7 +777,7 @@
         top: var(--hero-top);
         bottom: var(--meta-space);
         // Leave the portrait's column free on the right
-        right: calc(var(--gutter) + var(--portrait-w) + clamp(2rem, 4vw, 4rem));
+        right: calc(var(--frame-w) + var(--portrait-w) + clamp(2rem, 4vw, 4rem));
         align-items: flex-start;
         justify-content: flex-end;
         padding-right: 0;
@@ -691,11 +791,11 @@
         line-height: 0.84;
     }
 
-    // Portrait: top-aligned with the tagline, on the right page margin
+    // Portrait: hangs from the navbar rule, flush with the right frame line
     .imageStage {
-        top: var(--hero-top);
+        top: var(--nav-h);
         left: auto;
-        right: var(--gutter);
+        right: var(--frame-w);
         transform: none;
     }
 
@@ -706,32 +806,37 @@
         display: none;
     }
 
+    // Facts row: frame line to frame line, sitting on the bottom of the screen
     .heroMeta {
         position: absolute;
-        left: var(--gutter);
-        right: var(--gutter);
-        bottom: var(--meta-bottom);
+        left: var(--frame-w);
+        right: var(--frame-w);
+        bottom: 0;
+        height: var(--meta-h);
         z-index: 5;
         display: grid;
-        grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)) auto;
+        // The last two cells split the portrait's width, so the portrait sits
+        // exactly over them, edge to edge
+        grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr)) repeat(2, calc(var(--portrait-w) / 2));
         align-items: stretch;
         border-top: 1px solid var(--line-strong);
+        background-color: var(--bg);
         pointer-events: auto;
     }
 
     .metaCell {
         display: flex;
         flex-direction: column;
-        gap: 0.45rem;
+        justify-content: center;
+        gap: 0.55rem;
         min-width: 0;
-        padding: 1.1rem 1.25rem 0.25rem;
+        padding: 0 clamp(1.25rem, 2vw, 2rem);
+        border-left: 1px solid var(--line-strong);
 
+        // First cell's text lines up with the page gutter
         &:first-child {
-            padding-left: 0;
-        }
-
-        & + & {
-            border-left: 1px solid var(--line);
+            border-left: 0;
+            padding-left: var(--rail-inset);
         }
     }
 
@@ -747,7 +852,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.45rem;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: var(--text);
         white-space: nowrap;
@@ -771,7 +876,7 @@
         border: none;
         border-bottom: 1px solid var(--line-strong);
         font: inherit;
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: 600;
         color: var(--text);
         text-align: left;
@@ -791,25 +896,171 @@
         }
     }
 
+    // Resume: a full-height mustard cell closing the row
     .metaResume {
-        align-self: end;
+        align-self: stretch;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-left: 1.25rem;
-        padding: 0.85rem 1.4rem;
+        justify-content: center;
+        gap: 0.65rem;
+        padding: 0 1rem;
         background-color: var(--accent);
         color: var(--on-accent);
-        border: 1px solid var(--accent);
-        font-size: 0.95rem;
+        border: 0;
+        font-size: 1.05rem;
         white-space: nowrap;
         text-decoration: none;
         transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
 
+        svg {
+            flex-shrink: 0;
+        }
+
         &:hover {
             background-color: var(--ink-strong);
-            border-color: var(--ink-strong);
             color: var(--bg);
         }
+    }
+}
+
+// Up to 1024px wide the navbar's bar padding drops to 24px, and the cells
+// sitting under the portrait get narrow: let their copy wrap and shrink
+@media (min-width: 768px) and (max-width: 1199px) and (min-height: 501px) {
+    .hero {
+        --nav-h: calc(48px + clamp(2rem, 2.8vw, 2.6rem) + 1px);
+    }
+
+    .metaValue {
+        white-space: normal;
+        font-size: 1rem;
+    }
+
+    .metaResume {
+        font-size: 0.92rem;
+        gap: 0.4rem;
+    }
+
+    .metaEmail {
+        font-size: 0.95rem;
+    }
+
+    .metaCell {
+        padding-inline: 1rem;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1199px) and (min-height: 501px) {
+    .hero {
+        --nav-h: calc(56px + clamp(2rem, 2.8vw, 2.6rem) + 1px);
+    }
+}
+
+// Large desktops: the navbar's bar padding grows to 32px
+@media (min-width: 1600px) and (min-height: 501px) {
+    .hero {
+        --nav-h: calc(64px + clamp(2rem, 2.8vw, 2.6rem) + 1px);
+    }
+}
+
+// ==================================================================
+// Phones: a stacked column instead of screen-height percentages, so the
+// blocks can never collide on any phone height. The portrait takes
+// whatever height is left between the name and the contact rows.
+// ==================================================================
+@media (max-width: 767px) {
+    .sticky {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: clamp(0.75rem, 2svh, 1.25rem);
+        box-sizing: border-box;
+        padding: max(84px, 10.5svh) var(--gutter) max(1rem, 2.5svh);
+    }
+
+    .titleGroup {
+        position: static;
+        width: 100%;
+        padding: 0;
+        // Name and tagline keep their size; the portrait gives way
+        flex-shrink: 0;
+    }
+
+    // Portrait slot: fills the remaining height. A size container, so the
+    // card and its labels can size themselves from it
+    .imageStage {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        container-type: size;
+    }
+
+    .imageCard {
+        width: min(64vw, 100cqh * 0.745);
+        height: auto;
+        aspect-ratio: 0.745;
+    }
+
+    .heroEmail,
+    .heroResume {
+        position: static;
+        transform: none;
+        flex-shrink: 0;
+    }
+
+    .heroEmail {
+        width: auto;
+    }
+
+    // Copyright row closes the column
+    .corners {
+        position: static;
+        inset: auto;
+        flex-shrink: 0;
+        width: 100%;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+    }
+
+    .copyright,
+    .since {
+        position: static;
+    }
+
+    // Second phase: start higher so the whole block, button included,
+    // fits a phone with its browser bars showing
+    .aboutContent {
+        padding-top: max(80px, 11svh);
+        padding-bottom: 1.25rem;
+    }
+}
+
+// Shorter phones (or tall phones with Safari's bars out): tighter copy
+@media (max-width: 767px) and (max-height: 800px) {
+    .hey {
+        font-size: clamp(2.75rem, 13vw, 3.75rem);
+    }
+
+    .bioLeft {
+        font-size: clamp(1.1rem, 5vw, 1.3rem);
+    }
+
+    .bioRight {
+        margin-top: 0.9rem;
+
+        p {
+            font-size: clamp(0.92rem, 3.9vw, 1rem);
+        }
+    }
+
+    .cta {
+        margin-top: 0.9rem;
+        padding: 0.85rem 2rem;
     }
 }

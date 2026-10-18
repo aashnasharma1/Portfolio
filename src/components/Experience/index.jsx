@@ -2,8 +2,8 @@
 import styles from './style.module.scss';
 import SectionTag from '../../common/SectionTag';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 
 // Newest first. `end: null` means the role is ongoing.
 // `logo` is an optional path under /public — falls back to the `mark` monogram.
@@ -36,11 +36,9 @@ const roles = [
     end: "2026-04",
     summary: "Owned features end to end — from requirements gathering through to production deployment.",
     highlights: [
-      "Delivered features end to end and cut average delivery time by ~30% through tighter scoping and reusable components.",
-      "Built type-safe REST APIs with Node.js, Express and TypeScript, improving response times by ~30%.",
-      "Integrated payment gateways and implemented JWT/OAuth with role-based access control.",
-      "Added caching, structured logging and monitoring to keep production reliable.",
-      "Mentored junior developers through code reviews and pair programming."
+      "Cut average delivery time by ~30% through tighter scoping and reusable components.",
+      "Built type-safe REST APIs in Node.js, Express and TypeScript with payments and JWT/OAuth access control, improving response times by ~30%.",
+      "Added caching, logging and monitoring for production reliability, and mentored juniors through reviews and pairing."
     ],
     tags: ["TypeScript", "Node.js", "Express", "MongoDB"]
   },
@@ -89,249 +87,331 @@ const formatDuration = (start, end) => {
 
 const monthIndex = ({ year, month }) => year * 12 + month;
 
-// Timeline drawn to scale: each role is a segment placed by its real dates,
-// so gaps between roles show as gaps. Ticks mark each January.
-const buildTimeline = () => {
-  const spans = roles.map((role) => ({ start: parseMonth(role.start), end: parseMonth(role.end) }));
-  const first = Math.min(...spans.map((s) => monthIndex(s.start)));
-  const last = Math.max(...spans.map((s) => monthIndex(s.end))) + 1;
-  const total = last - first;
-  const segments = spans.map((s) => ({
-    left: ((monthIndex(s.start) - first) / total) * 100,
-    width: ((monthIndex(s.end) + 1 - monthIndex(s.start)) / total) * 100
-  }));
-  const ticks = [];
-  for (let year = Math.floor(first / 12) + 1; year * 12 < last; year++) {
-    ticks.push({ year, left: ((year * 12 - first) / total) * 100 });
-  }
-  return { segments, ticks, firstYear: Math.floor(first / 12) };
+// Oldest first along the ruler; the list above stays newest first
+const CHRONO = [...roles].reverse().map((role) => {
+  const start = parseMonth(role.start);
+  const end = parseMonth(role.end);
+  return { ...role, startM: monthIndex(start), endM: monthIndex(end), startLabel: formatMonth(start), endLabel: role.end ? formatMonth(end) : 'Present', duration: formatDuration(start, end) };
+});
+
+// The ruler runs a few months either side of the first and last role
+const PAD = 4;
+const FIRST = CHRONO[0].startM - PAD;
+const LAST = CHRONO[CHRONO.length - 1].endM + 1 + PAD;
+const SPAN = LAST - FIRST;
+
+const monthLabel = (m) => `${MONTHS[((m % 12) + 12) % 12]} ${Math.floor(m / 12)}`;
+
+// Scroll keyframes: each role gets an equal stretch of scroll in which the
+// needle sweeps its months; the gaps between roles are crossed quickly.
+const DWELL = 0.84 / CHRONO.length;
+const GAP = (1 - DWELL * CHRONO.length) / (CHRONO.length + 1);
+const KEYS = [];
+const MONTHS_AT = [];
+CHRONO.forEach((role, i) => {
+  const from = GAP + i * (DWELL + GAP);
+  KEYS.push(from, from + DWELL);
+  MONTHS_AT.push(role.startM, role.endM + 1);
+});
+KEYS.unshift(0); MONTHS_AT.unshift(CHRONO[0].startM - 1);
+KEYS.push(1); MONTHS_AT.push(CHRONO[CHRONO.length - 1].endM + 2);
+
+// The role under (or last passed by) the needle
+const roleAt = (m) => {
+  let index = 0;
+  CHRONO.forEach((role, i) => { if (m >= role.startM - 0.5) index = i; });
+  return index;
 };
+
+// The scrubbing ruler runs on past both ends so it never stops short on screen
+const OVERRUN = 16;
+const TICKS_FIT = Array.from({ length: SPAN + 1 }, (_, i) => FIRST + i);
+const TICKS_RUN = Array.from({ length: SPAN + 1 + OVERRUN * 2 }, (_, i) => FIRST - OVERRUN + i);
 
 const EASE = [0.22, 1, 0.36, 1];
 
 const headingReveal = {
-  initial: { y: "100%" },
-  open: (i) => ({ y: "0%", transition: { duration: 0.7, delay: 0.05 * i, ease: EASE } })
-};
-
-// Company name swaps through a mask as the active role changes
-const nameSwap = {
-  initial: { y: "105%" },
-  animate: { y: "0%", transition: { duration: 0.6, ease: EASE } },
-  exit: { y: "-105%", transition: { duration: 0.35, ease: EASE } }
-};
-
-const fadeSwap = {
-  initial: { opacity: 0, y: 12 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1, ease: EASE } },
-  exit: { opacity: 0, y: -8, transition: { duration: 0.25, ease: EASE } }
-};
-
-const entryReveal = {
   initial: { opacity: 0, y: 24 },
   open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
-function Logo({ role, className }) {
+const swap = {
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, staggerChildren: 0.06 } },
+};
+
+const pad = (n) => String(n).padStart(2, '0');
+
+function Logo({ role }) {
   return (
-    <span className={className}>
-      {role.logo ? (
-        <Image src={role.logo} alt={`${role.company} logo`} fill sizes="96px" />
-      ) : (
-        <span className={styles.mark}>{role.mark}</span>
-      )}
+    <span className={styles.logo}>
+      {role.logo
+        ? <Image src={role.logo} alt="" width={64} height={64} />
+        : <span className={styles.mark}>{role.mark}</span>}
     </span>
   );
 }
 
-function Timeline({ timeline, active, onSelect }) {
+// Summary · highlights · stack for one role
+function Details({ role, index }) {
   return (
-    <div className={styles.timeline}>
-      <div className={styles.track}>
-        {timeline.segments.map((segment, i) => (
-          <button
-            key={roles[i].company}
-            type="button"
-            className={`${styles.segment} ${i === active ? styles.segmentActive : ''}`}
-            style={{ left: `${segment.left}%`, width: `${segment.width}%` }}
-            onClick={() => onSelect(i)}
-            aria-label={`Jump to ${roles[i].company}`}
-            aria-current={i === active ? 'step' : undefined}
-          />
-        ))}
+    <div className={styles.details}>
+      <div className={styles.colIntro}>
+        <div className={styles.who}>
+          <Logo role={role} />
+          <div>
+            <span className={styles.counter}>{pad(index + 1)} / {pad(CHRONO.length)}</span>
+            <h3 className={styles.company}>{role.company}</h3>
+          </div>
+        </div>
+        <p className={styles.title}>{role.title}</p>
+        <p className={styles.meta}>
+          {role.startLabel} — {role.endLabel}
+          <span>{role.duration} · {role.location} · {role.type}</span>
+        </p>
+        <p className={styles.summary}>{role.summary}</p>
       </div>
-      <div className={styles.ticks} aria-hidden="true">
-        <span className={styles.tick} style={{ left: '0%' }}>{timeline.firstYear}</span>
-        {timeline.ticks.map((tick) => (
-          <span key={tick.year} className={styles.tick} style={{ left: `${tick.left}%` }}>{tick.year}</span>
-        ))}
-        <span className={`${styles.tick} ${styles.tickEnd}`} style={{ left: '100%' }}>Now</span>
+
+      <ul className={styles.highlights}>
+        {role.highlights.map((h) => <li key={h}>{h}</li>)}
+      </ul>
+
+      <div className={styles.colStack}>
+        <span className={styles.label}>Stack</span>
+        <ul className={styles.stack}>
+          {role.tags.map((t) => <li key={t}>{t}</li>)}
+        </ul>
       </div>
     </div>
   );
 }
 
-export default function Experience() {
-  const [active, setActive] = useState(0);
-  const entryRefs = useRef([]);
-  const reduced = useReducedMotion();
-  const timeline = buildTimeline();
+// The ruler itself: month ticks, year labels and a block per role.
+// `ppm` is pixels per month; `onSelect` jumps to a role; `fit` keeps it to
+// the roles' own span so it fits the width.
+function Ruler({ ppm, active, onSelect, fit = false }) {
+  const lead = fit ? 0 : OVERRUN * ppm;
+  return (
+    <div className={styles.ruler} style={{ width: SPAN * ppm }}>
+      <div className={styles.blocks}>
+        {CHRONO.map((role, i) => (
+          <button
+            key={role.company}
+            type="button"
+            className={[styles.block, i === active && styles.blockActive, !fit && (role.endM + 1 - role.startM) * ppm < 220 && styles.blockShort].filter(Boolean).join(' ')}
+            style={{ left: (role.startM - FIRST) * ppm, width: (role.endM + 1 - role.startM) * ppm }}
+            onClick={() => onSelect(i)}
+            aria-label={`${role.company}, ${role.startLabel} to ${role.endLabel}`}
+            aria-pressed={i === active}
+          >
+            <span className={styles.blockMark}>{role.mark}</span>
+            <span className={styles.blockName}>{role.company}</span>
+          </button>
+        ))}
+      </div>
+      <div className={styles.ticks} style={{ left: -lead, right: -lead }} aria-hidden="true">
+        {(fit ? TICKS_FIT : TICKS_RUN).map((m) => {
+          const jan = ((m % 12) + 12) % 12 === 0 && (!fit || LAST - m >= 3);
+          return (
+            <span key={m} className={jan ? styles.tickMajor : styles.tick} style={{ left: (m - FIRST) * ppm + lead }}>
+              {jan && <em>{Math.floor(m / 12)}</em>}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
-  // The entry crossing the middle of the screen is the active role
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(Number(entry.target.dataset.index));
-        });
-      },
-      { rootMargin: '-45% 0px -45% 0px' }
-    );
-    entryRefs.current.forEach((el) => el && observer.observe(el));
-    return () => observer.disconnect();
+// Desktop: the section pins and the ruler scrubs sideways under a fixed needle
+function Scrubber({ intro, narrow }) {
+  const trackRef = useRef(null);
+  const stageRef = useRef(null);
+  const wrapRef = useRef(null);
+  const innerRef = useRef(null);
+  const activeRef = useRef(0);
+  // Long role lists scroll up inside the panel as the role plays out
+  const detailY = useMotionValue(0);
+  const [box, setBox] = useState({ w: 1200 });
+  const [active, setActive] = useState(0);
+  const [readout, setReadout] = useState(monthLabel(CHRONO[0].startM));
+
+  useLayoutEffect(() => {
+    const el = stageRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setBox({ w: el.clientWidth }));
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  const scrollToRole = (index) => {
-    entryRefs.current[index]?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  // About two years of ruler across a desktop, ten months across a phone
+  const ppm = narrow ? Math.max(30, box.w / 10) : Math.max(26, box.w / 24);
+  const needleX = box.w * 0.5;
+
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start start', 'end end'] });
+  const rawMonth = useTransform(scrollYProgress, KEYS, MONTHS_AT);
+  const month = useSpring(rawMonth, { stiffness: 140, damping: 26, mass: 0.6 });
+  const x = useTransform(month, (m) => needleX - (m - FIRST) * ppm);
+
+  // Within a role's stretch of scroll: hold at the top, then glide the list
+  // up so its last line comes into view before the next role
+  const placeDetails = () => {
+    const wrap = wrapRef.current;
+    const inner = innerRef.current;
+    if (!wrap || !inner) return;
+    const i = activeRef.current;
+    const p = scrollYProgress.get();
+    const a = KEYS[1 + i * 2];
+    const b = KEYS[2 + i * 2];
+    const t = Math.min(1, Math.max(0, (p - a - (b - a) * 0.15) / ((b - a) * 0.7)));
+    const overflow = Math.max(0, inner.offsetHeight - wrap.clientHeight);
+    detailY.set(-overflow * t);
   };
 
-  const role = roles[active];
-  const start = parseMonth(role.start);
-  const end = parseMonth(role.end);
-  const isCurrent = role.end === null;
-  const heading = "Experience /";
+  useMotionValueEvent(month, 'change', (m) => {
+    const i = roleAt(m);
+    activeRef.current = i;
+    setActive(i);
+    setReadout(monthLabel(Math.floor(m)));
+  });
+
+  useMotionValueEvent(scrollYProgress, 'change', placeDetails);
+
+  // A new role mounts at its own height: place it straight away
+  useLayoutEffect(placeDetails, [active]);
+
+  // Jump the page so the needle lands mid-role
+  const select = (i) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const travel = el.offsetHeight - window.innerHeight;
+    const mid = (KEYS[1 + i * 2] + KEYS[2 + i * 2]) / 2;
+    window.scrollTo({ top: top + travel * mid, behavior: 'smooth' });
+  };
+
+  const role = CHRONO[active];
+
+  return (
+    <div ref={trackRef} className={styles.track} style={{ height: `${100 + CHRONO.length * 90}vh` }}>
+      <div className={styles.pin}>
+        <div ref={stageRef} className={styles.stage}>
+          {intro}
+          <div className={styles.viewport}>
+            <motion.div className={styles.rail} style={{ x }}>
+              <Ruler ppm={ppm} active={active} onSelect={select} />
+            </motion.div>
+            <div className={styles.needle} style={{ left: needleX }} aria-hidden="true">
+              <span className={styles.readout}>{readout}</span>
+            </div>
+          </div>
+
+          <div ref={wrapRef} className={styles.detailsWrap} aria-live="polite">
+            <motion.div ref={innerRef} style={{ y: detailY }}>
+              {/* Keyed so each role animates in fresh; no exit, so fast
+                  scrolling can never leave a stale role behind */}
+              <motion.div key={role.company} variants={swap} initial="initial" animate="animate">
+                <Details role={role} index={active} />
+              </motion.div>
+            </motion.div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Short screens (landscape phones, squat desktop windows) and reduced motion:
+// the whole ruler fits the width,
+// with every role listed below it
+function Stacked() {
+  const fitRef = useRef(null);
+  const [w, setW] = useState(360);
+
+  useLayoutEffect(() => {
+    const el = fitRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const [active, setActive] = useState(CHRONO.length - 1);
+  const refs = useRef([]);
+
+  return (
+    <div className={styles.stacked}>
+      <div ref={fitRef} className={`${styles.viewport} ${styles.viewportFit}`}>
+        <Ruler fit ppm={w / SPAN} active={active} onSelect={(i) => { setActive(i); refs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} />
+      </div>
+      <ol className={styles.stackedList}>
+        {[...CHRONO.keys()].reverse().map((i) => (
+          <motion.li
+            key={CHRONO[i].company}
+            ref={(el) => { refs.current[i] = el; }}
+            className={styles.stackedItem}
+            // Lights the role crossing the middle of the screen on the ruler
+            viewport={{ margin: '-45% 0px -45% 0px' }}
+            onViewportEnter={() => setActive(i)}
+          >
+            <motion.div variants={headingReveal} initial="initial" whileInView="open" viewport={{ once: true, margin: '-60px' }}>
+              <Details role={CHRONO[i]} index={i} />
+            </motion.div>
+          </motion.li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+export default function Experience() {
+  const reduced = useReducedMotion();
+  const [compact, setCompact] = useState(false);
+  const [narrow, setNarrow] = useState(false);
+
+  useEffect(() => {
+    // Too short to pin: landscape phones and squat desktop windows
+    const short = window.matchMedia('(max-height: 500px), (min-width: 901px) and (max-height: 680px)');
+    const thin = window.matchMedia('(max-width: 900px)');
+    const update = () => { setCompact(short.matches); setNarrow(thin.matches); };
+    update();
+    short.addEventListener('change', update);
+    thin.addEventListener('change', update);
+    return () => {
+      short.removeEventListener('change', update);
+      thin.removeEventListener('change', update);
+    };
+  }, []);
+
+  const pinned = !compact && !reduced;
+
+  // The header rides along in the pinned view; otherwise it sits above the list
+  const intro = (
+    <motion.div
+      className={pinned && !narrow ? `${styles.intro} ${styles.introPinned}` : styles.intro}
+      variants={headingReveal}
+      initial="initial"
+      whileInView="open"
+      viewport={{ once: true, margin: '-80px' }}
+    >
+      <h2 className={styles.heading}>
+        Where I&apos;ve been <span>shipping.</span>
+      </h2>
+      <p className={styles.subtext}>
+        Three teams since 2023, from internal tools used by hundreds to platforms built for enterprise scale.
+      </p>
+    </motion.div>
+  );
 
   return (
     <section id="experience" className={styles.experience}>
-      <SectionTag>Work history</SectionTag>
-      <div className={styles.headingContainer}>
-        <h2 className={styles.heading}>
-          {heading.split(" ").map((word, i) => (
-            <span key={i} className={styles.word}>
-              <motion.span
-                variants={headingReveal}
-                initial="initial"
-                whileInView="open"
-                viewport={{ once: true, margin: "-80px" }}
-                custom={i}
-              >
-                {word}
-              </motion.span>
-            </span>
-          ))}
-        </h2>
-        <span className={styles.count}>( {String(roles.length).padStart(2, '0')} )</span>
-      </div>
+      <SectionTag>Experience</SectionTag>
 
-      <div className={styles.subtextContainer}>
-        <p className={styles.subtext}>
-          Three roles, newest first, on a timeline drawn to scale.
-        </p>
-      </div>
-
-      <div className={styles.ledger}>
-        {/* Pinned panel: whichever role is in view */}
-        <aside className={styles.stage} aria-live="polite">
-          <div className={styles.stageInner}>
-            <div className={styles.stageTop}>
-              <span className={styles.counter}>
-                {String(active + 1).padStart(2, '0')} <span>/ {String(roles.length).padStart(2, '0')}</span>
-              </span>
-              {isCurrent && <span className={styles.current}>Current role</span>}
-            </div>
-
-            <div className={styles.identity}>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={role.company} variants={fadeSwap} initial="initial" animate="animate" exit="exit">
-                  <Logo role={role} className={styles.stageLogo} />
-                </motion.div>
-              </AnimatePresence>
-
-              <div className={styles.nameMask}>
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.p
-                    key={role.company}
-                    className={styles.stageName}
-                    variants={reduced ? fadeSwap : nameSwap}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                  >
-                    {role.company}
-                  </motion.p>
-                </AnimatePresence>
-              </div>
-
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.p
-                  key={role.company}
-                  className={styles.stageMeta}
-                  variants={fadeSwap}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  suppressHydrationWarning
-                >
-                  <strong>{role.title}</strong>
-                  <span>{formatMonth(start)} — {isCurrent ? 'Present' : formatMonth(end)} · {formatDuration(start, end)}</span>
-                </motion.p>
-              </AnimatePresence>
-            </div>
-
-            <Timeline timeline={timeline} active={active} onSelect={scrollToRole} />
-          </div>
-        </aside>
-
-        {/* Scrolling detail, one entry per role */}
-        <ol className={styles.entries}>
-          {roles.map((item, i) => {
-            const itemStart = parseMonth(item.start);
-            const itemEnd = parseMonth(item.end);
-            return (
-              <motion.li
-                key={item.company}
-                ref={(el) => { entryRefs.current[i] = el; }}
-                data-index={i}
-                className={`${styles.entry} ${i === active ? styles.entryActive : ''}`}
-                variants={entryReveal}
-                initial="initial"
-                whileInView="open"
-                viewport={{ once: true, margin: "-80px" }}
-              >
-                <header className={styles.entryHead}>
-                  <span className={styles.entryIndex}>{String(i + 1).padStart(2, '0')}</span>
-                  <Logo role={item} className={styles.entryLogo} />
-                  <h3 className={styles.entryCompany}>{item.company}</h3>
-                  <span className={styles.entryDates} suppressHydrationWarning>
-                    {formatMonth(itemStart)} — {item.end === null ? 'Present' : formatMonth(itemEnd)}
-                  </span>
-                </header>
-
-                <p className={styles.entryRole}>
-                  <strong>{item.title}</strong>
-                  <span>{item.type} · {item.location}</span>
-                </p>
-                <p className={styles.summary}>{item.summary}</p>
-
-                <ul className={styles.highlights}>
-                  {item.highlights.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
-
-                <div className={styles.stack}>
-                  <span className={styles.stackLabel}>Stack</span>
-                  <ul className={styles.tags}>
-                    {item.tags.map((tag) => (
-                      <li key={tag}>{tag}</li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.li>
-            );
-          })}
-        </ol>
-      </div>
+      {/* Phones keep the header above the pin to leave the screen to the timeline */}
+      {pinned
+        ? (narrow ? <>{intro}<Scrubber narrow /></> : <Scrubber intro={intro} />)
+        : <>{intro}<Stacked /></>}
     </section>
   );
 }

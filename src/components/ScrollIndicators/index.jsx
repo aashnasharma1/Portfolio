@@ -8,7 +8,11 @@ export default function ScrollIndicators() {
   const [isDarkBackground, setIsDarkBackground] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
+    // Runs at most once per frame: the colour probe below forces a style
+    // recalc, which stalled scroll animations on phones when run per event
+    let frame = null;
+    const update = () => {
+      frame = null;
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const percentage = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
@@ -18,7 +22,10 @@ export default function ScrollIndicators() {
       // Hide when near bottom (contact section) - above 90%
       const pastLanding = scrollTop > window.innerHeight * 0.8;
       const nearBottom = percentage > 90;
-      setIsVisible(pastLanding && !nearBottom);
+      const visible = pastLanding && !nearBottom;
+      setIsVisible(visible);
+      // Nothing to recolour while the indicators are hidden
+      if (!visible) return;
       
       // Check if Contact section is in view by detecting dark background
       // Get the element at the bottom center of the viewport
@@ -49,10 +56,17 @@ export default function ScrollIndicators() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
+    const handleScroll = () => {
+      if (frame === null) frame = requestAnimationFrame(update);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    update(); // Initial call
     
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frame !== null) cancelAnimationFrame(frame);
+    };
   }, []);
 
   const scrollToTop = () => {

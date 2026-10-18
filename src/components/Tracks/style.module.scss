@@ -1,0 +1,214 @@
+.tracks {
+    position: relative;
+    width: 100%;
+    // The enlarged figure box may reach past the gutter; never the page
+    overflow-x: clip;
+    box-sizing: border-box;
+    padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y);
+    background-color: var(--bg);
+    color: var(--text);
+
+    // Hairline figures in the site's palette. Plates are filled, so they
+    // take the section's own background.
+    --hairline-plate: var(--bg);
+    --hairline-hi: #b07a12;
+    --hairline-edge: #655e4e;
+    --hairline-mid: #a39b86;
+    --hairline-lo: #ddd4bb;
+    --hairline-stroke: 0.9;
+}
+
+:global(:root[data-theme="dark"]) .tracks {
+    --hairline-hi: #f2b549;
+    --hairline-edge: #cdc6b3;
+    --hairline-mid: #6e6858;
+    --hairline-lo: #2e2a22;
+}
+
+// ---- Intro ----
+.intro {
+    max-width: 640px;
+    margin: 0 auto clamp(0.5rem, 1.5vw, 1.25rem);
+    text-align: center;
+}
+
+.heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--ink-strong);
+
+    // Second phrase in a softer ink, like the reference
+    span {
+        color: var(--muted);
+    }
+}
+
+.subtext {
+    margin: 1.1rem auto 0;
+    max-width: 48ch;
+    font-size: clamp(1rem, 1.3vw, 1.15rem);
+    line-height: 1.65;
+    color: var(--text-soft);
+}
+
+// ---- Stage: figure | copy ----
+.stage {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    // Illustration gets the larger share
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    outline: none;
+}
+
+.figureCell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.figureWrap {
+    // Hairline draws at 5:4; keep the box fixed so swaps never jump.
+    // The figures leave a margin inside their box, so pull it out a little
+    // to let the drawing itself read larger.
+    // The drawings sit low in their 5:4 box, so the top margin pulls the
+    // empty upper band up under the intro.
+    aspect-ratio: 5 / 4;
+    width: 112%;
+    margin: -14% -6% -4%;
+}
+
+.figure {
+    width: 100%;
+}
+
+
+.copyCell {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 0;
+}
+
+.copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.counter {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: var(--accent-text);
+
+    span {
+        color: var(--muted);
+    }
+}
+
+.title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--ink-strong);
+}
+
+.stack {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.body {
+    margin: 0.3rem 0 0;
+    max-width: 44ch;
+    font-size: clamp(1.02rem, 1.3vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--text-soft);
+}
+
+// ---- Controls: square arrow cells, like the reference ----
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.arrow {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line-strong);
+    background-color: var(--bg-alt);
+    color: var(--ink-strong);
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+    &:hover:not(:disabled) {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        color: var(--on-accent);
+    }
+
+    &:disabled {
+        background-color: transparent;
+        border-color: var(--line);
+        color: var(--line-strong);
+        cursor: default;
+    }
+}
+
+.dots {
+    display: flex;
+    gap: 6px;
+    margin-left: 0.75rem;
+
+    span {
+        width: 32px;
+        height: 2px;
+        background-color: var(--line-strong);
+        transform: scaleX(0.56);
+        // Scale from the centre so the gaps between dashes stay even
+        transform-origin: 50% 50%;
+        transition: background-color 0.3s ease, transform 0.4s var(--ease-out);
+    }
+
+    .dotActive {
+        background-color: var(--accent);
+        transform: scaleX(1);
+    }
+}
+
+// ---- Phones: figure on top, copy below ----
+@media (max-width: 767px) {
+    .stage {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .figureWrap {
+        width: 118%;
+        margin: -16% -9% -6%;
+    }
+
+    .copyCell {
+        gap: 1.5rem;
+    }
+}

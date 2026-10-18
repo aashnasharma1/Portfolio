@@ -108,12 +108,16 @@ const StickyCards = () => {
         if (!stack) return;
         const cards = [...stack.querySelectorAll('.sticky-card')];
         let frame = null;
+        let settled = false;
 
         const update = () => {
             frame = null;
-            // Phones already keep the shape in the sticky strip
+            // Phones already keep the shape in the sticky strip: reset once,
+            // then skip (reading computed style per frame stalls scrolling)
             const enabled = window.innerWidth > 767;
-            const strip = parseFloat(getComputedStyle(stack).getPropertyValue('--stack-step')) || 112;
+            if (!enabled && settled) return;
+            settled = !enabled;
+            const strip = enabled ? parseFloat(getComputedStyle(stack).getPropertyValue('--stack-step')) || 112 : 0;
 
             cards.forEach((card, i) => {
                 const dock = card.querySelector('.svg-dock');

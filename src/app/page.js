@@ -7,7 +7,9 @@ import Preloader from '../components/Preloader';
 import Landing from '../components/Landing';
 import Projects from '../components/Projects';
 import AboutMe from '../components/AboutMe';
+import Tracks from '../components/Tracks';
 import Experience from '../components/Experience';
+import AiTools from '../components/AiTools';
 import Achievements from '../components/Achievements';
 import Contact from '../components/Contact';
 import Services from '../components/Services';
@@ -44,11 +46,17 @@ export default function Home() {
   const frameRef = useRef(null);
   useEffect(() => {
     let frame = null;
+    let last = null;
     const update = () => {
       frame = null;
       if (!stageRef.current || !frameRef.current) return;
       const bottom = stageRef.current.getBoundingClientRect().bottom;
-      frameRef.current.style.setProperty('--frame-bottom', `${Math.max(0, Math.min(window.innerHeight, bottom))}px`);
+      // Only write when it moves (near the footer), so most scroll frames
+      // don't restyle the striped strips
+      const next = Math.round(Math.max(0, Math.min(window.innerHeight, bottom)));
+      if (next === last) return;
+      last = next;
+      frameRef.current.style.setProperty('--frame-bottom', `${next}px`);
     };
     const schedule = () => { if (frame === null) frame = requestAnimationFrame(update); };
     update();
@@ -102,8 +110,10 @@ export default function Home() {
           <Landing startAnimations={startAnimations} />
           <Services />
           <AboutMe />
+          <Tracks />
           <Experience />
           <div id="work"><Projects /></div>
+          <AiTools />
           <Achievements />
           </div>
         </div>

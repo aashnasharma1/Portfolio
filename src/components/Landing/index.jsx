@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
+import scrollToSection from "../../common/scrollToSection";
 import styles from "./style.module.scss";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useMotionValue, useScroll, useSpring, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
 import Stickers from "./Stickers";
 import { FiMapPin, FiZap } from "react-icons/fi";
 
@@ -86,9 +87,13 @@ export default function Home({ startAnimations = false }) {
       const poseTop = heyRef.current.offsetTop + 6;
       const targetX = vw * 0.95 - poseWidth / 2;
       const targetY = poseTop + poseHeight / 2;
+      // Portrait's resting centre within the sticky frame (phones stack it
+      // in a flex column, portrait tablets centre it with a transform)
+      const stage = stageRef.current.getBoundingClientRect();
+      const frame = stageRef.current.parentElement.getBoundingClientRect();
       setAboutPose({
-        x: targetX - vw / 2,
-        y: targetY - stageRef.current.offsetTop,
+        x: targetX - (stage.left - frame.left + stage.width / 2),
+        y: targetY - (stage.top - frame.top + stage.height / 2),
         scale
       });
       setFrameRect({ cx: targetX, cy: targetY, w: poseWidth, h: poseHeight });
@@ -101,10 +106,20 @@ export default function Home({ startAnimations = false }) {
     update();
     document.fonts?.ready.then(update);
     query.addEventListener("change", update);
-    window.addEventListener("resize", update);
+    // On phones the address bar collapsing mid-scroll fires a height-only
+    // resize; re-measuring then re-renders the portrait mid-transition and
+    // stutters. Only a width change moves anything here.
+    let lastWidth = window.innerWidth;
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const onResize = () => {
+      if (touch && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      update();
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       query.removeEventListener("change", update);
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", onResize);
     };
   }, []);
 
@@ -124,6 +139,49 @@ export default function Home({ startAnimations = false }) {
 
   // Portrait: ONE Y-axis flip (grayscale front -> colour back) while it grows
   const rotateY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  // Show only the face pointing at the viewer. backface-visibility alone is
+  // not enough: iOS ignores it in the theme switch's page snapshot, which
+  // showed the colour side mirrored mid-switch.
+  const flipFront = useTransform(rotateY, (r) => (r < 90 ? 1 : 0));
+  const flipBack = useTransform(rotateY, (r) => (r < 90 ? 0 : 1));
+
+  // Phones, tablets and touch screens skip the 3D flip (it stutters there):
+  // the grey print fades off the colour one while the card moves, like a
+  // photo developing. Only opacity and a flat move/scale, all GPU-cheap.
+  const [flat, setFlat] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia(`${STACKED_QUERY}, (pointer: coarse)`);
+    const update = () => setFlat(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  const frontOpacity = flipFront;
+  const backOpacity = flipBack;
+
+  // Touch screens: rather than scrubbing every element with the scroll
+  // (iOS delivers scroll updates late during momentum, so scrubbed motion
+  // stutters however light it is), the hero switches between two states
+  // and CSS transitions animate the change on the compositor. A little
+  // hysteresis stops it flickering at the threshold.
+  // The attribute is flipped straight on the element (no React render in
+  // between), the moment the scroll starts, so the image answers at once.
+  // Direction-aware: going down it settles after a few pixels; coming back
+  // up it returns as soon as you scroll up into the pin, rather than only at
+  // the very top (which needed a second swipe through a still screen)
+  const lastP = useRef(0);
+  const placeFlat = (p) => {
+    const el = container.current;
+    if (!el) return;
+    const up = p < lastP.current;
+    lastP.current = p;
+    if (!flat) el.removeAttribute("data-settled");
+    else if (p < 0.015 || (up && p < 0.9)) el.removeAttribute("data-settled");
+    else if (!up && p > 0.03) el.setAttribute("data-settled", "");
+  };
+  useMotionValueEvent(scrollYProgress, "change", placeFlat);
+  // Also on entering/leaving touch mode, e.g. a reload part-way down the page
+  useEffect(() => placeFlat(scrollYProgress.get()), [flat]); // eslint-disable-line react-hooks/exhaustive-deps
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, aboutPose.scale]);
   const imgX = useTransform(scrollYProgress, [0.35, 0.9], [0, aboutPose.x]);
   const imgY = useTransform(scrollYProgress, [0.35, 0.9], [0, aboutPose.y]);
@@ -172,13 +230,19 @@ export default function Home({ startAnimations = false }) {
   };
 
   return (
-    <section ref={container} className={styles.hero}>
+    <section
+      ref={container}
+      className={styles.hero}
+      data-flat={flat ? "" : undefined}
+    >
       {/* Anchor for the "About" nav link, positioned at the about state */}
       <div id="about" className={styles.aboutAnchor} />
 
-      <div className={styles.sticky} onPointerMove={onStagePointerMove} onPointerLeave={releaseMagnet}>
+      {/* Keyed on the mode: framer leaves the inline styles it set behind, so
+          switching to the touch (CSS-driven) mode remounts with clean elements */}
+      <div key={flat ? "flat" : "scrub"} className={styles.sticky} onPointerMove={onStagePointerMove} onPointerLeave={releaseMagnet}>
         {/* Name, then the AI tagline beneath it, move and fade together */}
-        <motion.div className={styles.titleGroup} style={{ y: headingY, opacity: heroFade }}>
+        <motion.div className={styles.titleGroup} style={flat ? undefined : { y: headingY, opacity: heroFade }}>
 
           <h1 className={styles.heading}>
             {heading.map((line, li) => (
@@ -231,22 +295,26 @@ export default function Home({ startAnimations = false }) {
           <motion.div className={styles.magnet} style={{ x: pullX, y: pullY }}>
           <motion.div
             ref={cardRef}
-            className={styles.imageCard}
-            style={{ rotateY, scale: imgScale, x: imgX, y: imgY }}
+            className={flat ? `${styles.imageCard} ${styles.imageCardFlat}` : styles.imageCard}
+            style={flat
+              ? { "--ax": `${aboutPose.x}px`, "--ay": `${aboutPose.y}px`, "--as": aboutPose.scale }
+              : { rotateY, scale: imgScale, x: imgX, y: imgY }}
           >
-            <div className={`${styles.face} ${styles.faceFront}`}>
-              <Image src="/images/myself.webp" alt="Aashna Sharma" fill sizes="460px" className={styles.portraitGray} priority />
-            </div>
-            <div className={`${styles.face} ${styles.faceBack}`}>
-              <Image src="/images/myself.webp" alt="Aashna Sharma" fill sizes="460px" className={styles.portraitColor} />
-            </div>
+            {/* Front is a pre-rendered greyscale copy: a live CSS filter
+                re-renders every frame while the card turns, which stutters on phones */}
+            <motion.div className={`${styles.face} ${styles.faceFront}`} style={flat ? undefined : { opacity: frontOpacity }}>
+              <Image src="/images/myself-gray.webp" alt="Aashna Sharma" fill sizes="460px" className={styles.portraitGray} priority />
+            </motion.div>
+            <motion.div className={`${styles.face} ${styles.faceBack}`} style={flat ? undefined : { opacity: backOpacity }}>
+              <Image src="/images/myself.webp" alt="" fill sizes="460px" className={styles.portraitColor} priority />
+            </motion.div>
           </motion.div>
           </motion.div>
-          <Stickers show={startAnimations} opacity={stickersFade} scrollProgress={scrollYProgress} />
+          <Stickers show={startAnimations} opacity={flat ? undefined : stickersFade} scrollProgress={scrollYProgress} />
         </div>
 
         {/* Hero email + resume */}
-        <motion.div className={styles.heroEmail} style={{ opacity: heroFade }}>
+        <motion.div className={styles.heroEmail} style={flat ? undefined : { opacity: heroFade }}>
           <span className={styles.connectLabel}>Connect with me through Email</span>
           <button type="button" className={styles.email} onClick={copyEmail}>
             {EMAIL}
@@ -259,7 +327,7 @@ export default function Home({ startAnimations = false }) {
           target="_blank"
           rel="noopener noreferrer"
           className={styles.heroResume}
-          style={{ opacity: heroFade }}
+          style={flat ? undefined : { opacity: heroFade }}
         >
           Download Resume
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -269,7 +337,7 @@ export default function Home({ startAnimations = false }) {
         </motion.a>
 
         {/* Desktop: one structured row of facts and the resume action */}
-        <motion.div className={styles.heroMeta} style={{ opacity: heroFade }}>
+        <motion.div className={styles.heroMeta} style={flat ? undefined : { opacity: heroFade }}>
           <div className={styles.metaCell}>
             <span className={styles.metaLabel}>Email</span>
             <button type="button" className={styles.metaEmail} onClick={copyEmail}>
@@ -299,7 +367,7 @@ export default function Home({ startAnimations = false }) {
         </motion.div>
 
         {/* Corners — fade with the shapes so they never sit on the about copy */}
-        <motion.div className={styles.corners} style={{ opacity: shapesFade }}>
+        <motion.div className={styles.corners} style={flat ? undefined : { opacity: shapesFade }}>
           <motion.span className={styles.copyright} variants={cornerFade} initial="initial" animate={startAnimations ? "open" : "initial"}>
             ©2026
           </motion.span>
@@ -314,7 +382,7 @@ export default function Home({ startAnimations = false }) {
           <motion.div
             className={styles.portraitFrame}
             style={{
-              opacity: aboutOpacity,
+              ...(!flat && { opacity: aboutOpacity }),
               "--fx": `${frameRect.cx}px`,
               "--fy": `${frameRect.cy}px`,
               "--fw": `${frameRect.w}px`,
@@ -332,7 +400,7 @@ export default function Home({ startAnimations = false }) {
         )}
 
         {/* About content (fades in as the portrait settles) */}
-        <motion.div className={styles.aboutContent} style={{ opacity: aboutOpacity, y: aboutY }}>
+        <motion.div className={styles.aboutContent} style={flat ? undefined : { opacity: aboutOpacity, y: aboutY }}>
           <h2 ref={heyRef} className={styles.hey}>Hey!</h2>
 
           <p
@@ -357,7 +425,7 @@ export default function Home({ startAnimations = false }) {
               className={styles.cta}
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+                scrollToSection("#contact");
               }}
             >
               Get in touch

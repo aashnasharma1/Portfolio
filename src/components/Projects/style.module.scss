@@ -1,94 +1,105 @@
-@use "../../styles/section" as *;
-
 .projects {
-    @include section-shell;
-    @include section-header;
+    position: relative;
     z-index: 2;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+    padding: calc(var(--section-y) + 1rem) var(--gutter) var(--section-y);
     background-color: var(--bg);
     color: var(--text);
+}
 
-    .subtextContainer {
-        margin-bottom: 0;
-        border-bottom: none;
+// ---- Intro ----
+.intro {
+    max-width: 760px;
+    margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.heading {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--ink-strong);
+
+    span {
+        color: var(--muted);
     }
 }
 
+.subtext {
+    margin: 1.25rem 0 0;
+    max-width: 52ch;
+    font-size: clamp(1.02rem, 1.35vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--text-soft);
+}
+
+// ---- Showcase: list | scene panel ----
+.showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    column-gap: clamp(2rem, 5vw, 5rem);
+    // The panel runs out to the frame line on the right
+    margin-right: calc(-1 * var(--rail-inset));
+}
+
 .list {
-    @include container;
     list-style: none;
     margin: 0;
     padding: 0;
-    position: relative;
+    border-top: 1px solid var(--line-strong);
 }
 
-// ---- Row ----
 .row {
     position: relative;
-    transition: opacity 0.4s ease;
+    border-bottom: 1px solid var(--line-strong);
+    transition: border-color 0.4s ease;
 }
 
-.rule,
-.closingRule {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: var(--line-strong);
-    transform-origin: left center;
+// The active row is underlined in the accent, like a tab
+.rowActive {
+    border-bottom-color: var(--accent);
 }
 
-.rule {
-    top: 0;
-}
-
-.closingRule {
-    display: block;
-    position: relative;
-    margin-top: 0;
-}
-
-.rowHead {
-    display: grid;
-    // Reserve the thumbnail column so the Visit button never shifts between rows
-    grid-template-columns: 1fr auto clamp(220px, 24vw, 340px);
-    align-items: start;
-    column-gap: clamp(1rem, 3vw, 3rem);
-    padding: clamp(1.1rem, 2.4vw, 1.9rem) 0;
-}
-
-// ---- Name ----
-.lead {
-    min-width: 0;
-}
-
-.nameButton {
-    display: block;
-    padding: 0;
+.rowButton {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    gap: clamp(1rem, 2vw, 1.75rem);
+    padding: clamp(1.4rem, 2.4vw, 2rem) clamp(0.5rem, 1.5vw, 1.5rem);
     border: 0;
     background: none;
-    color: inherit;
-    font: inherit;
     text-align: left;
     cursor: pointer;
+    color: inherit;
+    font: inherit;
 }
 
-.nameMask {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 0.04em;
+.num {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    transition: color 0.3s ease;
 }
 
 .name {
-    display: block;
+    margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(2rem, 6.4vw, 5.5rem);
+    font-size: clamp(1.6rem, 2.4vw, 2.2rem);
     font-weight: 500;
-    line-height: 0.95;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
     color: var(--muted);
-    transition: color 0.4s var(--ease-out);
-    will-change: transform;
+    transition: color 0.3s ease, transform 0.4s var(--ease-out);
+}
+
+.rowActive .num {
+    color: var(--accent-text);
 }
 
 .rowActive .name {
@@ -96,233 +107,198 @@
 }
 
 @media (hover: hover) {
-    .nameButton:hover .name {
-        color: var(--ink-strong);
+    .row:not(.rowActive) .rowButton:hover .name {
+        color: var(--text);
+        transform: translateX(6px);
     }
+}
 
-    .rowActive .nameButton:hover .name {
+.rowButton:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+.detail {
+    overflow: hidden;
+}
+
+.detailInner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    // Line up with the name, past the number
+    padding: 0 clamp(0.5rem, 1.5vw, 1.5rem) clamp(1.6rem, 2.6vw, 2.2rem) calc(clamp(0.5rem, 1.5vw, 1.5rem) + 2ch + clamp(1rem, 2vw, 1.75rem));
+}
+
+.description {
+    margin: 0;
+    max-width: 46ch;
+    font-size: clamp(1.02rem, 1.25vw, 1.15rem);
+    line-height: 1.65;
+    color: var(--text-soft);
+}
+
+.stack {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+
+    span {
         color: var(--accent-text);
     }
 }
 
-// ---- Metadata (revealed at the bottom of the active row) ----
-.meta {
-    overflow: hidden;
-    margin: 0;
-}
-
-.metaInner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(1.25rem, 4vw, 3.5rem);
-    padding-bottom: clamp(1rem, 2.2vw, 1.6rem);
-}
-
-.metaItem {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-
-    dt {
-        font-family: var(--font-mono);
-        font-size: 0.68rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--muted);
-    }
-
-    dd {
-        margin: 0;
-        font-size: clamp(0.9rem, 1.1vw, 1.05rem);
-        font-weight: 600;
-        color: var(--text);
-    }
-}
-
-
-// ---- Visit button ----
 .visit {
     display: inline-flex;
     align-items: center;
-    gap: 0.55rem;
-    padding: 0.7rem 1.2rem;
-    border: 1px solid var(--line-strong);
-    border-radius: 0;
+    gap: 0.6rem;
+    margin-top: 0.25rem;
     font-family: var(--font-mono);
-    font-size: 0.78rem;
-    letter-spacing: 0.3px;
-    color: var(--muted);
-    white-space: nowrap;
+    font-size: 0.85rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     text-decoration: none;
-    transition: color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease;
+    color: var(--accent-text);
 
     svg {
         transition: transform 0.35s var(--ease-out);
     }
-}
 
-.rowActive .visit {
-    color: var(--text);
-    border-color: var(--line-strong);
-}
-
-@media (hover: hover) {
-    .visit:hover {
-        color: var(--on-accent);
-        background-color: var(--accent);
-        border-color: var(--accent);
-
-        svg {
-            transform: translate(2px, -2px);
-        }
+    &:hover svg {
+        transform: translateX(5px);
     }
 }
 
-// ---- Thumbnail (revealed at the top-right of the active row) ----
-.thumbCol {
-    // Always the reserved third grid column, so the Visit button never shifts
-    align-self: start;
-}
-
-.thumbWrap {
-    overflow: hidden;
-}
-
-.thumb {
+// ---- Scene panel ----
+.panel {
     position: relative;
     display: block;
-    width: 100%;
-    // Laptop renders (transparent WebP) — no frame of our own
-    aspect-ratio: 900 / 560;
-    text-decoration: none;
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    border-right: 0;
+    background-color: var(--bg-alt);
+    // Stays in view while the list expands below it
+    position: sticky;
+    top: 110px;
+}
+
+.panelImage {
+    position: absolute;
+    inset: 0;
 
     img {
-        object-fit: contain;
-        transition: transform 0.6s var(--ease-out);
+        object-fit: cover;
+        transition: transform 1.2s var(--ease-out);
     }
 }
 
 @media (hover: hover) {
-    .thumb:hover img {
-        transform: scale(1.04);
+    .panel:hover .panelImage img {
+        transform: scale(1.03);
+    }
+}
+
+.panelChip {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 0.9rem;
+    background-color: var(--bg);
+    border-top: 1px solid var(--line-strong);
+    border-right: 1px solid var(--line-strong);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-strong);
+}
+
+// ---- Closing CTA ----
+.cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+    padding: 1.1rem 1.75rem;
+    border: 1px solid var(--line-strong);
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: var(--ink-strong);
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+
+    svg {
+        transition: transform 0.35s var(--ease-out);
+    }
+
+    &:hover {
+        background-color: var(--accent);
+        border-color: var(--accent);
+        color: var(--on-accent);
+
+        svg {
+            transform: translate(3px, -3px);
+        }
     }
 }
 
 // ---- Cards (phones and small tablets) ----
 .cards {
-    @include container;
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2.5rem 1.5rem;
-    border-top: 1px solid var(--line-strong);
-    padding-top: 1.75rem;
+    gap: 3rem 1.5rem;
 }
 
 .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
     min-width: 0;
 }
 
-.cardInner {
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-}
-
-// Laptop render on top, full card width
 .cardImage {
     position: relative;
     display: block;
     width: 100%;
-    aspect-ratio: 900 / 560;
+    aspect-ratio: 5 / 4;
+    overflow: hidden;
+    border: 1px solid var(--line-strong);
+    background-color: var(--bg-alt);
+    margin-bottom: 0.4rem;
 
     img {
-        object-fit: contain;
+        object-fit: cover;
     }
-}
-
-.cardBody {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
 }
 
 .cardHead {
     display: flex;
     align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-}
+    gap: 0.9rem;
 
-.cardName {
-    margin: 0;
-    font-family: var(--font-display);
-    font-size: clamp(1.75rem, 8vw, 2.4rem);
-    font-weight: 600;
-    line-height: 1;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-    color: var(--text);
-}
-
-.cardYear {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    color: var(--accent-text);
-}
-
-.cardMeta {
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-.card .visit {
-    align-self: flex-start;
-    color: var(--text);
-}
-
-// ---- Tablet ----
-@media (max-width: 900px) {
-    .rowHead {
-        grid-template-columns: 1fr auto;
-    }
-
-    .thumbCol {
-        display: none;
-    }
-
-    .visit {
-        align-self: start;
-    }
-}
-
-// ---- Phone ----
-@media (max-width: 767px) {
-    .rowHead {
-        grid-template-columns: 1fr;
-        row-gap: 1rem;
+    .num {
+        color: var(--accent-text);
     }
 
     .name {
-        font-size: clamp(1.9rem, 11vw, 3rem);
-        white-space: normal;
+        color: var(--ink-strong);
     }
+}
 
-    .visit {
-        justify-self: start;
-    }
-
-    .metaInner {
-        gap: 1rem 2rem;
-    }
-
+@media (max-width: 767px) {
     .cards {
         grid-template-columns: 1fr;
-        gap: 3rem;
     }
-
 }

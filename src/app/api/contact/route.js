@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { enquiryEmail } from './emailTemplate';
 
 // Contact form → Resend. Runs on the server only, so the API key never
 // reaches the browser.
@@ -26,9 +27,6 @@ const throttled = (ip) => {
   hits.set(ip, recent);
   return recent.length > MAX_PER_WINDOW;
 };
-
-const escapeHtml = (value) =>
-  value.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 const json = (body, status = 200) => Response.json(body, { status });
 
@@ -72,14 +70,8 @@ export async function POST(request) {
     to: TO,
     // Hitting reply in the inbox goes straight to the visitor
     replyTo: email,
-    subject: `Portfolio enquiry from ${name}`,
-    text: `${message}\n\n— ${name} (${email})`,
-    html: `
-      <div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.6;color:#1a1712">
-        <p style="margin:0 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#655e4e">Portfolio enquiry</p>
-        <p style="margin:0 0 16px"><strong>${escapeHtml(name)}</strong> &lt;${escapeHtml(email)}&gt;</p>
-        <p style="margin:0;white-space:pre-wrap">${escapeHtml(message)}</p>
-      </div>`
+    subject: `New enquiry from ${name}`,
+    ...enquiryEmail({ name, email, message })
   });
 
   if (error) {

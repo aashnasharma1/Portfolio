@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import scrollToSection from '../../common/scrollToSection';
 import styles from "./style.module.scss";
 import { usePathname } from "next/navigation";
 
@@ -76,7 +77,7 @@ export default function Header() {
           <div className={styles.el}>
             <a href="#contact" onClick={(e) => {
               e.preventDefault();
-              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              scrollToSection('#contact');
             }}>Contact</a>
             <div className={styles.indicator}></div>
             <div className={styles.corners}>
@@ -107,7 +108,7 @@ export default function Header() {
             setTimeout(() => {
               if (url.hash) {
                 // In-page anchor: scroll to the section
-                document.querySelector(url.hash)?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection(url.hash);
               } else {
                 // "Home" link: scroll back to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });

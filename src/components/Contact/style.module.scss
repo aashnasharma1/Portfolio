@@ -326,19 +326,23 @@
 }
 
 // ---- Phone ----
+// Kept shorter than the screen, so the end of the page shows a strip of the
+// section above instead of making you scroll the whole footer into view.
+// The form stays; links that repeat elsewhere (menu, resume) drop out.
 @media (max-width: 767px) {
-    .fields {
-        grid-template-columns: 1fr;
+    .inner {
+        padding-top: 1.75rem;
+        gap: 1.5rem;
     }
 
-    .field + .field {
-        border-left: 0;
-        border-top: 1px solid var(--line-strong);
+    // Resume is still linked under Elsewhere
+    .cta {
+        display: none;
     }
 
-    .primary {
-        width: 100%;
-        justify-content: center;
+    // Name and email share a row; the message runs full width below
+    .field {
+        padding: 0.6rem 0.8rem 0.65rem;
     }
 
     .send {
@@ -348,11 +352,13 @@
 
     .columns {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 2.25rem 1.25rem;
+        gap: 1.25rem;
     }
 
-    .col:first-child {
-        grid-column: 1 / -1;
+    // The form covers contact, and the menu covers the sitemap
+    .col:nth-child(1),
+    .col:nth-child(2) {
+        display: none;
     }
 
     .bottom {

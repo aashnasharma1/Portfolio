@@ -8,7 +8,11 @@ export default function AnimatedShape({ type }) {
 
   useEffect(() => {
     if (!svgRef.current) return;
+    const svg = svgRef.current;
 
+    // Scoped to this SVG, so the '.bar' / '#bar-1' selectors below can't
+    // reach another card's shape, and so every tween can be paused together
+    const ctx = gsap.context(() => {
     if (type === 'Frontend Development') {
       // Lines animation for Frontend
       const lineOrigin = svgRef.current.querySelector('.line-origin');
@@ -184,9 +188,19 @@ export default function AnimatedShape({ type }) {
       });
     }
 
+    }, svg);
+
+    // The loops run forever; off screen they only burn time (they kept the
+    // main thread busy every frame and made the hero stutter on phones)
+    const tweens = ctx.getTweens();
+    const observer = new IntersectionObserver(([entry]) => {
+      tweens.forEach((t) => (entry.isIntersecting ? t.resume() : t.pause()));
+    });
+    observer.observe(svg);
+
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      gsap.killTweensOf(svgRef.current);
+      observer.disconnect();
+      ctx.kill();
     };
   }, [type]);
 

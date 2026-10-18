@@ -22,15 +22,22 @@ const pop = {
 };
 
 // Square stamp with a ring of text that idles slowly, spins faster on hover and with scroll
+// The idle spin's frame loop, mounted only where it's used: touch screens
+// spin with a CSS animation instead, since a JS loop every frame, forever,
+// competes with scrolling on phones
+function IdleSpin({ angle, speed }) {
+  useAnimationFrame((_, delta) => {
+    angle.set(angle.get() + delta * speed.get());
+  });
+  return null;
+}
+
 function SpinBadge({ scrollProgress, canDrag, show }) {
   const angle = useMotionValue(0);
   const speed = useSpring(0.03, { stiffness: 60, damping: 20 });
   const scrollSpin = useTransform(scrollProgress, [0, 1], [0, 540]);
   const rotate = useTransform([angle, scrollSpin], ([a, s]) => a + s);
 
-  useAnimationFrame((_, delta) => {
-    angle.set(angle.get() + delta * speed.get());
-  });
 
   return (
     <motion.div
@@ -46,7 +53,13 @@ function SpinBadge({ scrollProgress, canDrag, show }) {
       onHoverStart={() => speed.set(0.25)}
       onHoverEnd={() => speed.set(0.03)}
     >
-      <motion.svg viewBox="0 0 120 120" className={styles.badgeRing} style={{ rotate }} aria-hidden="true">
+      {canDrag && <IdleSpin angle={angle} speed={speed} />}
+      <motion.svg
+        viewBox="0 0 120 120"
+        className={canDrag ? styles.badgeRing : `${styles.badgeRing} ${styles.badgeRingCss}`}
+        style={canDrag ? { rotate } : undefined}
+        aria-hidden="true"
+      >
         <defs>
           <path id="badge-circle" d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0" />
         </defs>
@@ -93,7 +106,7 @@ export default function Stickers({ show, opacity, scrollProgress }) {
   }, []);
 
   return (
-    <motion.div ref={ref} className={styles.stickers} style={{ opacity }}>
+    <motion.div ref={ref} className={styles.stickers} style={opacity ? { opacity } : undefined} data-stickers="">
       <SpinBadge scrollProgress={scrollProgress} canDrag={canDrag} show={show} />
 
       <Pill className={styles.pillLocation} index={1} show={show}>
