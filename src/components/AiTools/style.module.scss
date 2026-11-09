@@ -110,13 +110,14 @@
 
 @media (max-width: 600px) {
     .grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1.75rem 0.75rem;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 1.5rem 0.5rem;
     }
 
+    // Five to a row: labels shrink so "Supabase" and "Tailwind" fit
     .name {
-        font-size: 0.72rem;
-        letter-spacing: 0.12em;
+        font-size: 0.62rem;
+        letter-spacing: 0.06em;
     }
 
 }
