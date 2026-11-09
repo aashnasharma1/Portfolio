@@ -326,7 +326,7 @@
 
   .sticky-card {
     grid-template-areas:
-      "main main shape"
+      "main main main"
       "skills skills skills";
     grid-template-rows: auto auto;
     min-height: 0;
@@ -343,7 +343,7 @@
   }
 
   .sticky-card-main {
-    padding: 1rem 0.5rem 1rem var(--gutter);
+    padding: 1rem var(--gutter);
     border-right: 0;
     gap: 1rem;
   }
@@ -354,19 +354,10 @@
     white-space: normal;
   }
 
-  .sticky-card-description {
-    font-size: 0.9rem;
-  }
-
+  /* Phones: just the number and title, no blurb or animated shape */
+  .sticky-card-description,
   .svg-box {
-    align-items: flex-start;
-    padding: 1rem 0.75rem;
-    border-right: 0;
-  }
-
-  .svg-box .animated-shape-box {
-    width: 40px;
-    height: 40px;
+    display: none;
   }
 
   .sticky-card-skills {

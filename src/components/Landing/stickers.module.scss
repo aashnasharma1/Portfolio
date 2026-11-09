@@ -132,15 +132,17 @@
         gap: 0.35em;
     }
 
+    // Only the location pill stays, in the top-right spot
     .pillLocation {
-        top: auto;
-        bottom: 9%;
-        translate: -45% 0;
+        left: auto;
+        right: 0;
+        top: 7%;
+        bottom: auto;
+        translate: 45% 0;
     }
 
     .pillAi {
-        top: 7%;
-        translate: 45% 0;
+        display: none;
     }
 }
 

@@ -3,7 +3,7 @@ import styles from './style.module.scss';
 import SectionTag from '../../common/SectionTag';
 import Image from 'next/image';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
 
 // Newest first. `end: null` means the role is ongoing.
 // `logo` is an optional path under /public — falls back to the `mark` monogram.
@@ -135,9 +135,12 @@ const headingReveal = {
   open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
 };
 
+// Role change: the outgoing role eases up and out while the next one
+// drifts in a beat later, so the two overlap instead of cutting
 const swap = {
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE, staggerChildren: 0.06 } },
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.12, ease: EASE } },
+  exit: { opacity: 0, y: -16, transition: { duration: 0.4, ease: EASE } },
 };
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -159,10 +162,16 @@ function Details({ role, index }) {
       <div className={styles.colIntro}>
         <div className={styles.who}>
           <Logo role={role} />
-          <div>
+          <div className={styles.whoText}>
             <span className={styles.counter}>{pad(index + 1)} / {pad(CHRONO.length)}</span>
             <h3 className={styles.company}>{role.company}</h3>
+            {/* Phones: the role sits under the company, the dates to the right */}
+            <p className={styles.whoRole}>{role.title}</p>
           </div>
+          <p className={styles.whoDates}>
+            <span>{role.startLabel}</span>
+            <span>{role.endLabel}</span>
+          </p>
         </div>
         <p className={styles.title}>{role.title}</p>
         <p className={styles.meta}>
@@ -232,6 +241,8 @@ function Scrubber({ intro, narrow }) {
   const activeRef = useRef(0);
   // Long role lists scroll up inside the panel as the role plays out
   const detailY = useMotionValue(0);
+  // Sprung, so the jump back to the top when a new role arrives is a glide
+  const detailYSmooth = useSpring(detailY, { stiffness: 90, damping: 22, mass: 0.8 });
   const [box, setBox] = useState({ w: 1200 });
   const [active, setActive] = useState(0);
   const [readout, setReadout] = useState(monthLabel(CHRONO[0].startM));
@@ -307,12 +318,14 @@ function Scrubber({ intro, narrow }) {
           </div>
 
           <div ref={wrapRef} className={styles.detailsWrap} aria-live="polite">
-            <motion.div ref={innerRef} style={{ y: detailY }}>
-              {/* Keyed so each role animates in fresh; no exit, so fast
-                  scrolling can never leave a stale role behind */}
-              <motion.div key={role.company} variants={swap} initial="initial" animate="animate">
-                <Details role={role} index={active} />
-              </motion.div>
+            <motion.div ref={innerRef} className={styles.detailsInner} style={{ y: detailYSmooth }}>
+              {/* Keyed so each role animates in fresh; popLayout lifts the
+                  outgoing role out of the flow so the two crossfade in place */}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div key={role.company} variants={swap} initial="initial" animate="animate" exit="exit">
+                  <Details role={role} index={active} />
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
           </div>
 

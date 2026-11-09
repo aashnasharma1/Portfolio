@@ -119,7 +119,11 @@
         letter-spacing: 0.12em;
     }
 
+}
+
+// Phones: just the logo and its name
+@media (max-width: 767px) {
     .use {
-        font-size: 0.76rem;
+        display: none;
     }
 }

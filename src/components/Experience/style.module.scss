@@ -347,6 +347,22 @@
     gap: 1rem;
 }
 
+// Company + role, and the dates on the right: the phone header
+.whoText {
+    flex: 1;
+    min-width: 0;
+}
+
+.whoRole,
+.whoDates {
+    display: none;
+}
+
+// Holds the outgoing role while it fades out over the new one
+.detailsInner {
+    position: relative;
+}
+
 .logo {
     flex-shrink: 0;
     width: 56px;
@@ -609,13 +625,54 @@
         gap: 0.5rem;
     }
 
+    // Header is one row: logo, company over role, dates on the right.
+    // The counter, the separate role/meta lines and the summary go.
+    .who {
+        align-items: flex-start;
+        gap: 0.85rem;
+    }
+
+    .counter,
+    .title,
+    .meta,
+    .summary {
+        display: none;
+    }
+
+    .whoRole {
+        display: block;
+        margin: 0.3rem 0 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: var(--text-soft);
+    }
+
+    .whoDates {
+        flex-shrink: 0;
+        margin: 0.2rem 0 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.3rem;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: var(--accent-text);
+
+        span + span {
+            color: var(--muted);
+        }
+    }
+
     .logo {
         width: 46px;
         height: 46px;
     }
 
     .company {
-        font-size: 1.55rem;
+        font-size: clamp(1.25rem, 5.6vw, 1.55rem);
     }
 
     .title {

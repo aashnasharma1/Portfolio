@@ -166,7 +166,8 @@
         .imageWrapper { aspect-ratio: 16 / 10; }
         .statValue { font-size: 1rem; }
         .title { font-size: 1.2rem; }
-        .meta { font-size: 0.7rem; margin-bottom: 0.6rem; }
+        // Event and date line is dropped on phones
+        .meta { display: none; }
         .description { font-size: 0.9rem; line-height: 1.5; }
     }
 }
