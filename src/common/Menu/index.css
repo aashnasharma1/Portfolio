@@ -588,7 +588,9 @@
   content: counter(smItem, decimal-leading-zero);
   position: absolute;
   top: 0.1em;
-  right: 2.8em;
+  /* Pinned to the item's right edge, inside its 1.4em padding, so it never
+     reaches back over the label however small the item gets */
+  right: 0;
   font-size: 18px;
   font-weight: 400;
   color: var(--sm-accent, var(--accent));
