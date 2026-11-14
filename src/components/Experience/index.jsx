@@ -2,15 +2,13 @@
 import styles from './style.module.scss';
 import SectionTag from '../../common/SectionTag';
 import Image from 'next/image';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { useLayoutEffect, useRef } from 'react';
+import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'framer-motion';
 
-// Newest first. `end: null` means the role is ongoing.
-// `logo` is an optional path under /public — falls back to the `mark` monogram.
+// `end: null` means the role is ongoing.
 const roles = [
   {
     company: "Control Print Ltd.",
-    mark: "CP",
     logo: "/images/Control-Print-Logo.png",
     title: "Software Engineer",
     type: "Full-time",
@@ -27,7 +25,6 @@ const roles = [
   },
   {
     company: "AllHeart Web",
-    mark: "AH",
     logo: "/images/All_heart_web.png",
     title: "Full Stack Engineer",
     type: "Full-time",
@@ -44,7 +41,6 @@ const roles = [
   },
   {
     company: "CG Infinity",
-    mark: "CG",
     logo: "/images/CG_infinity.png",
     title: "Software Engineer",
     type: "Internship",
@@ -85,346 +81,311 @@ const formatDuration = (start, end) => {
   return parts.join(" ");
 };
 
-const monthIndex = ({ year, month }) => year * 12 + month;
-
-// Oldest first along the ruler; the list above stays newest first
-const CHRONO = [...roles].reverse().map((role) => {
+// Oldest first: the skate drops in at the first job and rolls down to now
+const TIMELINE = [...roles].reverse().map((role) => {
   const start = parseMonth(role.start);
   const end = parseMonth(role.end);
-  return { ...role, startM: monthIndex(start), endM: monthIndex(end), startLabel: formatMonth(start), endLabel: role.end ? formatMonth(end) : 'Present', duration: formatDuration(start, end) };
+  return {
+    ...role,
+    year: start.year,
+    startLabel: formatMonth(start),
+    endLabel: role.end ? formatMonth(end) : "Present",
+    ongoing: !role.end,
+    duration: formatDuration(start, end),
+  };
 });
-
-// The ruler runs a few months either side of the first and last role
-const PAD = 4;
-const FIRST = CHRONO[0].startM - PAD;
-const LAST = CHRONO[CHRONO.length - 1].endM + 1 + PAD;
-const SPAN = LAST - FIRST;
-
-const monthLabel = (m) => `${MONTHS[((m % 12) + 12) % 12]} ${Math.floor(m / 12)}`;
-
-// Scroll keyframes: each role gets an equal stretch of scroll in which the
-// needle sweeps its months; the gaps between roles are crossed quickly.
-const DWELL = 0.84 / CHRONO.length;
-const GAP = (1 - DWELL * CHRONO.length) / (CHRONO.length + 1);
-const KEYS = [];
-const MONTHS_AT = [];
-CHRONO.forEach((role, i) => {
-  const from = GAP + i * (DWELL + GAP);
-  KEYS.push(from, from + DWELL);
-  MONTHS_AT.push(role.startM, role.endM + 1);
-});
-KEYS.unshift(0); MONTHS_AT.unshift(CHRONO[0].startM - 1);
-KEYS.push(1); MONTHS_AT.push(CHRONO[CHRONO.length - 1].endM + 2);
-
-// The role under (or last passed by) the needle
-const roleAt = (m) => {
-  let index = 0;
-  CHRONO.forEach((role, i) => { if (m >= role.startM - 0.5) index = i; });
-  return index;
-};
-
-// The scrubbing ruler runs on past both ends so it never stops short on screen
-const OVERRUN = 16;
-const TICKS_FIT = Array.from({ length: SPAN + 1 }, (_, i) => FIRST + i);
-const TICKS_RUN = Array.from({ length: SPAN + 1 + OVERRUN * 2 }, (_, i) => FIRST - OVERRUN + i);
 
 const EASE = [0.22, 1, 0.36, 1];
 
 const headingReveal = {
   initial: { opacity: 0, y: 24 },
-  open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } }
+  open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
-// Role change: the outgoing role eases up and out while the next one
-// drifts in a beat later, so the two overlap instead of cutting
-const swap = {
+// Each role rises in, its lines following one by one
+const entryReveal = {
   initial: { opacity: 0, y: 28 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.8, delay: 0.12, ease: EASE } },
-  exit: { opacity: 0, y: -16, transition: { duration: 0.4, ease: EASE } },
+  open: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE, staggerChildren: 0.07, delayChildren: 0.15 } },
 };
 
-const pad = (n) => String(n).padStart(2, '0');
+const lineReveal = {
+  initial: { opacity: 0, y: 12 },
+  open: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+};
 
-function Logo({ role }) {
+// Wheel radius in the skate drawing's own units (viewBox is 124 x 110)
+const WHEEL_R = 11;
+const ART_H = 110;
+
+// Signed distance from the skate to the nearest stop
+const nearestStop = (y, stops) => {
+  let best = Infinity;
+  for (const s of stops) if (Math.abs(y - s) < Math.abs(best)) best = y - s;
+  return best;
+};
+
+// Offset of an element inside an ancestor, ignoring transforms (so the
+// reveal's slide doesn't skew the measurement)
+const offsetWithin = (el, ancestor) => {
+  let top = 0;
+  let node = el;
+  while (node && node !== ancestor) {
+    top += node.offsetTop;
+    node = node.offsetParent;
+  }
+  return top;
+};
+
+// Side view of a quad roller skate, toe to the right
+function Skate({ wheelRotate }) {
   return (
-    <span className={styles.logo}>
-      {role.logo
-        ? <Image src={role.logo} alt="" width={64} height={64} />
-        : <span className={styles.mark}>{role.mark}</span>}
+    <svg viewBox="0 0 124 110" className={styles.skateArt} aria-hidden="true">
+      {/* Boot: high back, padded cuff, sloping instep down to the toe */}
+      <path
+        className={styles.boot}
+        d="M20 79 V22 Q20 9 33 9 H55 Q64 9 64 18 V38 Q66 49 80 53 L103 59 Q116 63 116 76 V79 Z"
+      />
+      <rect className={styles.cuff} x="18" y="6" width="48" height="9" rx="4.5" />
+      {/* Side stripe and heel tab */}
+      <path className={styles.bootStripe} d="M23 62 H58 Q74 64 104 68" />
+      <rect className={styles.heelTab} x="16" y="24" width="6" height="26" rx="2" />
+      {/* Laces criss-crossing down the front */}
+      <path
+        className={styles.laces}
+        d="M54 20 L63 26 M54 26 L63 20 M54 31 L64 37 M54 37 L64 31 M60 43 L72 48 M62 48 L70 42 M72 50 L84 54 M75 55 L81 48"
+      />
+      {/* Pom-poms at the end of the laces */}
+      <g className={styles.pom}>
+        <circle cx="90" cy="54" r="5.5" />
+        <circle cx="96" cy="51" r="4.5" />
+        <circle cx="95" cy="57.5" r="4.5" />
+      </g>
+      {/* Sole, plate and trucks */}
+      <rect className={styles.sole} x="16" y="77" width="102" height="6" rx="3" />
+      <path className={styles.truck} d="M26 83 H46 L42 89 H30 Z M88 83 H108 L104 89 H92 Z" />
+      {/* Toe stop */}
+      <rect className={styles.toeStop} x="111" y="81" width="11" height="14" rx="3.5" />
+      {/* Wheels, spinning with the scroll */}
+      {[36, 98].map((cx) => (
+        <motion.g key={cx} style={{ rotate: wheelRotate }}>
+          <circle className={styles.wheel} cx={cx} cy="97" r={WHEEL_R} />
+          <circle className={styles.hub} cx={cx} cy="97" r="4" />
+          <path className={styles.spoke} d={`M${cx} 88 V92 M${cx} 102 V106 M${cx - 9} 97 H${cx - 5} M${cx + 5} 97 H${cx + 9}`} />
+        </motion.g>
+      ))}
+    </svg>
+  );
+}
+
+// The skate riding the line, laid along it: wheels run on the line, the boot
+// stands off to its right and the toe leads the way. The wheels turn with
+// the distance rolled, it turns around when you scroll back up, and it hops
+// off the line over every stop.
+function Rider({ y, stopsRef, sizeRef, still }) {
+  const velocity = useVelocity(y);
+  // Read through a ref: reduced motion can resolve after the first render
+  const stillRef = useRef(still);
+  stillRef.current = still;
+
+  // Distance rolled in either direction, so the wheels always turn forward
+  const travelled = useMotionValue(0);
+  const lastY = useRef(0);
+  useMotionValueEvent(y, 'change', (v) => {
+    travelled.set(travelled.get() + Math.abs(v - lastY.current));
+    lastY.current = v;
+  });
+  const wheelRotate = useTransform(travelled, (d) => {
+    const r = WHEEL_R * sizeRef.current;
+    return ((d / (2 * Math.PI * r)) * 360) % 360;
+  });
+
+  // Which way it's heading: toe down going down, toe up coming back. The
+  // spring passes through zero, so it visibly turns around.
+  const heading = useMotionValue(1);
+  useMotionValueEvent(velocity, 'change', (v) => {
+    if (v > 40) heading.set(1);
+    else if (v < -40) heading.set(-1);
+  });
+  const turn = useSpring(heading, { stiffness: 220, damping: 24 });
+
+  const hop = useTransform(y, (v) => (stillRef.current ? 0 : Math.exp(-((nearestStop(v, stopsRef.current) / 60) ** 2))));
+  // Off the line and back, with the toe kicking out; a touch of lean with speed
+  const hopX = useTransform(hop, (h) => h * 26 * sizeRef.current);
+  const tilt = useTransform([hop, velocity, turn], ([h, v, t]) =>
+    stillRef.current ? 0 : -(h * 12 + Math.min(Math.abs(v) / 260, 4)) * Math.sign(t || 1)
+  );
+
+  // Speed lines trail behind, whichever way it's rolling
+  const trailOpacity = useTransform(velocity, (v) => (stillRef.current ? 0 : Math.min(Math.abs(v) / 1400, 0.9)));
+
+  return (
+    <motion.div className={styles.rider} style={{ y }} aria-hidden="true">
+      <motion.div className={styles.trails} style={{ opacity: trailOpacity, scaleY: heading }}>
+        <span /><span /><span />
+      </motion.div>
+      <motion.div className={styles.skate} style={{ x: hopX, rotate: tilt, originX: 0, originY: 0.5 }}>
+        <motion.div className={styles.skateHeading} style={{ scaleY: turn }}>
+          <div className={styles.skateTurn}>
+            <Skate wheelRotate={wheelRotate} />
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Company logo on the line; lights up once the skate has rolled past
+function Stop({ role, index, y, stopsRef, nodeRef }) {
+  const lit = useTransform(y, (v) => (v >= (stopsRef.current[index] ?? Infinity) - 8 ? 1 : 0));
+  const ringScale = useTransform(lit, (l) => 0.8 + l * 0.2);
+  return (
+    <span ref={nodeRef} className={styles.stop}>
+      <Image src={role.logo} alt="" width={64} height={64} />
+      <motion.span className={styles.stopRing} style={{ opacity: lit, scale: ringScale }} />
     </span>
   );
 }
 
-// Summary · highlights · stack for one role
-function Details({ role, index }) {
+function Entry({ role, index, side, y, stopsRef, nodeRef }) {
   return (
-    <div className={styles.details}>
-      <div className={styles.colIntro}>
-        <div className={styles.who}>
-          <Logo role={role} />
-          <div className={styles.whoText}>
-            <span className={styles.counter}>{pad(index + 1)} / {pad(CHRONO.length)}</span>
-            <h3 className={styles.company}>{role.company}</h3>
-            {/* Phones: the role sits under the company, the dates to the right */}
-            <p className={styles.whoRole}>{role.title}</p>
-          </div>
-          <p className={styles.whoDates}>
-            <span>{role.startLabel}</span>
-            <span>{role.endLabel}</span>
-          </p>
-        </div>
-        <p className={styles.title}>{role.title}</p>
-        <p className={styles.meta}>
-          {role.startLabel} — {role.endLabel}
-          <span>{role.duration} · {role.location} · {role.type}</span>
-        </p>
-        <p className={styles.summary}>{role.summary}</p>
-      </div>
+    <motion.article
+      className={styles.entry}
+      data-side={side}
+      style={{ '--row': index + 1 }}
+      variants={entryReveal}
+      initial="initial"
+      whileInView="open"
+      viewport={{ once: true, margin: '-80px' }}
+    >
+      <motion.div className={styles.yearRow} variants={lineReveal}>
+        <span className={styles.year}>{role.year}</span>
+        <span className={styles.sticker}>{role.type}</span>
+      </motion.div>
 
-      <ul className={styles.highlights}>
-        {role.highlights.map((h) => <li key={h}>{h}</li>)}
+      <header className={styles.head}>
+        <Stop role={role} index={index} y={y} stopsRef={stopsRef} nodeRef={nodeRef} />
+        <div className={styles.who}>
+          <h3 className={styles.company}>{role.company}</h3>
+          <p className={styles.role}>{role.title}</p>
+        </div>
+        <p className={styles.when}>
+          <span>{role.startLabel}</span>
+          <span className={role.ongoing ? styles.now : undefined}>{role.endLabel}</span>
+        </p>
+      </header>
+
+      <motion.p className={styles.summary} variants={lineReveal}>{role.summary}</motion.p>
+
+      <ul className={styles.points}>
+        {role.highlights.map((h) => (
+          <motion.li key={h} variants={lineReveal}>{h}</motion.li>
+        ))}
       </ul>
 
-      <div className={styles.colStack}>
-        <span className={styles.label}>Stack</span>
-        <ul className={styles.stack}>
-          {role.tags.map((t) => <li key={t}>{t}</li>)}
-        </ul>
-      </div>
-    </div>
-  );
-}
+      <motion.p className={styles.meta} variants={lineReveal}>
+        {role.duration} · {role.location}
+      </motion.p>
 
-// The ruler itself: month ticks, year labels and a block per role.
-// `ppm` is pixels per month; `onSelect` jumps to a role; `fit` keeps it to
-// the roles' own span so it fits the width.
-function Ruler({ ppm, active, onSelect, fit = false }) {
-  const lead = fit ? 0 : OVERRUN * ppm;
-  return (
-    <div className={styles.ruler} style={{ width: SPAN * ppm }}>
-      <div className={styles.blocks}>
-        {CHRONO.map((role, i) => (
-          <button
-            key={role.company}
-            type="button"
-            className={[styles.block, i === active && styles.blockActive, !fit && (role.endM + 1 - role.startM) * ppm < 220 && styles.blockShort].filter(Boolean).join(' ')}
-            style={{ left: (role.startM - FIRST) * ppm, width: (role.endM + 1 - role.startM) * ppm }}
-            onClick={() => onSelect(i)}
-            aria-label={`${role.company}, ${role.startLabel} to ${role.endLabel}`}
-            aria-pressed={i === active}
-          >
-            <span className={styles.blockMark}>{role.mark}</span>
-            <span className={styles.blockName}>{role.company}</span>
-          </button>
-        ))}
-      </div>
-      <div className={styles.ticks} style={{ left: -lead, right: -lead }} aria-hidden="true">
-        {(fit ? TICKS_FIT : TICKS_RUN).map((m) => {
-          const jan = ((m % 12) + 12) % 12 === 0 && (!fit || LAST - m >= 3);
-          return (
-            <span key={m} className={jan ? styles.tickMajor : styles.tick} style={{ left: (m - FIRST) * ppm + lead }}>
-              {jan && <em>{Math.floor(m / 12)}</em>}
-            </span>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// Desktop: the section pins and the ruler scrubs sideways under a fixed needle
-function Scrubber({ intro, narrow }) {
-  const trackRef = useRef(null);
-  const stageRef = useRef(null);
-  const wrapRef = useRef(null);
-  const innerRef = useRef(null);
-  const activeRef = useRef(0);
-  // Long role lists scroll up inside the panel as the role plays out
-  const detailY = useMotionValue(0);
-  // Sprung, so the jump back to the top when a new role arrives is a glide
-  const detailYSmooth = useSpring(detailY, { stiffness: 90, damping: 22, mass: 0.8 });
-  const [box, setBox] = useState({ w: 1200 });
-  const [active, setActive] = useState(0);
-  const [readout, setReadout] = useState(monthLabel(CHRONO[0].startM));
-
-  useLayoutEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setBox({ w: el.clientWidth }));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  // About two years of ruler across a desktop, ten months across a phone
-  const ppm = narrow ? Math.max(30, box.w / 10) : Math.max(26, box.w / 24);
-  const needleX = box.w * 0.5;
-
-  const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start start', 'end end'] });
-  const rawMonth = useTransform(scrollYProgress, KEYS, MONTHS_AT);
-  const month = useSpring(rawMonth, { stiffness: 140, damping: 26, mass: 0.6 });
-  const x = useTransform(month, (m) => needleX - (m - FIRST) * ppm);
-
-  // Within a role's stretch of scroll: hold at the top, then glide the list
-  // up so its last line comes into view before the next role
-  const placeDetails = () => {
-    const wrap = wrapRef.current;
-    const inner = innerRef.current;
-    if (!wrap || !inner) return;
-    const i = activeRef.current;
-    const p = scrollYProgress.get();
-    const a = KEYS[1 + i * 2];
-    const b = KEYS[2 + i * 2];
-    const t = Math.min(1, Math.max(0, (p - a - (b - a) * 0.15) / ((b - a) * 0.7)));
-    const overflow = Math.max(0, inner.offsetHeight - wrap.clientHeight);
-    detailY.set(-overflow * t);
-  };
-
-  useMotionValueEvent(month, 'change', (m) => {
-    const i = roleAt(m);
-    activeRef.current = i;
-    setActive(i);
-    setReadout(monthLabel(Math.floor(m)));
-  });
-
-  useMotionValueEvent(scrollYProgress, 'change', placeDetails);
-
-  // A new role mounts at its own height: place it straight away
-  useLayoutEffect(placeDetails, [active]);
-
-  // Jump the page so the needle lands mid-role
-  const select = (i) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const travel = el.offsetHeight - window.innerHeight;
-    const mid = (KEYS[1 + i * 2] + KEYS[2 + i * 2]) / 2;
-    window.scrollTo({ top: top + travel * mid, behavior: 'smooth' });
-  };
-
-  const role = CHRONO[active];
-
-  return (
-    <div ref={trackRef} className={styles.track} style={{ height: `${100 + CHRONO.length * 90}vh` }}>
-      <div className={styles.pin}>
-        <div ref={stageRef} className={styles.stage}>
-          {intro}
-          <div className={styles.viewport}>
-            <motion.div className={styles.rail} style={{ x }}>
-              <Ruler ppm={ppm} active={active} onSelect={select} />
-            </motion.div>
-            <div className={styles.needle} style={{ left: needleX }} aria-hidden="true">
-              <span className={styles.readout}>{readout}</span>
-            </div>
-          </div>
-
-          <div ref={wrapRef} className={styles.detailsWrap} aria-live="polite">
-            <motion.div ref={innerRef} className={styles.detailsInner} style={{ y: detailYSmooth }}>
-              {/* Keyed so each role animates in fresh; popLayout lifts the
-                  outgoing role out of the flow so the two crossfade in place */}
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.div key={role.company} variants={swap} initial="initial" animate="animate" exit="exit">
-                  <Details role={role} index={active} />
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Short screens (landscape phones, squat desktop windows) and reduced motion:
-// the whole ruler fits the width,
-// with every role listed below it
-function Stacked() {
-  const fitRef = useRef(null);
-  const [w, setW] = useState(360);
-
-  useLayoutEffect(() => {
-    const el = fitRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => setW(el.clientWidth));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-
-  const [active, setActive] = useState(CHRONO.length - 1);
-  const refs = useRef([]);
-
-  return (
-    <div className={styles.stacked}>
-      <div ref={fitRef} className={`${styles.viewport} ${styles.viewportFit}`}>
-        <Ruler fit ppm={w / SPAN} active={active} onSelect={(i) => { setActive(i); refs.current[i]?.scrollIntoView({ behavior: 'smooth', block: 'start' }); }} />
-      </div>
-      <ol className={styles.stackedList}>
-        {[...CHRONO.keys()].reverse().map((i) => (
-          <motion.li
-            key={CHRONO[i].company}
-            ref={(el) => { refs.current[i] = el; }}
-            className={styles.stackedItem}
-            // Lights the role crossing the middle of the screen on the ruler
-            viewport={{ margin: '-45% 0px -45% 0px' }}
-            onViewportEnter={() => setActive(i)}
-          >
-            <motion.div variants={headingReveal} initial="initial" whileInView="open" viewport={{ once: true, margin: '-60px' }}>
-              <Details role={CHRONO[i]} index={i} />
-            </motion.div>
-          </motion.li>
-        ))}
-      </ol>
-    </div>
+      <motion.ul className={styles.tags} variants={lineReveal}>
+        {role.tags.map((t) => <li key={t}>{t}</li>)}
+      </motion.ul>
+    </motion.article>
   );
 }
 
 export default function Experience() {
   const reduced = useReducedMotion();
-  const [compact, setCompact] = useState(false);
-  const [narrow, setNarrow] = useState(false);
+  const trackRef = useRef(null);
+  const nodeRefs = useRef([]);
+  const heightRef = useRef(1);
+  const stopsRef = useRef([]);
+  // px per drawing unit of the skate, for the wheel spin
+  const sizeRef = useRef(0.5);
 
-  useEffect(() => {
-    // Too short to pin: landscape phones and squat desktop windows
-    const short = window.matchMedia('(max-height: 500px), (min-width: 901px) and (max-height: 680px)');
-    const thin = window.matchMedia('(max-width: 900px)');
-    const update = () => { setCompact(short.matches); setNarrow(thin.matches); };
-    update();
-    short.addEventListener('change', update);
-    thin.addEventListener('change', update);
-    return () => {
-      short.removeEventListener('change', update);
-      thin.removeEventListener('change', update);
+  // The skate sits at the middle of the screen: progress 0 when the line's
+  // top reaches mid-screen, 1 when its bottom does
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ['start center', 'end center'] });
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 28, mass: 0.5 });
+  const skateY = useTransform(progress, (p) => p * heightRef.current);
+
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const measure = () => {
+      heightRef.current = track.offsetHeight;
+      stopsRef.current = nodeRefs.current.map((n) => (n ? offsetWithin(n, track) + n.offsetHeight / 2 : Infinity));
+      // Untransformed height of the drawing (it's turned a quarter turn)
+      const art = track.querySelector(`.${styles.skateTurn}`);
+      if (art) sizeRef.current = art.offsetHeight / ART_H || sizeRef.current;
+      // Nudge the motion values so the skate and stops pick up new sizes
+      progress.set(progress.get() + 1e-6);
     };
-  }, []);
-
-  const pinned = !compact && !reduced;
-
-  // The header rides along in the pinned view; otherwise it sits above the list
-  const intro = (
-    <motion.div
-      className={pinned && !narrow ? `${styles.intro} ${styles.introPinned}` : styles.intro}
-      variants={headingReveal}
-      initial="initial"
-      whileInView="open"
-      viewport={{ once: true, margin: '-80px' }}
-    >
-      <h2 className={styles.heading}>
-        Where I&apos;ve been <span>shipping.</span>
-      </h2>
-      <p className={styles.subtext}>
-        Three teams since 2023, from internal tools used by hundreds to platforms built for enterprise scale.
-      </p>
-    </motion.div>
-  );
+    measure();
+    document.fonts?.ready.then(measure);
+    const ro = new ResizeObserver(measure);
+    ro.observe(track);
+    return () => ro.disconnect();
+  }, [progress]);
 
   return (
     <section id="experience" className={styles.experience}>
       <SectionTag>Experience</SectionTag>
 
-      {/* Phones keep the header above the pin to leave the screen to the timeline */}
-      {pinned
-        ? (narrow ? <>{intro}<Scrubber narrow /></> : <Scrubber intro={intro} />)
-        : <>{intro}<Stacked /></>}
+      <motion.div
+        className={styles.intro}
+        variants={headingReveal}
+        initial="initial"
+        whileInView="open"
+        viewport={{ once: true, margin: '-80px' }}
+      >
+        <h2 className={styles.heading}>
+          Where I&apos;ve been <span>shipping.</span>
+        </h2>
+        <p className={styles.subtext}>
+          Three teams since 2023, from internal tools used by hundreds to platforms built for enterprise scale.
+        </p>
+        <span className={styles.hint}>Scroll to roll along ↓</span>
+      </motion.div>
+
+      <div ref={trackRef} className={styles.timeline}>
+        {/* The line, and the trail the skate leaves on it */}
+        <div className={styles.rail} aria-hidden="true">
+          <motion.div className={styles.railFill} style={{ scaleY: progress, originY: 0 }} />
+        </div>
+
+        {/* Drop-in: a bit of coping at the top of the line */}
+        <div className={styles.dropIn} aria-hidden="true">
+          <span className={styles.coping} />
+          <span>Drop in · {TIMELINE[0].year}</span>
+        </div>
+
+        {/* Roles alternate sides and interlock, each starting partway down
+            the one before it, so neither side of the line sits empty */}
+        <div className={styles.entries}>
+          {TIMELINE.map((role, i) => (
+            <Entry
+              key={role.company}
+              role={role}
+              index={i}
+              side={i % 2 === 0 ? 'left' : 'right'}
+              y={skateY}
+              stopsRef={stopsRef}
+              nodeRef={(el) => { nodeRefs.current[i] = el; }}
+            />
+          ))}
+        </div>
+
+        {/* End of the line: still rolling */}
+        <div className={styles.rolling}>
+          <span className={styles.rollingDot} aria-hidden="true" />
+          <span className={styles.rollingText}>
+            Still rolling
+            <em>Now · {TIMELINE[TIMELINE.length - 1].company}</em>
+          </span>
+        </div>
+
+        <Rider y={skateY} stopsRef={stopsRef} sizeRef={sizeRef} still={!!reduced} />
+      </div>
     </section>
   );
 }

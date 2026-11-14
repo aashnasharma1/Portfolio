@@ -7,7 +7,8 @@ import Preloader from '../components/Preloader';
 import Landing from '../components/Landing';
 import Projects from '../components/Projects';
 import AboutMe from '../components/AboutMe';
-import Tracks from '../components/Tracks';
+// Primarily focused on section, retired for now
+// import Tracks from '../components/Tracks';
 import Experience from '../components/Experience';
 import AiTools from '../components/AiTools';
 import Achievements from '../components/Achievements';
@@ -110,10 +111,10 @@ export default function Home() {
           <Landing startAnimations={startAnimations} />
           <Services />
           <AboutMe />
-          <Tracks />
+          {/* <Tracks /> */}
+          <AiTools />
           <Experience />
           <div id="work"><Projects /></div>
-          <AiTools />
           <Achievements />
           </div>
         </div>
