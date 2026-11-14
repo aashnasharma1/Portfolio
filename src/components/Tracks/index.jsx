@@ -1,7 +1,7 @@
 'use client';
 import styles from './style.module.scss';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { Exploded, Terminal, Cabinet, Branches } from '@lucasmarkes/hairline/react';
 import SectionTag from '../../common/SectionTag';
@@ -42,6 +42,10 @@ const TRACKS = [
 
 const EASE = [0.22, 1, 0.36, 1];
 
+// Time from one slide change to the next: ~0.75s of transition, then about
+// two seconds at rest
+const AUTO_ADVANCE_MS = 2750;
+
 const headingReveal = {
   initial: { opacity: 0, y: 24 },
   open: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
@@ -64,6 +68,15 @@ export default function Tracks() {
   const [dir, setDir] = useState(1);
   const reduced = useReducedMotion();
   const stageRef = useRef(null);
+  const inView = useInView(stageRef, { margin: '-20% 0px -20% 0px' });
+  // Auto-advance holds only while a mouse rests on the illustration or the copy
+  const [hover, setHover] = useState({ figure: false, copy: false });
+  const paused = hover.figure || hover.copy;
+
+  const hoverProps = (zone) => ({
+    onPointerEnter: (e) => { if (e.pointerType === 'mouse') setHover((h) => ({ ...h, [zone]: true })); },
+    onPointerLeave: (e) => { if (e.pointerType === 'mouse') setHover((h) => ({ ...h, [zone]: false })); },
+  });
 
   const go = useCallback((step) => {
     setDir(step);
@@ -81,6 +94,17 @@ export default function Tracks() {
     el.addEventListener('keydown', onKey);
     return () => el.removeEventListener('keydown', onKey);
   }, [go]);
+
+  // Steps to the next track (wrapping to the first) on a timer. Re-armed on
+  // every change, so a manual step or the end of a hover restarts the wait.
+  useEffect(() => {
+    if (reduced || paused || !inView) return;
+    const timer = setTimeout(() => {
+      setDir(1);
+      setIndex((i) => (i + 1) % TRACKS.length);
+    }, AUTO_ADVANCE_MS);
+    return () => clearTimeout(timer);
+  }, [index, paused, inView, reduced]);
 
   const track = TRACKS[index];
   const { Figure } = track;
@@ -105,7 +129,7 @@ export default function Tracks() {
       </motion.div>
 
       <div ref={stageRef} className={styles.stage} tabIndex={-1}>
-        <div className={styles.figureCell}>
+        <div className={styles.figureCell} {...hoverProps('figure')}>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={track.title} className={styles.figureWrap} variants={fade} initial="initial" animate="animate" exit="exit">
               <Figure className={styles.figure} play={!reduced} intensity={0.6} label={track.label} />
@@ -114,8 +138,9 @@ export default function Tracks() {
         </div>
 
         <div className={styles.copyCell}>
+          <div {...hoverProps('copy')}>
           <AnimatePresence mode="wait" initial={false} custom={dir}>
-            <motion.div key={track.title} className={styles.copy} custom={dir} variants={swap} initial="initial" animate="animate" exit="exit" aria-live="polite">
+            <motion.div key={track.title} className={styles.copy} custom={dir} variants={swap} initial="initial" animate="animate" exit="exit" aria-live={reduced || paused ? 'polite' : 'off'}>
               <span className={styles.counter}>
                 {String(index + 1).padStart(2, '0')} <span>/ {String(TRACKS.length).padStart(2, '0')}</span>
               </span>
@@ -124,6 +149,7 @@ export default function Tracks() {
               <p className={styles.body}>{track.body}</p>
             </motion.div>
           </AnimatePresence>
+          </div>
 
           <div className={styles.controls}>
             <button type="button" className={styles.arrow} onClick={() => go(-1)} disabled={index === 0} aria-label="Previous track">
