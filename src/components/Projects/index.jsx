@@ -179,7 +179,7 @@ function Cards() {
             <h3 className={styles.name}>{p.name}</h3>
           </div>
           <p className={styles.description}>{p.description}</p>
-          <p className={styles.stack}>{p.stack} <span>· {p.year}</span></p>
+          <p className={styles.stack}>{p.stack}</p>
           <VisitLink project={p} />
         </motion.li>
       ))}

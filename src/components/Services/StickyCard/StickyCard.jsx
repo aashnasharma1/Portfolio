@@ -58,7 +58,6 @@ const StickyCards = () => {
         {
             index: '01',
             title: 'Frontend Development',
-            description: 'Custom-coded sites that are fast, accessible and full of thoughtful motion.',
             skills: [
                 { name: 'Modern Websites', stack: ['react', 'next', 'ts', 'js', 'tailwind', 'scss'] },
                 { name: 'Motion & Animations', stack: ['framer', 'gsap', 'three'] },
@@ -68,7 +67,6 @@ const StickyCards = () => {
         {
             index: '02',
             title: 'Backend Development',
-            description: 'Robust APIs and databases built to scale, from design to deployment.',
             skills: [
                 { name: 'RESTful APIs', stack: ['node', 'express', 'dotnet', 'postman'] },
                 { name: 'Database Design', stack: ['mongo', 'postgres', 'mysql', 'prisma'] },
@@ -78,7 +76,6 @@ const StickyCards = () => {
         {
             index: '03',
             title: 'Web Performance',
-            description: 'Faster load times and smoother interactions, tuned for Core Web Vitals.',
             skills: [
                 { name: 'Core Web Vitals', stack: ['lighthouse', 'next', 'react'] },
                 { name: 'Code Optimization', stack: ['webpack', 'redis', 'elastic'] },
@@ -88,7 +85,6 @@ const StickyCards = () => {
         {
             index: '04',
             title: 'System Architecture',
-            description: 'End-to-end systems designed to stay maintainable as they grow.',
             skills: [
                 { name: 'Full-stack Solutions', stack: ['mongo', 'express', 'react', 'node', 'dotnet'] },
                 { name: 'Scalable Patterns', stack: ['docker', 'redis', 'elastic', 'azure'] },
@@ -210,7 +206,6 @@ const StickyCards = () => {
                             <span className="sticky-card-index">{cardData.index}</span>
                             <h3 className="sticky-card-title">{cardData.title}</h3>
                         </div>
-                        <p className="sticky-card-description">{cardData.description}</p>
                     </div>
 
                     <ul className="sticky-card-skills">

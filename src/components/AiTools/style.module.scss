@@ -24,8 +24,26 @@
     letter-spacing: -0.035em;
     color: var(--ink-strong);
 
-    span {
+    .muted {
         color: var(--muted);
+    }
+
+    .short {
+        display: none;
+    }
+
+    @media (max-width: 767px) {
+        .full {
+            display: none;
+        }
+
+        .short {
+            display: inline;
+
+            .muted {
+                font-size: 0.72em;
+            }
+        }
     }
 }
 

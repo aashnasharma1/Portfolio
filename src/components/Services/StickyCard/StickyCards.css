@@ -1,6 +1,6 @@
 /* Ruled-table layout: every card is one row of hairline-bordered cells.
    Columns (shared with the section header via --svc-cols on .services):
-   index | title + description | capabilities + tools | animated shape */
+   index | title | capabilities + tools | animated shape */
 .sticky-cards {
   --stack-base: 96px;
   --stack-step: 112px;
@@ -135,14 +135,6 @@
   /* Sized to the column so even the longest title stays on one line */
   white-space: nowrap;
   color: var(--text);
-}
-
-.sticky-card-description {
-  margin: 0;
-  max-width: 40ch;
-  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
-  line-height: 1.65;
-  color: var(--muted);
 }
 
 /* Capabilities: tracked caps label, its tools listed beneath */
@@ -319,8 +311,8 @@
 @media (max-width: 767px) {
   .sticky-cards {
     --stack-base: 84px;
-    /* Just the number + title row stays visible; the description (which
-       starts below 1rem padding + 2.2em title + 1rem gap) stays covered */
+    /* Just the number + title row stays visible; the skills row
+       below it stays covered */
     --stack-step: 72px;
   }
 
@@ -354,8 +346,7 @@
     white-space: normal;
   }
 
-  /* Phones: just the number and title, no blurb or animated shape */
-  .sticky-card-description,
+  /* Phones: just the number and title, no animated shape */
   .svg-box {
     display: none;
   }

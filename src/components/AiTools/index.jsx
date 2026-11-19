@@ -48,8 +48,15 @@ export default function AiTools() {
         viewport={{ once: true, margin: '-80px' }}
       >
         <h2 className={styles.heading}>
-          The AI kit,<br />
-          <span>and what each is for.</span>
+          {/* Phones hide each tool's note, so they get a plainer line */}
+          <span className={styles.full}>
+            The AI kit,<br />
+            <span className={styles.muted}>and what each is for.</span>
+          </span>
+          <span className={styles.short}>
+            AI-powered workflow,<br />
+            <span className={styles.muted}>I build with it every day.</span>
+          </span>
         </h2>
         <p className={styles.subtext}>
           Reached for daily to move faster on UI, APIs, tests and docs, while the architecture stays mine.
